@@ -98,7 +98,7 @@ export default function UserHomePage() {
                             <span className="material-symbols-outlined text-red-500 group-hover:rotate-12 transition-transform">
                                 emergency
                             </span>
-                            แจ้งขอความช่วยเหลือ (SOS)
+                            แจ้งขอความช่วยเหลือ test (SOS)
                         </Link>
                     </div>
                 </section>
