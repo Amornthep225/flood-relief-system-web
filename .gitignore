@@ -6,3 +6,4 @@ out/
 *.log
 .vscode/
 .gitignore
+next-env.d.ts
