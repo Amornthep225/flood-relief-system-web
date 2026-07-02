@@ -3,15 +3,11 @@ import UserRegisterForm from "@/components/form/UserRegisterForm/UserRegisterFor
 import { cards } from "@/constants/cards";
 import { colors } from "@/constants/colors";
 
-const mockData = {
-    hotline: "1784",
-
-    links: {
+const links = {
         home: "/",
         login: "/user/users-login",
         registerSuccess: "/user/users-login",
-    },
-};
+    }
 
 export default function RegisterPage() {
     return (
@@ -39,7 +35,7 @@ export default function RegisterPage() {
                         </h1>
                     </div>
 
-                    <UserRegisterForm links={mockData.links} />
+                    <UserRegisterForm links={links} />
                 </div>
             </main>
         </div>

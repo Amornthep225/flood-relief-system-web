@@ -31,7 +31,7 @@ export const cards = {
     },
 
     userLogin: {
-        wrapper:
+        card:
             "bg-white w-full max-w-[420px] rounded-3xl shadow-2xl shadow-slate-200/50 p-8 md:p-10 border border-slate-100",
 
         icon:
