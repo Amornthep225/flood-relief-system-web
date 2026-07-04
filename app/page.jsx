@@ -3,6 +3,7 @@ import { cards } from "@/constants/cards";
 import { buttons } from "@/constants/buttons";
 import { colors } from "@/constants/colors";
 import PublicNavbar from "@/components/common/public-navbar";
+import Footer from "@/components/common/footer/Footer";
 const theme = colors.blue;
 const mockdata = {
   hotline: "1784",
@@ -152,35 +153,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="w-full py-8 border-t border-blue-100 mt-auto bg-white/40">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className={`${theme.mutedText} flex items-center gap-2 text-sm font-medium`}>
-            <span className="material-symbols-outlined text-sm">update</span>
-            อัปเดตข้อมูลล่าสุด: 5 นาทีที่แล้ว
-          </div>
-
-          <div className="flex items-center gap-8">
-            <a
-              className={`${theme.mutedText}`}
-              href="#"
-            >
-              นโยบายความเป็นส่วนตัว
-            </a>
-            <a
-              className={`${theme.mutedText} `}
-              href="#"
-            >
-              ติดต่อศูนย์ช่วยเหลือ
-            </a>
-            <a
-              className={`${theme.mutedText} `}
-              href="#"
-            >
-              รายงานปัญหา
-            </a>
-          </div>
-        </div>
-      </footer>
+      <Footer theme={theme} />
     </div>
   );
 }
