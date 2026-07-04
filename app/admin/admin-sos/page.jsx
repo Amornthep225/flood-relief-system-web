@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import AdminGuard from "@/components/admin/AdminGuard";
 const mockData = {
     stats: [
         {
@@ -94,6 +94,7 @@ export default function AdminSosPage() {
     });
 
     return (
+        <AdminGuard>
         <div className="min-h-screen bg-slate-50 text-slate-900">
             <header className="flex items-center justify-between bg-white/80 backdrop-blur border-b border-slate-200 px-8 py-4 sticky top-0 z-10">
                 <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
@@ -286,6 +287,7 @@ export default function AdminSosPage() {
                 <DetailModal item={detailCase} onClose={() => setDetailCase(null)} />
             )}
         </div>
+        </AdminGuard>
     );
 }
 
