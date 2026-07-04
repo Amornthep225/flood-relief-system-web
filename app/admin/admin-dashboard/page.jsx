@@ -1,5 +1,5 @@
 "use client";
-
+import AdminGuard from "@/components/admin/AdminGuard";
 import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 
@@ -133,6 +133,7 @@ export default function AdminDashboardPage() {
     }, []);
 
     return (
+        <AdminGuard>
         <div className="min-h-screen bg-slate-50 text-slate-900">
             <header className="flex items-center justify-between bg-white/80 backdrop-blur border-b border-slate-200 px-8 py-4 sticky top-0 z-10">
                 <div>
@@ -227,9 +228,9 @@ export default function AdminDashboardPage() {
                 </section>
             </main>
         </div>
+        </AdminGuard>
     );
 }
-
 function StatCard({ item }) {
     return (
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">

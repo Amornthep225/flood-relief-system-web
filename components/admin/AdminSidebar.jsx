@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+import Swal from "sweetalert2";
 import { cards } from "@/constants/cards";
 
 const menuGroups = [
@@ -61,6 +65,36 @@ const menuGroups = [
 ];
 
 export default function AdminSidebar() {
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const handleLogout = async () => {
+        const result = await Swal.fire({
+            title: "ออกจากระบบ?",
+            text: "คุณต้องการออกจากระบบใช่หรือไม่",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "ออกจากระบบ",
+            cancelButtonText: "ยกเลิก",
+            confirmButtonColor: "#0284c7",
+            cancelButtonColor: "#64748b",
+        });
+
+        if (!result.isConfirmed) return;
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("admin");
+
+        await Swal.fire({
+            icon: "success",
+            title: "ออกจากระบบสำเร็จ",
+            timer: 800,
+            showConfirmButton: false,
+        });
+
+        router.replace("/admin-login");
+    };
+
     return (
         <aside className={cards.adminLayout.sidebar}>
             <div className="p-6 flex items-center gap-3">
@@ -74,6 +108,7 @@ export default function AdminSidebar() {
                     <h1 className="text-lg font-bold leading-none text-slate-800">
                         FLOOD RELIEF
                     </h1>
+
                     <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mt-1">
                         Command Center
                     </p>
@@ -87,43 +122,53 @@ export default function AdminSidebar() {
                             {group.title}
                         </p>
 
-                        {group.items.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={
-                                    item.active
-                                        ? "flex items-center gap-3 px-3 py-2.5 rounded-xl bg-sky-500/10 text-sky-500 font-bold"
-                                        : "flex items-center gap-3 px-3 py-2.5 text-slate-600 hover:bg-slate-50 hover:text-sky-500 transition-colors rounded-xl group"
-                                }
-                            >
-                                <span className="material-symbols-outlined w-5 text-center text-[20px]">
-                                    {item.icon}
-                                </span>
+                        {group.items.map((item) => {
+                            const active = pathname === item.href;
 
-                                <p className="text-sm font-medium">{item.title}</p>
-
-                                {item.badge && (
-                                    <span className="ml-auto bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-bold">
-                                        {item.badge}
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={
+                                        active
+                                            ? "flex items-center gap-3 px-3 py-2.5 rounded-xl bg-sky-500/10 text-sky-500 font-bold"
+                                            : "flex items-center gap-3 px-3 py-2.5 text-slate-600 hover:bg-slate-50 hover:text-sky-500 transition-colors rounded-xl group"
+                                    }
+                                >
+                                    <span className="material-symbols-outlined w-5 text-center text-[20px]">
+                                        {item.icon}
                                     </span>
-                                )}
-                            </Link>
-                        ))}
+
+                                    <p className="text-sm font-medium">
+                                        {item.title}
+                                    </p>
+
+                                    {item.badge && (
+                                        <span className="ml-auto bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-bold">
+                                            {item.badge}
+                                        </span>
+                                    )}
+                                </Link>
+                            );
+                        })}
                     </div>
                 ))}
             </nav>
 
             <div className="p-4 border-t border-slate-100">
-                <Link
-                    href="/admin-login"
-                    className="flex items-center gap-3 px-3 py-2 text-slate-500 hover:text-red-600 transition-colors group"
+                <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-3 py-2 text-slate-500 hover:text-red-600 transition-colors rounded-xl hover:bg-red-50"
                 >
                     <span className="material-symbols-outlined text-[20px]">
                         logout
                     </span>
-                    <p className="text-sm font-medium">ออกจากระบบ</p>
-                </Link>
+
+                    <p className="text-sm font-medium">
+                        ออกจากระบบ
+                    </p>
+                </button>
             </div>
         </aside>
     );
