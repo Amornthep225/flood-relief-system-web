@@ -121,16 +121,11 @@ export default function UserLoginForm({ links }) {
 
             <div className="relative flex py-6 items-center">
                 <div className="flex-grow border-t border-slate-100" />
-                <span className="mx-4 text-slate-300 text-[10px]">หรือ</span>
+                <span className="mx-4 text-slate-300 text-[10px]">หากไม่มีบัญชีผู้ใช้</span>
                 <div className="flex-grow border-t border-slate-100" />
             </div>
 
             <div className="space-y-3">
-                <button type="button" className={buttons.userLogin.line}>
-                    <span className="text-xl font-bold">LINE</span>
-                    <span>เข้าสู่ระบบด้วย LINE</span>
-                </button>
-
                 <Link href={links.register} className={buttons.userLogin.register}>
                     <span className="material-symbols-outlined">volunteer_activism</span>
                     ลงทะเบียน
