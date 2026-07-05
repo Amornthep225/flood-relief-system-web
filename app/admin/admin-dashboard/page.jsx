@@ -1,5 +1,5 @@
 "use client";
-import AdminGuard from "@/components/admin/AdminGuard";
+import RoleGuard from "@/components/RoleGuard/RoleGuard";
 import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 
@@ -133,102 +133,106 @@ export default function AdminDashboardPage() {
     }, []);
 
     return (
-        <AdminGuard>
-        <div className="min-h-screen bg-slate-50 text-slate-900">
-            <header className="flex items-center justify-between bg-white/80 backdrop-blur border-b border-slate-200 px-8 py-4 sticky top-0 z-10">
-                <div>
-                    <h2 className="text-xl font-bold text-slate-800">Dashboard ภาพรวม</h2>
-                    <p className="text-xs text-slate-500">ข้อมูลสถานการณ์ล่าสุดแบบ Real-time</p>
-                </div>
-
-                <div className="flex items-center gap-4">
-                    <button className="p-2 rounded-full bg-slate-100 text-slate-600 hover:text-sky-500 hover:bg-sky-50 transition-all relative">
-                        <span className="material-symbols-outlined text-[20px]">notifications</span>
-                        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse" />
-                    </button>
-
-                    <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-                        <div className="text-right hidden sm:block">
-                            <p className="text-sm font-bold text-slate-700">Admin Staff</p>
-                            <p className="text-xs text-slate-500">ศูนย์ประสานงานกลาง</p>
-                        </div>
-
-                        <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 border-2 border-white shadow-sm">
-                            <span className="material-symbols-outlined">person</span>
-                        </div>
+        <RoleGuard
+            role="Admin"
+            storageKey="admin"
+            loginPath="/admin-login"
+        >
+            <div className="min-h-screen bg-slate-50 text-slate-900">
+                <header className="flex items-center justify-between bg-white/80 backdrop-blur border-b border-slate-200 px-8 py-4 sticky top-0 z-10">
+                    <div>
+                        <h2 className="text-xl font-bold text-slate-800">Dashboard ภาพรวม</h2>
+                        <p className="text-xs text-slate-500">ข้อมูลสถานการณ์ล่าสุดแบบ Real-time</p>
                     </div>
-                </div>
-            </header>
 
-            <main className="p-8 space-y-8 max-w-[1400px] mx-auto w-full">
-                <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {mockData.stats.map((item) => (
-                        <StatCard key={item.title} item={item} />
-                    ))}
-                </section>
+                    <div className="flex items-center gap-4">
+                        <button className="p-2 rounded-full bg-slate-100 text-slate-600 hover:text-sky-500 hover:bg-sky-50 transition-all relative">
+                            <span className="material-symbols-outlined text-[20px]">notifications</span>
+                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse" />
+                        </button>
 
-                <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                        <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                            <div>
-                                <h4 className="font-bold text-lg text-slate-800">
-                                    สถิติการช่วยเหลือ (Relief Operations)
-                                </h4>
-                                <p className="text-sm text-slate-500">
-                                    เปรียบเทียบคำขอ vs การช่วยเหลือสำเร็จ
-                                </p>
+                        <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
+                            <div className="text-right hidden sm:block">
+                                <p className="text-sm font-bold text-slate-700">Admin Staff</p>
+                                <p className="text-xs text-slate-500">ศูนย์ประสานงานกลาง</p>
                             </div>
 
-                            <select className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg px-3 py-1 text-slate-600">
-                                <option>7 วันล่าสุด</option>
-                                <option>30 วันล่าสุด</option>
-                            </select>
-                        </div>
-
-                        <div className="p-6 h-80 relative">
-                            <canvas ref={reliefChartRef} />
+                            <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 border-2 border-white shadow-sm">
+                                <span className="material-symbols-outlined">person</span>
+                            </div>
                         </div>
                     </div>
+                </header>
 
-                    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm">
-                        <div className="p-6 border-b border-slate-100">
-                            <h4 className="font-bold text-lg text-slate-800">สถานะคำขอ (Requests)</h4>
-                            <p className="text-sm text-slate-500">สัดส่วนสถานะปัจจุบัน</p>
-                        </div>
-
-                        <div className="p-6 h-64 flex justify-center items-center relative">
-                            <canvas ref={statusChartRef} />
-                        </div>
-
-                        <div className="p-4 bg-slate-50 text-center border-t border-slate-100 rounded-b-2xl">
-                            <p className="text-xs text-slate-500">
-                                อัปเดตล่าสุด: <span className="font-bold text-slate-700">1 นาทีที่แล้ว</span>
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                <section className="bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                        <div>
-                            <h4 className="font-bold text-lg text-slate-800">กิจกรรมล่าสุด (Live Feed)</h4>
-                            <p className="text-sm text-slate-500">ความเคลื่อนไหวในระบบ Real-time</p>
-                        </div>
-
-                        <button className="text-xs text-sky-500 font-bold hover:underline">
-                            ดูทั้งหมด
-                        </button>
-                    </div>
-
-                    <div className="divide-y divide-slate-50">
-                        {mockData.activities.map((item) => (
-                            <ActivityItem key={item.title} item={item} />
+                <main className="p-8 space-y-8 max-w-[1400px] mx-auto w-full">
+                    <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {mockData.stats.map((item) => (
+                            <StatCard key={item.title} item={item} />
                         ))}
-                    </div>
-                </section>
-            </main>
-        </div>
-        </AdminGuard>
+                    </section>
+
+                    <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                                <div>
+                                    <h4 className="font-bold text-lg text-slate-800">
+                                        สถิติการช่วยเหลือ (Relief Operations)
+                                    </h4>
+                                    <p className="text-sm text-slate-500">
+                                        เปรียบเทียบคำขอ vs การช่วยเหลือสำเร็จ
+                                    </p>
+                                </div>
+
+                                <select className="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg px-3 py-1 text-slate-600">
+                                    <option>7 วันล่าสุด</option>
+                                    <option>30 วันล่าสุด</option>
+                                </select>
+                            </div>
+
+                            <div className="p-6 h-80 relative">
+                                <canvas ref={reliefChartRef} />
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm">
+                            <div className="p-6 border-b border-slate-100">
+                                <h4 className="font-bold text-lg text-slate-800">สถานะคำขอ (Requests)</h4>
+                                <p className="text-sm text-slate-500">สัดส่วนสถานะปัจจุบัน</p>
+                            </div>
+
+                            <div className="p-6 h-64 flex justify-center items-center relative">
+                                <canvas ref={statusChartRef} />
+                            </div>
+
+                            <div className="p-4 bg-slate-50 text-center border-t border-slate-100 rounded-b-2xl">
+                                <p className="text-xs text-slate-500">
+                                    อัปเดตล่าสุด: <span className="font-bold text-slate-700">1 นาทีที่แล้ว</span>
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="bg-white rounded-2xl border border-slate-100 shadow-sm">
+                        <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                            <div>
+                                <h4 className="font-bold text-lg text-slate-800">กิจกรรมล่าสุด (Live Feed)</h4>
+                                <p className="text-sm text-slate-500">ความเคลื่อนไหวในระบบ Real-time</p>
+                            </div>
+
+                            <button className="text-xs text-sky-500 font-bold hover:underline">
+                                ดูทั้งหมด
+                            </button>
+                        </div>
+
+                        <div className="divide-y divide-slate-50">
+                            {mockData.activities.map((item) => (
+                                <ActivityItem key={item.title} item={item} />
+                            ))}
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </RoleGuard>
     );
 }
 function StatCard({ item }) {

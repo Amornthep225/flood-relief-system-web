@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import AdminGuard from "@/components/admin/AdminGuard";
+import RoleGuard from "@/components/RoleGuard/RoleGuard";
 const mockData = {
     summary: {
         totalStaff: "48",
@@ -74,7 +74,11 @@ export default function AdminStaffPage() {
     };
 
     return (
-        <AdminGuard>
+                <RoleGuard
+            role="Admin"
+            storageKey="admin"
+            loginPath="/admin-login"
+        >
         <div className="min-h-screen bg-slate-50 text-slate-900">
             <header className="flex items-center justify-between bg-white/80 backdrop-blur border-b border-slate-200 px-8 py-4 sticky top-0 z-10">
                 <div>
@@ -258,7 +262,7 @@ export default function AdminStaffPage() {
                 />
             )}
         </div>
-        </AdminGuard>
+        </RoleGuard>
     );
 }
 

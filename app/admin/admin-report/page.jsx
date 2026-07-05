@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import AdminGuard from "@/components/admin/AdminGuard";
+import RoleGuard from "@/components/RoleGuard/RoleGuard";
 const reports = {
     donors: {
         title: "รายงานสรุปยอดผู้บริจาค",
@@ -64,7 +64,11 @@ export default function AdminReportPage() {
     const resetFilter = () => setDateFilter("");
 
     return (
-        <AdminGuard>
+        <RoleGuard
+            role="Admin"
+            storageKey="admin"
+            loginPath="/admin-login"
+        >
         <div className="min-h-screen bg-slate-100 text-slate-800">
             <header className="flex items-center justify-between bg-white border-b border-slate-200 px-8 py-4 sticky top-0 z-10 no-print">
                 <div className="flex items-center gap-3">
@@ -160,7 +164,7 @@ export default function AdminReportPage() {
                 </section>
             </main>
         </div>
-        </AdminGuard>
+        </RoleGuard>
     );
 }
 
