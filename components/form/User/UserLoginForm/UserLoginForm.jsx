@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { buttons } from "@/constants/buttons";
@@ -19,6 +19,15 @@ export default function UserLoginForm({ links }) {
     const [form, setForm] = useState(initialForm);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const user = localStorage.getItem("user");
+
+        if (token && user) {
+            router.replace(links.success);
+        }
+    }, [router, links.success]);
 
     const handleChange = (e) => {
         setForm((prev) => ({
@@ -38,17 +47,25 @@ export default function UserLoginForm({ links }) {
                 password: form.password,
             });
 
+            if (!data.token) {
+                throw new Error("ไม่พบ Token จากระบบ");
+            }
+
             localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify({
-                userId: data.userId,
-                fullName: data.fullName,
-                role: data.role,
-            }));
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify({
+                    userId: data.userId,
+                    fullName: data.fullName,
+                    role: data.role,
+                })
+            );
 
             await Swal.fire({
                 icon: "success",
                 title: "เข้าสู่ระบบสำเร็จ",
-                text: "กำลังนำคุณเข้าสู่ระบบ...",
+                text: "กำลังนำคุณไปยังหน้าเลือกบทบาท...",
                 timer: 1000,
                 showConfirmButton: false,
             });
@@ -102,48 +119,33 @@ export default function UserLoginForm({ links }) {
                         จดจำฉันไว้
                     </label>
 
-                    <button
-                        type="button"
-                        className="text-xs font-bold text-sky-500 hover:underline"
-                    >
+                    <button type="button" className="text-xs font-bold text-sky-500 hover:underline">
                         ลืมรหัสผ่าน?
                     </button>
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className={buttons.userLogin.login}
-                >
+                <button type="submit" disabled={loading} className={buttons.userLogin.login}>
                     {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
                 </button>
             </form>
 
             <div className="relative flex py-6 items-center">
                 <div className="flex-grow border-t border-slate-100" />
-                <span className="mx-4 text-slate-300 text-[10px]">หากไม่มีบัญชีผู้ใช้</span>
+                <span className="mx-4 text-slate-300 text-[10px]">
+                    หากไม่มีบัญชีผู้ใช้
+                </span>
                 <div className="flex-grow border-t border-slate-100" />
             </div>
 
-            <div className="space-y-3">
-                <Link href={links.register} className={buttons.userLogin.register}>
-                    <span className="material-symbols-outlined">volunteer_activism</span>
-                    ลงทะเบียน
-                </Link>
-            </div>
+            <Link href={links.register} className={buttons.userLogin.register}>
+                <span className="material-symbols-outlined">volunteer_activism</span>
+                ลงทะเบียน
+            </Link>
         </>
     );
 }
 
-function LoginInput({
-    label,
-    icon,
-    name,
-    type = "text",
-    value,
-    onChange,
-    placeholder,
-}) {
+function LoginInput({ label, icon, name, type = "text", value, onChange, placeholder }) {
     return (
         <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">

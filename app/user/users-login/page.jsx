@@ -3,13 +3,6 @@ import UserLoginForm from "@/components/form/User/UserLoginForm/UserLoginForm";
 import { cards } from "@/constants/cards";
 import { colors } from "@/constants/colors";
 
-const mockData = {
-    links: {
-        register: "/user/users-register",
-        success: "/user/sos-home",
-    },
-};
-
 export default function LoginPage() {
     return (
         <div className={`relative min-h-screen flex flex-col font-sans ${colors.login.page}`}>
@@ -36,7 +29,12 @@ export default function LoginPage() {
                         </h1>
                     </div>
 
-                    <UserLoginForm links={mockData.links} />
+                    <UserLoginForm
+                        links={{
+                            register: "/user/users-register",
+                            success: "/select-role",
+                        }}
+                    />
                 </div>
             </main>
         </div>

@@ -203,10 +203,6 @@ export default function UserRegisterForm({ links }) {
             </div>
 
             <div className="space-y-3">
-                <button type="button" className={buttons.userRegister.line}>
-                    <span className="text-xl font-bold">LINE</span>
-                    <span>ลงทะเบียนด้วย LINE</span>
-                </button>
 
                 <Link
                     href={links.login}
