@@ -1,5 +1,5 @@
 import PublicNavbar from "@/components/common/public-navbar";
-import UserRegisterForm from "@/components/form/User/UserRegisterForm/UserRegisterForm";
+import UserRegisterForm from "@/components/form/User/UserRegisterForm";
 import { cards } from "@/constants/cards";
 import { colors } from "@/constants/colors";
 
