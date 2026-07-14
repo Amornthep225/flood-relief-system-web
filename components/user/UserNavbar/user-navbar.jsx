@@ -1,17 +1,23 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { buttons } from "@/constants/buttons";
+import { getUserProfile } from "@/services/user/profile";
+
 export default function UserNavbar({
-    user,
     theme,
     hotline = "1784",
     notificationCount = 0,
-
     homeHref = "/",
     backHref = "/",
-    logoutHref = "/",
-
+    logoutHref = "/user/users-login",
     options = {},
 }) {
+    const router = useRouter();
+    const [user, setUser] = useState(null);
+
     const {
         home = false,
         back = false,
@@ -21,12 +27,43 @@ export default function UserNavbar({
         hotlineButton = true,
     } = options;
 
+    useEffect(() => {
+        const loadUser = async () => {
+            const token = localStorage.getItem("token");
+            const userStorage = localStorage.getItem("user");
+
+            if (!token || !userStorage) {
+                router.replace("/user/users-login");
+                return;
+            }
+
+            try {
+                const data = await getUserProfile();
+                setUser(data);
+            } catch {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                router.replace("/user/users-login");
+            }
+        };
+
+        loadUser();
+    }, [router]);
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        router.replace(logoutHref);
+    };
+
     return (
         <nav className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-sm">
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-3 flex items-center justify-between">
                 <Link href={homeHref} className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-[#2a93d5] rounded-lg flex items-center justify-center text-white">
-                        <span className="material-symbols-outlined text-2xl">waves</span>
+                        <span className="material-symbols-outlined text-2xl">
+                            waves
+                        </span>
                     </div>
 
                     <h2 className={`${theme.primaryText} text-xl font-black uppercase tracking-tight`}>
@@ -36,10 +73,7 @@ export default function UserNavbar({
 
                 <div className="flex items-center gap-5">
                     {back && (
-                        <Link
-                            href={backHref}
-                            className="flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-sky-600 transition-colors"
-                        >
+                        <Link href={backHref} className="flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-sky-600 transition-colors">
                             <span className="material-symbols-outlined text-[18px]">
                                 arrow_back
                             </span>
@@ -48,21 +82,19 @@ export default function UserNavbar({
                     )}
 
                     {home && (
-                        <Link
-                            href={homeHref}
-                            className={`${theme.primaryText} text-sm font-bold hover:text-[#2a93d5] transition-colors`}
-                        >
+                        <Link href={homeHref} className={`${theme.primaryText} text-sm font-bold hover:text-[#2a93d5] transition-colors`}>
                             หน้าแรก
                         </Link>
                     )}
 
                     {logout && (
-                        <Link
-                            href={logoutHref}
+                        <button
+                            type="button"
+                            onClick={handleLogout}
                             className="text-sm font-bold text-slate-500 hover:text-red-500 transition-colors"
                         >
                             Logout
-                        </Link>
+                        </button>
                     )}
 
                     {(back || home || logout) && (
@@ -85,17 +117,17 @@ export default function UserNavbar({
 
                     {profile && user && (
                         <div className="flex items-center gap-3">
-                            <img
-                                src={user.image}
-                                alt={user.name}
-                                className="w-10 h-10 rounded-full object-cover border border-slate-200"
-                            />
+                            <div className="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold border border-slate-200">
+                                {user.fullName?.charAt(0) || "U"}
+                            </div>
 
                             <div className="hidden md:block">
                                 <p className={`${theme.primaryText} text-sm font-bold`}>
-                                    {user.name}
+                                    {user.fullName}
                                 </p>
-                                <p className="text-xs text-slate-400">ผู้ใช้งานระบบ</p>
+                                <p className="text-xs text-slate-400">
+                                    {user.email}
+                                </p>
                             </div>
                         </div>
                     )}

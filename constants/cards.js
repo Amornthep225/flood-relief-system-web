@@ -53,12 +53,12 @@ export const cards = {
     },
 
     userHome: {
-        hero:
-            "relative bg-gradient-to-r from-sky-500 to-blue-600 rounded-2xl p-8 md:p-12 overflow-hidden shadow-xl shadow-sky-200 mb-10",
+    hero:
+        "relative bg-gradient-to-r from-sky-500 to-blue-600 rounded-2xl p-8 md:p-12 overflow-hidden shadow-xl shadow-sky-200",
 
-        menu:
-            "bg-white p-8 rounded-2xl shadow-lg shadow-sky-100/50 border border-white flex flex-col h-full hover:-translate-y-1 transition-all duration-300",
-    },
+    menu:
+        "bg-white p-8 rounded-2xl shadow-lg shadow-sky-100/50 border border-white flex flex-col min-h-[280px] hover:-translate-y-1 transition-all duration-300",
+},
 
     userSosForm: {
         form:

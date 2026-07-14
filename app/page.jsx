@@ -3,7 +3,7 @@ import { cards } from "@/constants/cards";
 import { buttons } from "@/constants/buttons";
 import { colors } from "@/constants/colors";
 import PublicNavbar from "@/components/common/public-navbar";
-import Footer from "@/components/common/footer/Footer";
+import Footer from "@/components/common/Footer/PublicFooter";
 const theme = colors.blue;
 const mockdata = {
   hotline: "1784",
