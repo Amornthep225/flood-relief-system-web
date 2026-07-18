@@ -1,10 +1,8 @@
-import { cards } from "@/constants/cards";
-
 export default function SosItemSelector({
     categories,
     itemsByCategory,
-    selectedCategories,
-    selectedItems,
+    selectedCategoryIds,
+    selectedItemIds,
     quantities,
     onToggleItem,
     onIncrease,
@@ -12,93 +10,145 @@ export default function SosItemSelector({
     onQuantityChange,
 }) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            {selectedCategories.map((categoryId) => {
-                const category = categories.find((item) => item.id === categoryId);
-                const items = itemsByCategory[categoryId] || [];
+        <div className="space-y-6">
+            {selectedCategoryIds.map((categoryId) => {
+                const category = categories.find(
+                    (item) => item.id === categoryId
+                );
+
+                const items =
+                    itemsByCategory[categoryId] || [];
 
                 return (
-                    <div key={categoryId} className={cards.userSosForm.itemGroup}>
-                        <h4 className="font-bold text-slate-700 mb-3 border-b border-slate-100 pb-2 flex items-center gap-2 text-sm">
+                    <div
+                        key={categoryId}
+                        className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5"
+                    >
+                        <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-4">
                             <span className="material-symbols-outlined text-sky-500">
-                                {category?.icon}
+                                {category?.icon || "category"}
                             </span>
-                            ระบุจำนวน {category?.title}
-                        </h4>
 
-                        <div className="space-y-3">
-                            {items.map((item) => {
-                                const checked = selectedItems.includes(item.id);
+                            {category?.title ||
+                                category?.name ||
+                                categoryId}
+                        </h3>
 
-                                return (
-                                    <div key={item.id} className="relative">
-                                        <button
-                                            type="button"
-                                            onClick={() => onToggleItem(item.id)}
-                                            className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-colors cursor-pointer relative ${
-                                                checked
-                                                    ? "bg-sky-50 border-sky-500 text-sky-700 rounded-b-none"
-                                                    : "bg-slate-50 border-slate-100 hover:bg-slate-100"
+                        {items.length === 0 ? (
+                            <p className="text-sm text-slate-500">
+                                ยังไม่มีรายการสิ่งของในหมวดนี้
+                            </p>
+                        ) : (
+                            <div className="space-y-3">
+                                {items.map((item) => {
+                                    const isSelected =
+                                        selectedItemIds.includes(
+                                            item.id
+                                        );
+
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className={`rounded-xl border p-4 transition-all ${
+                                                isSelected
+                                                    ? "border-sky-400 bg-white shadow-sm"
+                                                    : "border-slate-200 bg-white"
                                             }`}
                                         >
-                                            <div
-                                                className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${
-                                                    checked
-                                                        ? "bg-sky-500 border-sky-500"
-                                                        : "border-slate-300"
-                                                }`}
-                                            >
-                                                {checked && (
-                                                    <span className="material-symbols-outlined text-white text-[12px]">
-                                                        check
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            <span className="text-sm font-medium flex-grow text-left truncate">
-                                                {item.name}
-                                            </span>
-                                        </button>
-
-                                        {checked && (
-                                            <div className="flex items-center justify-between px-3 py-2.5 bg-sky-50/50 border border-t-0 border-sky-500 rounded-b-xl -mt-1 pt-3">
-                                                <div className="flex items-center gap-2 bg-white border border-sky-200 rounded-lg p-0.5 shadow-sm">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => onDecrease(item.id)}
-                                                        className="w-6 h-6 rounded flex items-center justify-center text-sky-500 hover:bg-sky-100"
-                                                    >
-                                                        -
-                                                    </button>
-
+                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                                <label className="flex items-center gap-3 cursor-pointer">
                                                     <input
-                                                        type="number"
-                                                        min="1"
-                                                        value={quantities[item.id] || 1}
-                                                        onChange={(e) =>
-                                                            onQuantityChange(item.id, e.target.value)
+                                                        type="checkbox"
+                                                        checked={
+                                                            isSelected
                                                         }
-                                                        className="w-8 text-center text-xs font-bold text-slate-700 focus:outline-none bg-transparent"
+                                                        onChange={() =>
+                                                            onToggleItem(
+                                                                item.id
+                                                            )
+                                                        }
+                                                        className="w-5 h-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500"
                                                     />
 
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => onIncrease(item.id)}
-                                                        className="w-6 h-6 rounded bg-sky-100 flex items-center justify-center text-sky-600 hover:bg-sky-200"
-                                                    >
-                                                        +
-                                                    </button>
-                                                </div>
+                                                    <div>
+                                                        <p className="font-bold text-slate-800">
+                                                            {
+                                                                item.name
+                                                            }
+                                                        </p>
 
-                                                <span className="text-[10px] text-slate-500 font-bold">
-                                                    {item.unit}
-                                                </span>
+                                                        <p className="text-xs text-slate-400 mt-1">
+                                                            หน่วย:{" "}
+                                                            {
+                                                                item.unit
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                </label>
+
+                                                {isSelected && (
+                                                    <div className="flex items-center gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                onDecrease(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                            className="w-9 h-9 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center justify-center"
+                                                        >
+                                                            <span className="material-symbols-outlined text-lg">
+                                                                remove
+                                                            </span>
+                                                        </button>
+
+                                                        <input
+                                                            type="number"
+                                                            min="1"
+                                                            value={
+                                                                quantities[
+                                                                    item
+                                                                        .id
+                                                                ] || 1
+                                                            }
+                                                            onChange={(
+                                                                event
+                                                            ) =>
+                                                                onQuantityChange(
+                                                                    item.id,
+                                                                    event
+                                                                        .target
+                                                                        .value
+                                                                )
+                                                            }
+                                                            className="w-20 h-9 rounded-lg border border-slate-200 text-center text-sm font-bold outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                                                        />
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                onIncrease(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                            className="w-9 h-9 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center justify-center"
+                                                        >
+                                                            <span className="material-symbols-outlined text-lg">
+                                                                add
+                                                            </span>
+                                                        </button>
+
+                                                        <span className="text-xs font-medium text-slate-500 min-w-10">
+                                                            {item.unit}
+                                                        </span>
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 );
             })}

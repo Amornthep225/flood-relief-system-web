@@ -1,47 +1,56 @@
-import { cards } from "@/constants/cards";
-
 export default function SosCategorySelector({
     categories,
-    selectedCategories,
-    onToggleCategory,
+    selectedCategoryIds,
+    onToggle,
 }) {
+    if (categories.length === 0) {
+        return (
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
+                ยังไม่มีหมวดหมู่สิ่งของที่เปิดใช้งาน
+            </div>
+        );
+    }
+
     return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {categories.map((category) => {
-                const selected = selectedCategories.includes(category.id);
+                const isSelected =
+                    selectedCategoryIds.includes(category.id);
 
                 return (
                     <button
                         key={category.id}
                         type="button"
-                        onClick={() => onToggleCategory(category.id)}
-                        className={`${cards.userSosForm.category} ${
-                            selected
-                                ? "border-sky-500 bg-sky-50 shadow-md"
-                                : "border-slate-100"
+                        onClick={() => onToggle(category.id)}
+                        className={`relative min-h-32 rounded-2xl border p-5 text-left transition-all ${
+                            isSelected
+                                ? "border-sky-500 bg-sky-50 shadow-lg shadow-sky-100"
+                                : "border-slate-200 bg-white hover:border-sky-300 hover:bg-sky-50/50"
                         }`}
                     >
+                        {isSelected && (
+                            <span className="material-symbols-outlined absolute right-3 top-3 text-sky-500">
+                                check_circle
+                            </span>
+                        )}
+
                         <div
-                            className={`absolute top-2 right-2 w-6 h-6 bg-sky-500 text-white rounded-full flex items-center justify-center text-xs shadow-sm z-10 transition-transform ${
-                                selected ? "scale-100" : "scale-0"
+                            className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
+                                isSelected
+                                    ? "bg-sky-500 text-white"
+                                    : "bg-sky-100 text-sky-500"
                             }`}
                         >
-                            <span className="material-symbols-outlined text-sm">
-                                check
+                            <span className="material-symbols-outlined text-2xl">
+                                {category.icon || "inventory_2"}
                             </span>
                         </div>
 
-                        <span
-                            className={`material-symbols-outlined text-3xl mb-3 transition-colors ${
-                                selected ? "text-sky-500" : "text-slate-400"
-                            }`}
-                        >
-                            {category.icon}
-                        </span>
-
-                        <span className="font-bold text-slate-700 mb-1 text-sm md:text-base">
-                            {category.title}
-                        </span>
+                        <p className="font-bold text-slate-800">
+                            {category.title ||
+                                category.name ||
+                                "ไม่ระบุชื่อ"}
+                        </p>
                     </button>
                 );
             })}

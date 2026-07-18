@@ -7,20 +7,25 @@ export default function LocationPicker({
     location,
     onLocationChange,
 }) {
-    const [loadingLocation, setLoadingLocation] = useState(false);
+    const [findingLocation, setFindingLocation] =
+        useState(false);
+
+    const hasLocation =
+        location.latitude !== null &&
+        location.longitude !== null;
 
     const getCurrentLocation = () => {
         if (!navigator.geolocation) {
             Swal.fire({
                 icon: "error",
-                title: "อุปกรณ์ไม่รองรับตำแหน่ง",
-                text: "เบราว์เซอร์นี้ไม่รองรับ Geolocation",
+                title: "ไม่รองรับตำแหน่ง",
+                text: "เบราว์เซอร์นี้ไม่รองรับระบบ Geolocation",
             });
 
             return;
         }
 
-        setLoadingLocation(true);
+        setFindingLocation(true);
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -30,100 +35,128 @@ export default function LocationPicker({
                     longitude: position.coords.longitude,
                 }));
 
-                setLoadingLocation(false);
+                setFindingLocation(false);
+
+                Swal.fire({
+                    icon: "success",
+                    title: "ปักหมุดสำเร็จ",
+                    text: "บันทึกตำแหน่งปัจจุบันเรียบร้อยแล้ว",
+                    timer: 1000,
+                    showConfirmButton: false,
+                });
             },
             (error) => {
-                setLoadingLocation(false);
+                setFindingLocation(false);
 
-                let message = "ไม่สามารถดึงตำแหน่งได้";
+                let message =
+                    "ไม่สามารถค้นหาตำแหน่งปัจจุบันได้";
 
-                if (error.code === error.PERMISSION_DENIED) {
+                if (
+                    error.code ===
+                    error.PERMISSION_DENIED
+                ) {
                     message =
                         "กรุณาอนุญาตให้เว็บไซต์เข้าถึงตำแหน่งของคุณ";
                 }
 
-                if (error.code === error.POSITION_UNAVAILABLE) {
-                    message = "ไม่พบข้อมูลตำแหน่งของอุปกรณ์";
+                if (
+                    error.code ===
+                    error.POSITION_UNAVAILABLE
+                ) {
+                    message =
+                        "ไม่พบข้อมูลตำแหน่งจากอุปกรณ์";
                 }
 
                 if (error.code === error.TIMEOUT) {
-                    message = "ใช้เวลาในการค้นหาตำแหน่งนานเกินไป";
+                    message =
+                        "ใช้เวลาในการค้นหาตำแหน่งนานเกินไป";
                 }
 
                 Swal.fire({
                     icon: "error",
-                    title: "ไม่สามารถปักหมุดได้",
+                    title: "ปักหมุดไม่สำเร็จ",
                     text: message,
                 });
             },
             {
                 enableHighAccuracy: true,
-                timeout: 10000,
+                timeout: 15000,
                 maximumAge: 0,
             }
         );
     };
 
-    const hasLocation =
-        location.latitude !== null &&
-        location.longitude !== null;
-
     return (
         <div className="space-y-4">
-            <div className="relative min-h-72 rounded-3xl overflow-hidden border-2 border-slate-100 shadow-sm bg-slate-200">
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 bg-slate-900/10">
-                    <span className="material-symbols-outlined text-6xl text-sky-500 drop-shadow-lg mb-4">
-                        location_on
-                    </span>
+            <div className="relative h-72 overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-sky-50 to-blue-100">
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+                    <div className="w-20 h-20 rounded-full bg-white text-red-500 shadow-xl flex items-center justify-center mb-5">
+                        <span className="material-symbols-outlined text-5xl">
+                            location_on
+                        </span>
+                    </div>
 
-                    {hasLocation && (
-                        <div className="mb-4 rounded-xl bg-white/90 px-4 py-2 text-center text-xs font-medium text-slate-600 shadow">
+                    {hasLocation ? (
+                        <div className="rounded-xl bg-white/90 px-5 py-3 mb-5 shadow-sm text-sm text-slate-600">
                             <p>
                                 Latitude:{" "}
-                                {location.latitude.toFixed(6)}
+                                {Number(
+                                    location.latitude
+                                ).toFixed(6)}
                             </p>
 
                             <p>
                                 Longitude:{" "}
-                                {location.longitude.toFixed(6)}
+                                {Number(
+                                    location.longitude
+                                ).toFixed(6)}
                             </p>
                         </div>
+                    ) : (
+                        <p className="text-sm text-slate-500 mb-5">
+                            กรุณาปักหมุดตำแหน่งที่ต้องการรับความช่วยเหลือ
+                        </p>
                     )}
 
                     <button
                         type="button"
                         onClick={getCurrentLocation}
-                        disabled={loadingLocation}
-                        className="bg-white hover:bg-slate-50 text-slate-700 font-bold px-8 py-3.5 rounded-full shadow-lg flex items-center gap-2 transition-all hover:scale-105 active:scale-95 disabled:opacity-60"
+                        disabled={findingLocation}
+                        className="rounded-xl bg-sky-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-sky-200 transition hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-60 flex items-center gap-2"
                     >
-                        <span className="material-symbols-outlined text-sky-500">
+                        <span className="material-symbols-outlined text-xl">
                             my_location
                         </span>
 
-                        {loadingLocation
+                        {findingLocation
                             ? "กำลังค้นหาตำแหน่ง..."
                             : hasLocation
-                              ? "ปักหมุดใหม่"
-                              : "ปักหมุดตำแหน่งปัจจุบัน"}
+                              ? "ปักหมุดตำแหน่งใหม่"
+                              : "ใช้ตำแหน่งปัจจุบัน"}
                     </button>
                 </div>
             </div>
 
             <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
-                    รายละเอียดสถานที่จัดส่ง
+                <label
+                    htmlFor="addressDetail"
+                    className="block text-sm font-bold text-slate-700 mb-2"
+                >
+                    รายละเอียดสถานที่
                 </label>
 
                 <textarea
-                    rows={3}
+                    id="addressDetail"
+                    rows={4}
                     value={location.addressDetail}
                     onChange={(event) =>
                         onLocationChange((previous) => ({
                             ...previous,
-                            addressDetail: event.target.value,
+                            addressDetail:
+                                event.target.value,
                         }))
                     }
-                    placeholder="เช่น บ้านเลขที่ 123 หมู่ 4 ใกล้วัด หรือจุดสังเกตอื่น ๆ"
+                    placeholder="เช่น บ้านเลขที่ 123 หมู่ 4 ซอย 5 ใกล้วัด หรือระบุจุดสังเกต"
                     className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
                 />
             </div>
