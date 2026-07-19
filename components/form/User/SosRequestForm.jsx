@@ -10,11 +10,11 @@ import {
     getActiveReliefItems,
 } from "@/services/user/sos";
 
-import FormSectionTitle from "../../user/SosPage/FormSectionTitle";
-import SosCategorySelector from "../../user/SosPage/SosCategorySelector";
-import SosItemSelector from "../../user/SosPage/SosItemSelector";
-import LocationPicker from "../../user/SosPage/LocationPicker";
-import ConfirmSosModal from "../../user/SosPage/ConfirmSosModal";
+import FormSectionTitle from "@/components/user/SosForm/FormSectionTitle";
+import SosCategorySelector from "@/components/user/SosForm/SosCategorySelector";
+import SosItemSelector from "@/components/user/SosForm/SosItemSelector";
+import LocationPicker from "@/components/user/SosForm/LocationPicker";
+import ConfirmSosModal from "@/components/user/SosForm/ConfirmSosModal";
 
 const initialLocation = {
     latitude: null,
@@ -551,9 +551,6 @@ export default function SosRequestForm() {
                     isSubmitting={isSubmitting}
                     selectedItemCount={
                         selectedItemIds.length
-                    }
-                    reliefBagQuantity={
-                        reliefBagQuantity
                     }
                     onClose={() => {
                         if (!isSubmitting) {

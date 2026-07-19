@@ -1,38 +1,22 @@
-import { colors } from "@/constants/colors";
-import UserNavbar from "@/components/user/UserNavbar/user-navbar";
-import RoleGuard from "@/components/RoleGuard/RoleGuard";
+
+
 import DonorHero from "@/components/user/DonorHome/DonorHero";
 import DonorMenu from "@/components/user/DonorHome/DonorMenu";
-
-const theme = colors.role;
+import UserLayout from "@/components/layout/UserLayout";
 
 export default function DonorHomePage() {
     return (
-        <RoleGuard role="User" storageKey="user" loginPath="/user/users-login">
-            <div className={`min-h-screen flex flex-col relative ${colors.donor.page}`}>
-                <UserNavbar
-                    theme={theme}
-                    hotline="1784"
-                    notificationCount={3}
-                    homeHref="/user/donor-home"
-                    backHref="/select-role"
-                    logoutHref="/user/users-login"
-                    options={{
-                        back: true,
-                        home: false,
-                        logout: true,
-                        notification: true,
-                        profile: true,
-                        hotlineButton: true,
-                    }}
-                />
+        <UserLayout
+            homeHref="/user/donor-home"
+            backHref="/select-role"
+            logoutHref="/user/users-login"
+        >
+                
 
                 <main className="max-w-7xl mx-auto px-6 py-8">
                     <DonorHero />
                     <DonorMenu />
                 </main>
-
-            </div>
-        </RoleGuard>
+        </UserLayout>
     );
 }

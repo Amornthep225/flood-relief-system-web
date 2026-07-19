@@ -2,7 +2,7 @@ import Link from "next/link";
 import { colors } from "@/constants/colors";
 import { cards } from "@/constants/cards";
 import { buttons } from "@/constants/buttons";
-import UserNavbar from "@/components/user/user-navbar";
+import UserNavbar from "@/components/user/UserNavbar/user-navbar";
 const theme = colors.role;
 const mockData = {
     user: {
