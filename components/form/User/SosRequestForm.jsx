@@ -4,22 +4,23 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
-import { cards } from "@/constants/cards";
-import { buttons } from "@/constants/buttons";
-
 import {
     createSosRequest,
     getActiveReliefCategories,
     getActiveReliefItems,
-} from "@/services/user/sosPage";
+} from "@/services/user/sos";
 
-import SosFormHeader from "../../user/SosPage/SosFormHeader";
-import SectionTitle from "../../user/SosPage/SectionTitle";
-import SosCategorySelector from "../../user/SosPage/SosCategorySelector";
-import SosItemSelector from "../../user/SosPage/SosItemSelector";
-import ReliefBagInput from "../../user/SosPage/ReliefBagInput";
-import LocationPicker from "../../user/SosPage/LocationPicker";
-import ConfirmSosModal from "../../user/SosPage/ConfirmSosModal";
+import FormSectionTitle from "@/components/user/SosForm/FormSectionTitle";
+import SosCategorySelector from "@/components/user/SosForm/SosCategorySelector";
+import SosItemSelector from "@/components/user/SosForm/SosItemSelector";
+import LocationPicker from "@/components/user/SosForm/LocationPicker";
+import ConfirmSosModal from "@/components/user/SosForm/ConfirmSosModal";
+
+const initialLocation = {
+    latitude: null,
+    longitude: null,
+    addressDetail: "",
+};
 
 export default function SosRequestForm() {
     const router = useRouter();
@@ -27,25 +28,37 @@ export default function SosRequestForm() {
     const [categories, setCategories] = useState([]);
     const [items, setItems] = useState([]);
 
-    const [selectedCategories, setSelectedCategories] = useState([]);
-    const [selectedItems, setSelectedItems] = useState([]);
+    const [
+        selectedCategoryIds,
+        setSelectedCategoryIds,
+    ] = useState([]);
+
+    const [selectedItemIds, setSelectedItemIds] =
+        useState([]);
+
     const [quantities, setQuantities] = useState({});
 
-    const [reliefBagQuantity, setReliefBagQuantity] = useState("");
+    const [
+        reliefBagQuantity,
+    ] = useState(1);
 
-    const [location, setLocation] = useState({
-        latitude: null,
-        longitude: null,
-        addressDetail: "",
-    });
+    const [userRemark, setUserRemark] = useState("");
+    const [location, setLocation] =
+        useState(initialLocation);
 
-    const [loadingData, setLoadingData] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showConfirm, setShowConfirm] = useState(false);
+    const [loadingData, setLoadingData] =
+        useState(true);
+
+    const [isSubmitting, setIsSubmitting] =
+        useState(false);
+
+    const [showConfirm, setShowConfirm] =
+        useState(false);
 
     const itemsByCategory = useMemo(() => {
         return items.reduce((result, item) => {
-            const categoryId = item.reliefCategoryId;
+            const categoryId =
+                item.reliefCategoryId;
 
             if (!result[categoryId]) {
                 result[categoryId] = [];
@@ -62,18 +75,32 @@ export default function SosRequestForm() {
             try {
                 setLoadingData(true);
 
-                const [categoryData, itemData] = await Promise.all([
+                const [
+                    categoryResponse,
+                    itemResponse,
+                ] = await Promise.all([
                     getActiveReliefCategories(),
                     getActiveReliefItems(),
                 ]);
 
-                setCategories(Array.isArray(categoryData) ? categoryData : []);
-                setItems(Array.isArray(itemData) ? itemData : []);
+                setCategories(
+                    Array.isArray(categoryResponse)
+                        ? categoryResponse
+                        : []
+                );
+
+                setItems(
+                    Array.isArray(itemResponse)
+                        ? itemResponse
+                        : []
+                );
             } catch (error) {
                 await Swal.fire({
                     icon: "error",
                     title: "โหลดข้อมูลไม่สำเร็จ",
-                    text: error.message,
+                    text:
+                        error.message ||
+                        "ไม่สามารถโหลดรายการสิ่งของได้",
                 });
             } finally {
                 setLoadingData(false);
@@ -84,50 +111,61 @@ export default function SosRequestForm() {
     }, []);
 
     const toggleCategory = (categoryId) => {
-        const isSelected = selectedCategories.includes(categoryId);
+        const isSelected =
+            selectedCategoryIds.includes(categoryId);
 
-        if (isSelected) {
-            const categoryItemIds = items
-                .filter(
-                    (item) => item.reliefCategoryId === categoryId
-                )
-                .map((item) => item.id);
-
-            setSelectedCategories((previous) =>
-                previous.filter((id) => id !== categoryId)
+        if (!isSelected) {
+            setSelectedCategoryIds(
+                (previous) => [
+                    ...previous,
+                    categoryId,
+                ]
             );
-
-            setSelectedItems((previous) =>
-                previous.filter(
-                    (itemId) => !categoryItemIds.includes(itemId)
-                )
-            );
-
-            setQuantities((previous) => {
-                const updated = { ...previous };
-
-                categoryItemIds.forEach((itemId) => {
-                    delete updated[itemId];
-                });
-
-                return updated;
-            });
 
             return;
         }
 
-        setSelectedCategories((previous) => [
-            ...previous,
-            categoryId,
-        ]);
+        const categoryItemIds = items
+            .filter(
+                (item) =>
+                    item.reliefCategoryId ===
+                    categoryId
+            )
+            .map((item) => item.id);
+
+        setSelectedCategoryIds((previous) =>
+            previous.filter(
+                (id) => id !== categoryId
+            )
+        );
+
+        setSelectedItemIds((previous) =>
+            previous.filter(
+                (id) =>
+                    !categoryItemIds.includes(id)
+            )
+        );
+
+        setQuantities((previous) => {
+            const updated = { ...previous };
+
+            categoryItemIds.forEach((id) => {
+                delete updated[id];
+            });
+
+            return updated;
+        });
     };
 
     const toggleItem = (itemId) => {
-        const isSelected = selectedItems.includes(itemId);
+        const isSelected =
+            selectedItemIds.includes(itemId);
 
         if (isSelected) {
-            setSelectedItems((previous) =>
-                previous.filter((id) => id !== itemId)
+            setSelectedItemIds((previous) =>
+                previous.filter(
+                    (id) => id !== itemId
+                )
             );
 
             setQuantities((previous) => {
@@ -139,7 +177,10 @@ export default function SosRequestForm() {
             return;
         }
 
-        setSelectedItems((previous) => [...previous, itemId]);
+        setSelectedItemIds((previous) => [
+            ...previous,
+            itemId,
+        ]);
 
         setQuantities((previous) => ({
             ...previous,
@@ -147,19 +188,11 @@ export default function SosRequestForm() {
         }));
     };
 
-    const updateQuantity = (itemId, value) => {
-        const quantity = Math.max(Number(value) || 1, 1);
-
-        setQuantities((previous) => ({
-            ...previous,
-            [itemId]: quantity,
-        }));
-    };
-
     const increaseQuantity = (itemId) => {
         setQuantities((previous) => ({
             ...previous,
-            [itemId]: (previous[itemId] || 1) + 1,
+            [itemId]:
+                Number(previous[itemId] || 1) + 1,
         }));
     };
 
@@ -167,54 +200,54 @@ export default function SosRequestForm() {
         setQuantities((previous) => ({
             ...previous,
             [itemId]: Math.max(
-                (previous[itemId] || 1) - 1,
+                Number(previous[itemId] || 1) - 1,
                 1
             ),
         }));
     };
 
-    const validateForm = () => {
-        if (selectedItems.length === 0) {
-            Swal.fire({
+    const updateQuantity = (itemId, value) => {
+        const numberValue = Number(value);
+
+        setQuantities((previous) => ({
+            ...previous,
+            [itemId]:
+                Number.isFinite(numberValue) &&
+                    numberValue >= 1
+                    ? Math.floor(numberValue)
+                    : 1,
+        }));
+    };
+
+    const validateForm = async () => {
+        if (selectedItemIds.length === 0) {
+            await Swal.fire({
                 icon: "warning",
                 title: "กรุณาเลือกรายการสิ่งของ",
-                text: "ต้องเลือกรายการสิ่งของอย่างน้อย 1 รายการ",
+                text: "ต้องเลือกสิ่งของอย่างน้อย 1 รายการ",
             });
 
             return false;
         }
-
-        if (
-            !reliefBagQuantity ||
-            Number(reliefBagQuantity) < 1
-        ) {
-            Swal.fire({
-                icon: "warning",
-                title: "กรุณาระบุจำนวนถุงยังชีพ",
-                text: "จำนวนถุงยังชีพต้องมีอย่างน้อย 1 ชุด",
-            });
-
-            return false;
-        }
-
+        console.log(location);
         if (
             location.latitude === null ||
             location.longitude === null
         ) {
-            Swal.fire({
+            await Swal.fire({
                 icon: "warning",
-                title: "กรุณาระบุตำแหน่ง",
-                text: "กรุณากดปุ่มปักหมุดตำแหน่งปัจจุบัน",
+                title: "กรุณาปักหมุดตำแหน่ง",
+                text: "เจ้าหน้าที่ต้องใช้พิกัดในการค้นหาตำแหน่งของคุณ",
             });
 
             return false;
         }
 
         if (!location.addressDetail.trim()) {
-            Swal.fire({
+            await Swal.fire({
                 icon: "warning",
-                title: "กรุณาระบุรายละเอียดที่อยู่",
-                text: "เช่น บ้านเลขที่ หมู่บ้าน หรือลักษณะจุดสังเกต",
+                title: "กรุณาระบุรายละเอียดสถานที่",
+                text: "เช่น บ้านเลขที่ หมู่บ้าน หรือจุดสังเกต",
             });
 
             return false;
@@ -223,171 +256,308 @@ export default function SosRequestForm() {
         return true;
     };
 
-    const openConfirmModal = () => {
-        if (!validateForm()) {
+    const openConfirmModal = async () => {
+        const isValid = await validateForm();
+
+        if (!isValid) {
             return;
         }
 
         setShowConfirm(true);
     };
 
-    const submitSosRequest = async () => {
-        if (isSubmitting) {
+    const handleSubmit = async () => {
+    if (isSubmitting) {
+        return;
+    }
+    setIsSubmitting(true);
+
+    try {
+
+        const payload = {
+
+            latitude:
+                Number(location.latitude),
+
+            longitude:
+                Number(location.longitude),
+
+            addressDetail:
+                location.addressDetail.trim(),
+
+            userRemark:
+                userRemark.trim() || null,
+
+
+            items:
+                selectedItemIds.map(
+                    (itemId) => ({
+
+                        reliefItemId: itemId,
+
+                        quantity:
+                            Number(
+                                quantities[itemId]
+                            ) || 1
+
+                    })
+                )
+        };
+
+
+        const response =
+            await createSosRequest(payload);
+
+
+
+        setShowConfirm(false);
+
+
+
+        await Swal.fire({
+
+            icon:"success",
+
+            title:"ส่งคำขอสำเร็จ",
+
+            text:
+                `รหัสคำขอ: ${response.sosRequestId}`,
+
+            timer:1500,
+
+            showConfirmButton:false,
+
+            allowOutsideClick:false
+
+        });
+
+
+
+        router.push(
+            `/user/sos-success?id=${response.sosRequestId}`
+        );
+
+
+
+    } catch(error){
+
+
+        if(
+            error.message.includes("Token") ||
+            error.message.includes("เข้าสู่ระบบใหม่")
+        ){
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+
+
+            await Swal.fire({
+
+                icon:"warning",
+
+                title:"เซสชันหมดอายุ",
+
+                text:error.message
+
+            });
+
+
+            router.replace(
+                "/user/users-login"
+            );
+
+
             return;
+
         }
 
-        setIsSubmitting(true);
 
-        try {
-            const payload = {
-                centerId: null,
-                reliefBagQuantity: Number(reliefBagQuantity),
-                latitude: location.latitude,
-                longitude: location.longitude,
-                addressDetail: location.addressDetail.trim(),
-                items: selectedItems.map((itemId) => ({
-                    reliefItemId: itemId,
-                    quantity: quantities[itemId] || 1,
-                })),
-            };
 
-            const response = await createSosRequest(payload);
+        await Swal.fire({
 
-            setShowConfirm(false);
+            icon:"error",
 
-            await Swal.fire({
-                icon: "success",
-                title: "ส่งคำขอสำเร็จ",
-                text: `รหัสคำขอ: ${
-                    response.sosRequestId || "-"
-                }`,
-                timer: 1500,
-                showConfirmButton: false,
-            });
+            title:"ส่งคำขอไม่สำเร็จ",
 
-            sessionStorage.setItem(
-                "lastSosRequest",
-                JSON.stringify(response)
-            );
+            text:
+                error.message ||
+                "เกิดข้อผิดพลาด"
 
-            router.push(
-                `/user/sos-success?id=${response.sosRequestId}`
-            );
-        } catch (error) {
-            await Swal.fire({
-                icon: "error",
-                title: "ส่งคำขอไม่สำเร็จ",
-                text: error.message,
-            });
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+        });
+
+
+
+    } finally {
+
+        setIsSubmitting(false);
+
+    }
+
+};
 
     if (loadingData) {
         return (
-            <div className="min-h-[400px] flex items-center justify-center">
-                <div className="flex flex-col items-center gap-3 text-slate-500">
-                    <span className="material-symbols-outlined text-4xl animate-spin">
-                        progress_activity
-                    </span>
+            <div className="min-h-[500px] flex flex-col items-center justify-center gap-4 text-slate-500">
+                <span className="material-symbols-outlined text-5xl animate-spin text-sky-500">
+                    progress_activity
+                </span>
 
-                    <p className="text-sm font-medium">
-                        กำลังโหลดรายการสิ่งของ...
-                    </p>
-                </div>
+                <p className="font-medium">
+                    กำลังโหลดข้อมูลสิ่งของ...
+                </p>
             </div>
         );
     }
 
     return (
         <>
-            <div className="w-full max-w-3xl mx-auto">
-                <SosFormHeader />
+            <div className="mx-auto w-full max-w-4xl">
+                <div className="mb-8 text-center">
+                    <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-100 text-red-500">
+                        <span className="material-symbols-outlined text-4xl">
+                            emergency
+                        </span>
+                    </div>
+
+                    <h1 className="text-3xl font-black text-slate-800">
+                        แจ้งขอความช่วยเหลือ SOS
+                    </h1>
+
+                    <p className="mt-2 text-sm text-slate-500">
+                        กรุณากรอกข้อมูลให้ครบถ้วน
+                        เพื่อให้เจ้าหน้าที่สามารถช่วยเหลือได้รวดเร็ว
+                    </p>
+                </div>
 
                 <form
-                    onSubmit={(event) => event.preventDefault()}
-                    className={cards.userSosForm.form}
+                    onSubmit={(event) =>
+                        event.preventDefault()
+                    }
+                    className="space-y-8 rounded-3xl border border-slate-100 bg-white p-6 shadow-xl shadow-sky-100/50 md:p-10"
                 >
-                    <section className="space-y-4">
-                        <SectionTitle
+                    <section className="space-y-5">
+                        <FormSectionTitle
                             number="1"
-                            title="เลือกสิ่งของที่ต้องการรับความช่วยเหลือ"
+                            title="เลือกหมวดหมู่สิ่งของ"
+                            description="เลือกได้มากกว่า 1 หมวดหมู่"
                         />
 
                         <SosCategorySelector
                             categories={categories}
-                            selectedCategories={selectedCategories}
-                            onToggleCategory={toggleCategory}
+                            selectedCategoryIds={
+                                selectedCategoryIds
+                            }
+                            onToggle={toggleCategory}
                         />
+                    </section>
 
-                        {selectedCategories.length > 0 && (
-                            <SosItemSelector
-                                categories={categories}
-                                itemsByCategory={itemsByCategory}
-                                selectedCategories={
-                                    selectedCategories
-                                }
-                                selectedItems={selectedItems}
-                                quantities={quantities}
-                                onToggleItem={toggleItem}
-                                onIncrease={increaseQuantity}
-                                onDecrease={decreaseQuantity}
-                                onQuantityChange={updateQuantity}
-                            />
+                    {selectedCategoryIds.length >
+                        0 && (
+                            <section className="space-y-5">
+                                <FormSectionTitle
+                                    number="2"
+                                    title="เลือกรายการและจำนวน"
+                                    description="ระบุจำนวนสิ่งของที่ต้องการ"
+                                />
+
+                                <SosItemSelector
+                                    categories={categories}
+                                    itemsByCategory={
+                                        itemsByCategory
+                                    }
+                                    selectedCategoryIds={
+                                        selectedCategoryIds
+                                    }
+                                    selectedItemIds={
+                                        selectedItemIds
+                                    }
+                                    quantities={
+                                        quantities
+                                    }
+                                    onToggleItem={
+                                        toggleItem
+                                    }
+                                    onIncrease={
+                                        increaseQuantity
+                                    }
+                                    onDecrease={
+                                        decreaseQuantity
+                                    }
+                                    onQuantityChange={
+                                        updateQuantity
+                                    }
+                                />
+                            </section>
                         )}
-                    </section>
 
-                    <section className="space-y-4">
-                        <SectionTitle
-                            number="2"
-                            title="จำนวนชุดถุงยังชีพที่ต้องการ"
-                        />
 
-                        <ReliefBagInput
-                            value={reliefBagQuantity}
-                            onChange={setReliefBagQuantity}
-                        />
-                    </section>
-
-                    <section className="space-y-4">
-                        <SectionTitle
+                    <section className="space-y-5">
+                        <FormSectionTitle
                             number="3"
-                            title="พิกัดจัดส่ง / ตำแหน่งของท่าน"
+                            title="ตำแหน่งรับความช่วยเหลือ"
+                            description="ใช้พิกัดปัจจุบันและระบุรายละเอียดสถานที่"
                         />
 
                         <LocationPicker
                             location={location}
-                            onLocationChange={setLocation}
+                            onLocationChange={
+                                setLocation
+                            }
                         />
                     </section>
 
-                    <div className="pt-4">
-                        <button
-                            type="button"
-                            onClick={openConfirmModal}
-                            disabled={isSubmitting}
-                            className={buttons.userSosForm.submit}
-                        >
-                            <span className="material-symbols-outlined">
-                                send
-                            </span>
+                    <section className="space-y-5">
+                        <FormSectionTitle
+                            number="4"
+                            title="หมายเหตุเพิ่มเติม"
+                            description="ข้อมูลผู้ประสบภัยหรือความต้องการเร่งด่วน"
+                        />
 
-                            ส่งข้อมูลแจ้งขอความช่วยเหลือ
-                        </button>
-                    </div>
+                        <textarea
+                            rows={4}
+                            maxLength={500}
+                            value={userRemark}
+                            onChange={(event) =>
+                                setUserRemark(
+                                    event.target.value
+                                )
+                            }
+                            placeholder="เช่น มีเด็กเล็ก ผู้สูงอายุ ผู้ป่วยติดเตียง หรือมีระดับน้ำสูง"
+                            className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                        />
+
+                        <p className="text-right text-xs text-slate-400">
+                            {userRemark.length}/500
+                        </p>
+                    </section>
+
+                    <button
+                        type="button"
+                        onClick={openConfirmModal}
+                        disabled={isSubmitting}
+                        className="flex w-full items-center justify-center gap-3 rounded-xl bg-red-500 px-6 py-4 text-base font-bold text-white shadow-lg shadow-red-200 transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        <span className="material-symbols-outlined">
+                            emergency
+                        </span>
+
+                        ส่งข้อมูลแจ้งขอความช่วยเหลือ
+                    </button>
                 </form>
             </div>
 
             {showConfirm && (
                 <ConfirmSosModal
                     isSubmitting={isSubmitting}
+                    selectedItemCount={
+                        selectedItemIds.length
+                    }
                     onClose={() => {
                         if (!isSubmitting) {
                             setShowConfirm(false);
                         }
                     }}
-                    onConfirm={submitSosRequest}
+                    onConfirm={handleSubmit}
                 />
             )}
         </>

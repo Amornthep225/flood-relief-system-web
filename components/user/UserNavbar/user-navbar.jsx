@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { buttons } from "@/constants/buttons";
-import { getUserProfile } from "@/services/user/profile";
 
 export default function UserNavbar({
     theme,
@@ -28,27 +27,22 @@ export default function UserNavbar({
     } = options;
 
     useEffect(() => {
-        const loadUser = async () => {
-            const token = localStorage.getItem("token");
-            const userStorage = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+    const userStorage = localStorage.getItem("user");
 
-            if (!token || !userStorage) {
-                router.replace("/user/users-login");
-                return;
-            }
+    if (!token || !userStorage) {
+        router.replace("/user/users-login");
+        return;
+    }
 
-            try {
-                const data = await getUserProfile();
-                setUser(data);
-            } catch {
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-                router.replace("/user/users-login");
-            }
-        };
-
-        loadUser();
-    }, [router]);
+    try {
+        setUser(JSON.parse(userStorage));
+    } catch {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        router.replace("/user/users-login");
+    }
+}, [router]);
 
     const handleLogout = () => {
         localStorage.removeItem("token");

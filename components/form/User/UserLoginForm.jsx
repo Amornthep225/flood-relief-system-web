@@ -98,7 +98,6 @@ export default function UserLoginForm({ links }) {
                     userId: data.userId,
                     fullName: data.fullName,
                     email: data.email,
-                    phoneNumber: data.phoneNumber,
                     role: data.role,
                 })
             );
