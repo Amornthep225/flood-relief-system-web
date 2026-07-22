@@ -51,8 +51,6 @@
 
 ## Donation
 
-[ ] Donor Register
-
 [ ] Donation Request
 
 [ ] Stock Management

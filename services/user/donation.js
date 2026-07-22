@@ -5,30 +5,24 @@ import {
 } from "@/services/apiHelper/apiHelper";
 
 
-export async function createDonation(payload) {
+export async function createDonation(payload){
 
     const token = getToken();
-
-
-    if (!token) {
-        throw new Error(
-            "ไม่พบ Token กรุณาเข้าสู่ระบบใหม่"
-        );
-    }
 
 
     const response = await fetch(
         `${API_URL}/donations`,
         {
-            method: "POST",
+            method:"POST",
 
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                Authorization: `Bearer ${token}`,
+            headers:{
+                "Content-Type":"application/json",
+
+                Authorization:
+                `Bearer ${token}`
             },
 
-            body: JSON.stringify(payload),
+            body:JSON.stringify(payload)
         }
     );
 
@@ -65,5 +59,25 @@ export async function getMyDonations() {
     );
 
 
+    return readApiResponse(response);
+}
+export async function getDonationById(id){
+
+    const token = getToken();
+    const response = await fetch(
+        `${API_URL}/donations/${id}`,
+        {
+            method:"GET",
+
+            headers:{
+                Accept:"application/json",
+
+                Authorization:
+                `Bearer ${token}`
+            },
+
+            cache:"no-store"
+        }
+    );
     return readApiResponse(response);
 }
