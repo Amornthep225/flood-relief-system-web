@@ -1,89 +1,201 @@
-## 🔌 โครงสร้าง API (Endpoints)
+# API Reference
+## Flood Relief Management System
 
-### 🔐 1. Auth (ระบบยืนยันตัวตนและการลงทะเบียน)
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :---: |
-| **POST** | `/api/auth/user-register` | ลงทะเบียนบัญชีผู้ใช้งานทั่วไป / ผู้ประสบภัย | ❌ |
-| **POST** | `/api/auth/user-login` | เข้าสู่ระบบผู้ใช้งานทั่วไป / ผู้ประสบภัย (รับ JWT Token) | ❌ |
-| **POST** | `/api/auth/staff-login` | เข้าสู่ระบบสำหรับเจ้าหน้าที่ช่วยเหลือภาคสนาม | ❌ |
-| **POST** | `/api/auth/staff-register` | ลงทะเบียนบัญชีเจ้าหน้าที่ช่วยเหลือใหม่ | ❌ |
-| **POST** | `/api/auth/admin-login` | เข้าสู่ระบบสำหรับผู้ดูแลระบบ (Admin) | ❌ |
-| **POST** | `/api/auth/admin-register` | ลงทะเบียนบัญชีผู้ดูแลระบบใหม่ | ❌ |
+Base URL สำหรับ Development:
 
-### 🏢 2. Centers (ระบบจัดการศูนย์บรรเทาทุกข์)
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :---: |
-| **GET** | `/api/centers` | ดึงข้อมูลรายการศูนย์บรรเทาทุกข์ทั้งหมด | 🔒 |
-| **POST** | `/api/centers` | เพิ่มข้อมูลศูนย์บรรเทาทุกข์ใหม่ | 🔒 |
-| **GET** | `/api/centers/{id}` | ดูรายละเอียดของศูนย์บรรเทาทุกข์แบบเฉพาะเจาะจง | 🔒 |
-| **PUT** | `/api/centers/{id}` | แก้ไขข้อมูลรายละเอียดของศูนย์บรรเทาทุกข์ | 🔒 |
-| **DELETE** | `/api/centers/{id}` | ลบข้อมูลศูนย์บรรเทาทุกข์ออกจากระบบ | 🔒 |
+```text
+http://localhost:7000/api
+```
 
-### 📂 3. Relief Categories (หมวดหมู่สิ่งของบรรเทาทุกข์)
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :---: |
-| **GET** | `/api/relief-categories` | ดึงข้อมูลหมวดหมู่สิ่งของทั้งหมด | 🔒 |
-| **POST** | `/api/relief-categories` | เพิ่มหมวดหมู่สิ่งของใหม่ | 🔒 |
-| **GET** | `/api/relief-categories/active` | ดึงหมวดหมู่สิ่งของเฉพาะที่เปิดใช้งานอยู่ (Active) | 🔒 |
-| **GET** | `/api/relief-categories/{id}` | ดูรายละเอียดของหมวดหมู่สิ่งของตาม ID | 🔒 |
-| **PUT** | `/api/relief-categories/{id}` | แก้ไขข้อมูลหมวดหมู่สิ่งของ | 🔒 |
-| **DELETE** | `/api/relief-categories/{id}` | ลบหมวดหมู่สิ่งของ | 🔒 |
-| **PUT** | `/api/relief-categories/{id}/status` | อัปเดตสถานะการเปิด/ปิดใช้งานหมวดหมู่ | 🔒 |
+API ที่มีสัญลักษณ์ 🔒 ต้องส่ง Header:
 
-### 📦 4. Relief Items (รายการสิ่งของบรรเทาทุกข์ในคลัง)
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :---: |
-| **GET** | `/api/relief-items` | ดึงรายการสิ่งของบรรเทาทุกข์ทั้งหมด | 🔒 |
-| **POST** | `/api/relief-items` | เพิ่มรายการสิ่งของบรรเทาทุกข์ใหม่เข้าคลัง | 🔒 |
-| **GET** | `/api/relief-items/active` | ดึงรายการสิ่งของเฉพาะที่พร้อมแจกจ่าย (Active) | 🔒 |
-| **GET** | `/api/relief-items/category/{categoryId}` | ดึงรายการสิ่งของแยกตามหมวดหมู่ที่ระบุ | 🔒 |
-| **GET** | `/api/relief-items/{id}` | ดูรายละเอียดของสิ่งของบรรเทาทุกข์ตาม ID | 🔒 |
-| **PUT** | `/api/relief-items/{id}` | แก้ไขข้อมูลรายละเอียดสิ่งของบรรเทาทุกข์ | 🔒 |
-| **DELETE** | `/api/relief-items/{id}` | ลบรายการสิ่งของบรรเทาทุกข์ | 🔒 |
-| **PUT** | `/api/relief-items/{id}/status` | อัปเดตสถานะการเปิด/ปิดใช้งานของสิ่งของบรรเทาทุกข์ | 🔒 |
+```http
+Authorization: Bearer {token}
+```
 
-### 🚨 5. SOS Requests (ระบบจัดการคำขอความช่วยเหลือ)
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :---: |
-| **GET** | `/api/sos-requests/my-requests` | ดูประวัติคำขอทั้งหมดของผู้ประสบภัยปัจจุบัน | 🔒 |
-| **POST** | `/api/sos-requests` | สร้างคำขอความช่วยเหลือ (SOS) ใหม่ | 🔒 |
-| **GET** | `/api/sos-requests` | ดึงรายการคำขอ SOS ทั้งหมดในระบบ (สำหรับ Admin/Staff) | 🔒 |
-| **GET** | `/api/sos-requests/my` | ดูคำขอความช่วยเหลือที่สัมพันธ์กับผู้ใช้งานปัจจุบัน | 🔒 |
-| **GET** | `/api/sos-requests/{id}` | ดูรายละเอียดและสถานะไทม์ไลน์ของคำขอเฉพาะเจาะจง | 🔒 |
-| **PUT** | `/api/sos-requests/{id}/assign` | มอบหมายเจ้าหน้าที่รับผิดชอบในคำขอนี้ | 🔒 |
-| **PUT** | `/api/sos-requests/{id}/status` | อัปเดตสถานะขั้นตอนการช่วยเหลือ (Preparing, Delivering, etc.) | 🔒 |
-| **PUT** | `/api/sos-requests/{id}/cancel` | ยกเลิกคำขอความช่วยเหลือ | 🔒 |
-| **GET** | `/api/sos-requests/statistics` | ดึงข้อมูลสถิติภาพรวมคำขอ SOS ทั้งหมด | 🔒 |
-| **GET** | `/api/sos-requests/pending` | ดึงเฉพาะรายการคำขอความช่วยเหลือที่รอดำเนินการ (Pending) | 🔒 |
-| **GET** | `/api/sos-requests/staff/me` | ดึงงานคำขอ SOS ทั้งหมดที่เจ้าหน้าที่คนนี้ได้รับมอบหมาย | 🔒 |
-| **GET** | `/api/sos-requests/center/{centerId}` | ดึงรายการคำขอ SOS ทั้งหมดที่อยู่ในความดูแลของศูนย์นั้นๆ | 🔒 |
+> หมายเหตุ: ชื่อ route ของ endpoint ที่เพิ่มใหม่ควรตรวจเทียบกับ Controller จริงก่อน Merge หากมีการเปลี่ยนชื่อในโค้ด
 
-### 👷 6. Staffs (ระบบจัดการบัญชีเจ้าหน้าที่)
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :---: |
-| **GET** | `/api/staffs` | ดึงรายชื่อเจ้าหน้าที่ทั้งหมดในระบบ | 🔒 |
-| **POST** | `/api/staffs` | สร้างบัญชีเจ้าหน้าที่โดยผู้ดูแลระบบ | 🔒 |
-| **GET** | `/api/staffs/{id}` | ดูรายละเอียดข้อมูลโปรไฟล์ของเจ้าหน้าที่ตาม ID | 🔒 |
-| **PUT** | `/api/staffs/{id}` | แก้ไขข้อมูลของเจ้าหน้าที่ | 🔒 |
-| **DELETE** | `/api/staffs/{id}` | ลบบัญชีเจ้าหน้าที่ออกจากระบบ | 🔒 |
-| **GET** | `/api/staffs/summary` | ดูข้อมูลสรุปเชิงสถิติการทำงานของเจ้าหน้าที่ | 🔒 |
-| **PUT** | `/api/staffs/{id}/status` | อัปเดตสถานะการเปิด/ปิดใช้งานบัญชีของเจ้าหน้าที่ | 🔒 |
+---
 
-### 👥 7. Users (ระบบจัดการบัญชีผู้ใช้งาน)
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :---: |
-| **GET** | `/api/users` | ดึงรายชื่อผู้ใช้งานระบบทั้งหมด (สำหรับ Admin) | 🔒 |
-| **GET** | `/api/users/{id}` | ดูรายละเอียดข้อมูลโปรไฟล์ผู้ใช้งานตาม ID | 🔒 |
-| **PUT** | `/api/users/{id}` | แก้ไขข้อมูลรายละเอียดผู้ใช้งาน | 🔒 |
-| **DELETE** | `/api/users/{id}` | ลบบัญชีผู้ใช้งานออกจากระบบ | 🔒 |
-| **PUT** | `/api/users/{id}/status` | อัปเดตสถานะการระงับหรือเปิดใช้งานบัญชีผู้ใช้งาน | 🔒 |
+## 1. Authentication
 
-### 🎁 8. Donations (ระบบจัดการการบริจาคสิ่งของ)
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :---: |
-| **POST** | `/api/Donations` | สร้างรายการแจ้งความประสงค์บริจาคสิ่งของใหม่ | 🔒 |
-| **GET** | `/api/Donations` | ดึงรายการข้อมูลการบริจาคทั้งหมดในระบบ | 🔒 |
-| **GET** | `/api/Donations/my` | ดูประวัติรายการบริจาคทั้งหมดของผู้บริจาคปัจจุบัน | 🔒 |
-| **GET** | `/api/Donations/{id}` | ดูรายละเอียดของรายการบริจาคตาม ID | 🔒 |
-| **DELETE** | `/api/Donations/{id}` | ลบ/ยกเลิกรายการบริจาคสิ่งของ | 🔒 |
-| **PUT** | `/api/Donations/{id}/status` | อัปเดตสถานะการรับมอบสิ่งของบริจาค | 🔒 |
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| POST | `/api/auth/user-register` | สมัคร User/Donor | ❌ |
+| POST | `/api/auth/user-login` | Login User/Donor และรับ JWT | ❌ |
+| POST | `/api/auth/staff-register` | สมัคร Staff | ❌ |
+| POST | `/api/auth/staff-login` | Login Staff | ❌ |
+| POST | `/api/auth/admin-register` | สมัคร Admin | ❌ |
+| POST | `/api/auth/admin-login` | Login Admin | ❌ |
+
+---
+
+## 2. Centers
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| GET | `/api/centers` | รายการศูนย์ทั้งหมด | 🔒 |
+| GET | `/api/centers/{id}` | รายละเอียดศูนย์ | 🔒 |
+| POST | `/api/centers` | เพิ่มศูนย์ | 🔒 |
+| PUT | `/api/centers/{id}` | แก้ไขศูนย์ | 🔒 |
+| DELETE | `/api/centers/{id}` | ลบ/ปิดใช้งานศูนย์ | 🔒 |
+
+---
+
+## 3. Relief Categories
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| GET | `/api/relief-categories` | รายการหมวดหมู่ทั้งหมด | 🔒 |
+| GET | `/api/relief-categories/active` | หมวดหมู่ที่เปิดใช้งาน | 🔒 |
+| GET | `/api/relief-categories/{id}` | รายละเอียดหมวดหมู่ | 🔒 |
+| POST | `/api/relief-categories` | เพิ่มหมวดหมู่ | 🔒 |
+| PUT | `/api/relief-categories/{id}` | แก้ไขหมวดหมู่ | 🔒 |
+| PUT | `/api/relief-categories/{id}/status` | เปิด/ปิดใช้งาน | 🔒 |
+| DELETE | `/api/relief-categories/{id}` | ลบหมวดหมู่ | 🔒 |
+
+---
+
+## 4. Relief Items
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| GET | `/api/relief-items` | รายการสิ่งของทั้งหมด | 🔒 |
+| GET | `/api/relief-items/active` | รายการที่เปิดใช้งาน | 🔒 |
+| GET | `/api/relief-items/category/{categoryId}` | รายการตามหมวดหมู่ | 🔒 |
+| GET | `/api/relief-items/{id}` | รายละเอียดสิ่งของ | 🔒 |
+| POST | `/api/relief-items` | เพิ่มสิ่งของ | 🔒 |
+| PUT | `/api/relief-items/{id}` | แก้ไขสิ่งของ | 🔒 |
+| PUT | `/api/relief-items/{id}/status` | เปิด/ปิดใช้งาน | 🔒 |
+| DELETE | `/api/relief-items/{id}` | ลบสิ่งของ | 🔒 |
+
+---
+
+## 5. SOS Requests
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| POST | `/api/sos-requests` | สร้างคำขอ SOS | 🔒 |
+| GET | `/api/sos-requests` | รายการ SOS ทั้งระบบ | 🔒 |
+| GET | `/api/sos-requests/my` | คำขอของ User ปัจจุบัน | 🔒 |
+| GET | `/api/sos-requests/my-requests` | ประวัติคำขอของ User | 🔒 |
+| GET | `/api/sos-requests/{id}` | รายละเอียดและ Timeline | 🔒 |
+| GET | `/api/sos-requests/pending` | รายการ Pending | 🔒 |
+| GET | `/api/sos-requests/staff/me` | งานของ Staff ปัจจุบัน | 🔒 |
+| GET | `/api/sos-requests/center/{centerId}` | SOS แยกตามศูนย์ | 🔒 |
+| GET | `/api/sos-requests/statistics` | สถิติ SOS | 🔒 |
+| PUT | `/api/sos-requests/{id}/assign` | มอบหมาย Staff และเปลี่ยนเป็น Accepted | 🔒 |
+| PUT | `/api/sos-requests/{id}/status` | อัปเดตสถานะ SOS | 🔒 |
+| PUT | `/api/sos-requests/{id}/cancel` | ยกเลิกคำขอ | 🔒 |
+
+### กฎของ Status
+
+```text
+Pending → Accepted → Preparing → Delivering → Completed
+```
+
+`Cancelled` เป็นสถานะปลายทางอีกกรณีหนึ่ง
+
+เมื่ออัปเดตเป็น `Delivering` Backend จะตัดสต็อกและสร้าง Transaction ประเภท `SOSOut`
+
+---
+
+## 6. Donations
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| POST | `/api/Donations` | สร้าง Donation | 🔒 |
+| GET | `/api/Donations` | Donation ทั้งหมด | 🔒 |
+| GET | `/api/Donations/my` | Donation ของผู้ใช้ปัจจุบัน | 🔒 |
+| GET | `/api/Donations/{id}` | รายละเอียด Donation | 🔒 |
+| PUT | `/api/Donations/{id}/status` | อัปเดตสถานะ | 🔒 |
+| DELETE | `/api/Donations/{id}` | ยกเลิก/ลบ Donation | 🔒 |
+
+### Receive Donation
+
+ระบบรองรับการรับ Donation เข้าคลัง โดย flow ต้องทำงานใน Database Transaction เดียว:
+
+1. ตรวจสอบ Donation และรายการ Donation Items
+2. เพิ่มจำนวนใน Center Inventory
+3. สร้าง Inventory Transaction ประเภท `DonationIn`
+4. อัปเดต Donation เป็น `Received`
+5. Rollback ทั้งหมดหากขั้นตอนใดล้มเหลว
+
+> ให้ตรวจชื่อ route รับ Donation จาก `DonationsController` หรือ `InventoriesController` ในโค้ดจริง และบันทึกชื่อ endpoint ที่ตรงกันก่อนส่ง Production
+
+---
+
+## 7. Inventories
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| GET | `/api/inventories` | รายการคลังทั้งหมด หรือกรองตามสิทธิ์ | 🔒 |
+| GET | `/api/inventories/center/{centerId}` | คลังของศูนย์ | 🔒 |
+| GET | `/api/inventories/low-stock` | รายการที่ต่ำกว่าหรือเท่ากับ Minimum Quantity | ตาม Controller |
+| POST | `/api/inventories/stock-in` | เพิ่มสต็อกด้วยรายการปรับปรุงคลัง | 🔒 |
+| POST | `/api/inventories/stock-out` | ตัดสต็อกด้วยรายการปรับปรุงคลัง | 🔒 |
+| GET | `/api/inventories/transactions` | ประวัติ Stock In/Out, DonationIn และ SOSOut | 🔒 |
+
+### Query Parameter ของ Low Stock
+
+```http
+GET /api/inventories/low-stock?centerId=C0001
+```
+
+เมื่อไม่ส่ง `centerId` ระบบคืนรายการ Low Stock ทุกศูนย์ตามสิทธิ์ของผู้เรียก
+
+### Transaction Types
+
+| Type | ความหมาย |
+|---|---|
+| `StockIn` | เจ้าหน้าที่เพิ่มสต็อกทั่วไป |
+| `StockOut` | เจ้าหน้าที่ตัดสต็อกทั่วไป |
+| `DonationIn` | รับของบริจาคเข้าคลัง |
+| `SOSOut` | ตัดสิ่งของเพื่อส่ง SOS |
+
+### Validation ที่จำเป็น
+
+- Quantity ต้องมากกว่า 0
+- Center และ Relief Item ต้องมีอยู่จริงและเปิดใช้งาน
+- Stock Out ห้ามทำให้ Quantity ติดลบ
+- SOSOut ต้องทำได้เพียงครั้งเดียวต่อ SOS
+- DonationIn ต้องทำได้เพียงครั้งเดียวต่อ Donation
+- ทุกการเปลี่ยนสต็อกต้องมี Inventory Transaction
+
+---
+
+## 8. Staffs
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| GET | `/api/staffs` | รายชื่อ Staff | 🔒 |
+| GET | `/api/staffs/{id}` | รายละเอียด Staff | 🔒 |
+| GET | `/api/staffs/summary` | สรุปข้อมูล Staff | 🔒 |
+| POST | `/api/staffs` | เพิ่ม Staff | 🔒 |
+| PUT | `/api/staffs/{id}` | แก้ไข Staff | 🔒 |
+| PUT | `/api/staffs/{id}/status` | เปิด/ปิดบัญชี | 🔒 |
+| DELETE | `/api/staffs/{id}` | ลบ Staff | 🔒 |
+
+---
+
+## 9. Users
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| GET | `/api/users` | รายชื่อ Users | 🔒 |
+| GET | `/api/users/{id}` | รายละเอียด User | 🔒 |
+| PUT | `/api/users/{id}` | แก้ไข User | 🔒 |
+| PUT | `/api/users/{id}/status` | เปิด/ระงับบัญชี | 🔒 |
+| DELETE | `/api/users/{id}` | ลบ User | 🔒 |
+
+---
+
+## Standard Error Response
+
+```json
+{
+  "message": "ข้อความอธิบายข้อผิดพลาด"
+}
+```
+
+Frontend Service ใช้ `parseResponse()` เพื่ออ่าน `message` และ throw Error ไปยัง Main Component

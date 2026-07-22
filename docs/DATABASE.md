@@ -1,135 +1,315 @@
-## 🗄️ โครงสร้างฐานข้อมูล (Database Structure)
+# Database Structure
+## Flood Relief Management System
 
-### 1. ตาราง Users (ข้อมูลผู้ใช้งานทั่วไป / ผู้ประสบภัย / ผู้บริจาค)
-| Field Name | Data Type | Description |
-| :--- | :--- | :--- |
-| **Id** | varchar(10) (PK) | รหัสผู้ใช้งาน |
-| **FullName** | longtext | ชื่อ-นามสกุล |
-| **PhoneNumber** | varchar(10) | เบอร์โทรศัพท์ติดต่อ |
-| **Email** | longtext | อีเมล (ใช้สำหรับ Login) |
-| **PasswordHash** | longtext | รหัสผ่านที่เข้ารหัสแล้ว |
-| **Role** | longtext | บทบาท (User, Donor) |
-| **IsActive** | tinyint(1) (boolean) | สถานะการใช้งานบัญชี (0 = Inactive, 1 = Active) |
-| **CreatedAt** | datetime(6) | วันเวลาที่ลงทะเบียน |
-| **UpdatedAt** | datetime(6) (Null) | วันเวลาที่อัปเดตข้อมูลล่าสุด (มีค่าเป็น NULL ได้) |
+Database Engine: **MySQL**  
+ORM: **Entity Framework Core**
 
-### 2. ตาราง Admins (ข้อมูลผู้ดูแลระบบ)
-| Field Name | Data Type | Description |
-| :--- | :--- | :--- |
-| **Id** | varchar(2) (PK) | รหัสผู้ดูแลระบบ |
-| **Username** | longtext | ชื่อผู้ใช้งานสำหรับ Admin |
-| **Email** | longtext | อีเมล |
-| **PasswordHash** | longtext | รหัสผ่านที่เข้ารหัสแล้ว |
-| **Role** | longtext | บทบาท (Admin) |
-| **IsActive** | tinyint(1) (boolean) | สถานะการใช้งานบัญชี |
-| **CreatedAt** | datetime(6) | วันเวลาที่สร้างบัญชี |
-| **UpdatedAt** | datetime(6) (Null) | วันเวลาที่อัปเดตข้อมูลล่าสุด |
+> เอกสารนี้อธิบายโครงสร้างเชิงระบบ ควรตรวจสอบชื่อชนิดข้อมูลและ constraint สุดท้ายกับ EF Core Migration ล่าสุด
 
-### 3. ตาราง Staffs (ข้อมูลเจ้าหน้าที่ช่วยเหลือภาคสนาม)
-| Field Name | Data Type | Description |
-| :--- | :--- | :--- |
-| **Id** | varchar(5) (PK) | รหัสเจ้าหน้าที่ |
-| **CenterId** | varchar(5) (FK) | รหัสศูนย์บรรเทาทุกข์ที่สังกัด (เชื่อมโยงกับ `centers.Id`) |
-| **FullName** | longtext | ชื่อ-นามสกุลเจ้าหน้าที่ |
-| **Username** | longtext | ชื่อผู้ใช้งาน |
-| **Email** | longtext | อีเมล |
-| **PhoneNumber** | varchar(10) | เบอร์โทรศัพท์ติดต่อ |
-| **PasswordHash** | longtext | รหัสผ่านที่เข้ารหัสแล้ว |
-| **Role** | longtext | บทบาท (Staff) |
-| **IsActive** | tinyint(1) (boolean) | สถานะการใช้งานบัญชี |
-| **CreatedAt** | datetime(6) | วันเวลาที่สร้างบัญชี |
-| **UpdatedAt** | datetime(6) (Null) | วันเวลาที่อัปเดตข้อมูลล่าสุด |
+---
 
-### 4. ตาราง Centers (ศูนย์บริหารจัดการ/จุดรับความช่วยเหลือ)
-| Field Name | Data Type | Description |
-| :--- | :--- | :--- |
-| **Id** | varchar(5) (PK) | รหัสศูนย์บรรเทาทุกข์ |
-| **CenterName** | varchar(150) | ชื่อศูนย์บรรเทาทุกข์ |
-| **Address** | longtext | ที่อยู่ของศูนย์ |
-| **Province** | longtext | จังหวัด |
-| **District** | longtext | อำเภอ / เขต |
-| **SubDistrict** | longtext | ตำบล / แขวง |
-| **ZipCode** | varchar(5) | รหัสไปรษณีย์ |
-| **PhoneNumber** | varchar(10) | เบอร์โทรศัพท์ติดต่อของศูนย์ |
-| **ContactName** | longtext | ชื่อผู้ประสานงานหลัก |
-| **Latitude** | double | พิกัดละติจูดของศูนย์ |
-| **Longitude** | double | พิกัดลองจิจูดของศูนย์ |
-| **IsActive** | tinyint(1) (boolean) | สถานะการเปิดใช้งานของศูนย์ |
-| **CreatedAt** | datetime(6) | วันเวลาที่เพิ่มข้อมูล |
-| **UpdatedAt** | datetime(6) (Null) | วันเวลาที่แก้ไขข้อมูลล่าสุด |
+## ความสัมพันธ์หลัก
 
-### 5. ตาราง SOS Requests (คำขอความช่วยเหลือจากผู้ประสบภัย)
-| Field Name | Data Type | Description |
-| :--- | :--- | :--- |
-| **Id** | varchar(10) (PK) | รหัสคำขอ SOS |
-| **UserId** | varchar(10) (FK) | รหัสผู้แจ้งขอความช่วยเหลือ (เชื่อมโยงกับ `users.Id`) |
-| **CenterId** | varchar(5) (FK Null) | รหัสศูนย์ที่รับผิดชอบ (เชื่อมโยงกับ `centers.Id`) |
-| **AssignedStaffId**| varchar(5) (FK Null) | รหัสเจ้าหน้าที่ผู้รับผิดชอบงาน (เชื่อมโยงกับ `staffs.Id`) |
-| **Latitude** | double | พิกัดละติจูดของผู้แจ้ง |
-| **Longitude** | double | พิกัดลองจิจูดของผู้แจ้ง |
-| **AddressDetail** | varchar(500) | รายละเอียดสถานที่/จุดสังเกตเพิ่มเติม |
-| **Priority** | varchar(20) | ระดับความเร่งด่วน (เช่น Normal, High) |
-| **Status** | varchar(30) | สถานะคำขอ (Pending, Accepted, Preparing, Delivering, Completed, Cancelled) |
-| **UserRemark** | varchar(500) (Null) | หมายเหตุเพิ่มเติมจากผู้ประสบภัย |
-| **StaffRemark** | varchar(500) (Null) | หมายเหตุหรือบันทึกเพิ่มเติมจากเจ้าหน้าที่ |
-| **CreatedAt** | datetime(6) | วันเวลาที่สร้างคำขอ |
-| **AcceptedAt** | datetime(6) (Null) | วันเวลาที่เจ้าหน้าที่กดรับเรื่อง |
-| **PreparingAt** | datetime(6) (Null) | วันเวลาที่เริ่มจัดเตรียมสิ่งของ |
-| **DeliveringAt** | datetime(6) (Null) | วันเวลาที่เจ้าหน้าที่เริ่มเดินทาง |
-| **CompletedAt** | datetime(6) (Null) | วันเวลาที่ช่วยเหลือสำเร็จ |
-| **CancelledAt** | datetime(6) (Null) | วันเวลาที่คำขอถูกยกเลิก |
-| **UpdatedAt** | datetime(6) (Null) | วันเวลาที่อัปเดตข้อมูลล่าสุด |
+```text
+Users 1 ── * SosRequests
+Users 1 ── * Donations
 
-### 6. ตาราง SOS Request Items (รายละเอียดรายการสิ่งของในแต่ละคำขอ SOS)
-| Field Name | Data Type | Description |
-| :--- | :--- | :--- |
-| **Id** | varchar(10) (PK) | รหัสรายการสิ่งของในคำขอ |
-| **SosRequestId** | varchar(10) (FK) | รหัสคำขอ SOS (เชื่อมโยงกับ `sos_requests.Id`) |
-| **ReliefItemId** | varchar(10) (FK) | รหัสสิ่งของบรรเทาทุกข์ (เชื่อมโยงกับ `relief_items.Id`) |
-| **Quantity** | int(11) | จำนวนสิ่งของที่ร้องขอ |
-| **Unit** | varchar(50) | หน่วยนับ ณ ตอนที่ขอ (เช่น ถุง, แพ็ค) |
-| **CreatedAt** | datetime(6) | วันเวลาที่เพิ่มรายการสิ่งของนี้ |
+Centers 1 ── * Staffs
+Centers 1 ── * SosRequests
+Centers 1 ── * Donations
+Centers 1 ── * CenterInventories
 
-### 7. ตาราง Relief Categories (หมวดหมู่สิ่งของบรรเทาทุกข์)
-| Field Name | Data Type | Description |
-| :--- | :--- | :--- |
-| **Id** | varchar(5) (PK) | รหัสหมวดหมู่สิ่งของ (เช่น food) |
-| **Name** | varchar(100) | ชื่อหมวดหมู่ (เช่น อาหาร, ยารักษาโรค) |
-| **Icon** | varchar(50) | ชื่อ Icon สำหรับนำไปแสดงผลบนหน้าเว็บ |
-| **IsActive** | tinyint(1) (boolean) | สถานะเปิดใช้งานหมวดหมู่ |
-| **CreatedAt** | datetime(6) | วันเวลาที่สร้างหมวดหมู่ |
+SosRequests 1 ── * SosRequestItems
+Donations 1 ── * DonationItems
 
-### 8. ตาราง Relief Items (รายการสิ่งของบรรเทาทุกข์ในคลัง)
-| Field Name | Data Type | Description |
-| :--- | :--- | :--- |
-| **Id** | varchar(10) (PK) | รหัสสิ่งของบรรเทาทุกข์ |
-| **ReliefCategoryId**| varchar(5) (FK) | รหัสหมวดหมู่สิ่งของ (เชื่อมโยงกับ `relief_categories.Id`) |
-| **Name** | varchar(150) | ชื่อสิ่งของบรรเทาทุกข์ (เช่น ข้าวสาร, น้ำดื่ม) |
-| **Unit** | varchar(50) | หน่วยนับมาตรฐาน (เช่น ถุง, แพ็ค, กล่อง) |
-| **IsActive** | tinyint(1) (boolean) | สถานะเปิดใช้งานรายการสิ่งของ |
-| **CreatedAt** | datetime(6) | วันเวลาที่เพิ่มรายการสิ่งของ |
+ReliefCategories 1 ── * ReliefItems
+ReliefItems 1 ── * SosRequestItems
+ReliefItems 1 ── * DonationItems
+ReliefItems 1 ── * CenterInventories
 
-### 9. ตาราง Donations (ข้อมูลรายการบริจาคสิ่งของ)
-| Field Name | Data Type | Description |
-| :--- | :--- | :--- |
-| **Id** | varchar(10) (PK) | รหัสรายการบริจาค |
-| **UserId** | varchar(10) (FK) | รหัสผู้บริจาค (เชื่อมโยงกับ `users.Id`) |
-| **DonationType** | longtext | ประเภทการบริจาค |
-| **Description** | longtext | รายละเอียดการบริจาคเพิ่มเติม |
-| **Quantity** | int(11) | จำนวนรวมของสิ่งของที่บริจาค |
-| **CenterId** | varchar(5) (FK) | รหัสศูนย์รับมอบการบริจาค (เชื่อมโยงกับ `centers.Id`) |
-| **Unit** | longtext | หน่วยนับสิ่งของบริจาค |
-| **ImageUrl** | longtext (Null) | URL รูปภาพสิ่งของบริจาค/หลักฐาน |
-| **QRCode** | longtext (Null) | ข้อมูล/รูปภาพ QR Code สำหรับการบริจาค |
-| **Status** | longtext | สถานะการรับบริจาค |
-| **CreatedAt** | datetime(6) | วันเวลาที่แจ้งบริจาค |
-| **UpdatedAt** | datetime(6) (Null) | วันเวลาที่อัปเดตข้อมูลล่าสุด |
+CenterInventories 1 ── * InventoryTransactions
+```
 
-### 10. ตาราง Donation Items (รายละเอียดสิ่งของในแต่ละรายการบริจาค)
-| Field Name | Data Type | Description |
-| :--- | :--- | :--- |
-| **Id** | varchar(10) (PK) | รหัสรายการสิ่งของที่บริจาค |
-| **DonationId** | varchar(10) (FK) | รหัสการบริจาค (เชื่อมโยงกับ `donations.Id`) |
-| **ReliefItemId** | varchar(10) (FK) | รหัสสิ่งของบรรเทาทุกข์ (เชื่อมโยงกับ `relief_items.Id`) |
-| **Quantity** | int(11) | จำนวนสิ่งของที่บริจาค |
-| **Unit** | longtext | หน่วยนับสิ่งของบริจาค |
+---
+
+## 1. Users
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar(10) PK | รหัส User |
+| FullName | longtext | ชื่อ-นามสกุล |
+| PhoneNumber | varchar(10) | เบอร์โทร |
+| Email | longtext | อีเมล Login |
+| PasswordHash | longtext | Password Hash |
+| Role | longtext | `User` หรือ `Donor` |
+| IsActive | tinyint(1) | สถานะบัญชี |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+| UpdatedAt | datetime(6) NULL | วันที่แก้ไข |
+
+---
+
+## 2. Admins
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar(2) PK | รหัส Admin |
+| Username | longtext | Username |
+| Email | longtext | Email |
+| PasswordHash | longtext | Password Hash |
+| Role | longtext | `Admin` |
+| IsActive | tinyint(1) | สถานะ |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+| UpdatedAt | datetime(6) NULL | วันที่แก้ไข |
+
+---
+
+## 3. Staffs
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar(5) PK | รหัส Staff |
+| CenterId | varchar(5) FK | ศูนย์ที่สังกัด |
+| FullName | longtext | ชื่อ-นามสกุล |
+| Username | longtext | Username |
+| Email | longtext | Email |
+| PhoneNumber | varchar(10) | เบอร์โทร |
+| PasswordHash | longtext | Password Hash |
+| Role | longtext | `Staff` |
+| IsActive | tinyint(1) | สถานะ |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+| UpdatedAt | datetime(6) NULL | วันที่แก้ไข |
+
+---
+
+## 4. Centers
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar(5) PK | รหัสศูนย์ |
+| CenterName | varchar(150) | ชื่อศูนย์ |
+| Address | longtext | ที่อยู่ |
+| Province | longtext | จังหวัด |
+| District | longtext | อำเภอ/เขต |
+| SubDistrict | longtext | ตำบล/แขวง |
+| ZipCode | varchar(5) | รหัสไปรษณีย์ |
+| PhoneNumber | varchar(10) | เบอร์ศูนย์ |
+| ContactName | longtext | ผู้ประสานงาน |
+| Latitude | double | Latitude |
+| Longitude | double | Longitude |
+| IsActive | tinyint(1) | สถานะ |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+| UpdatedAt | datetime(6) NULL | วันที่แก้ไข |
+
+---
+
+## 5. SosRequests
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar(10) PK | รหัส SOS |
+| UserId | varchar(10) FK | ผู้แจ้ง |
+| CenterId | varchar(5) FK NULL | ศูนย์รับผิดชอบ |
+| AssignedStaffId | varchar(5) FK NULL | Staff ที่รับผิดชอบ |
+| Latitude | double | Latitude |
+| Longitude | double | Longitude |
+| AddressDetail | varchar(500) | จุดสังเกต |
+| Priority | varchar(20) | `Normal`, `High` ฯลฯ |
+| Status | varchar(30) | สถานะงาน |
+| UserRemark | varchar(500) NULL | หมายเหตุ User |
+| StaffRemark | varchar(500) NULL | หมายเหตุ Staff |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+| AcceptedAt | datetime(6) NULL | วันที่รับเรื่อง |
+| PreparingAt | datetime(6) NULL | วันที่เริ่มเตรียม |
+| DeliveringAt | datetime(6) NULL | วันที่เริ่มนำส่ง |
+| CompletedAt | datetime(6) NULL | วันที่เสร็จ |
+| CancelledAt | datetime(6) NULL | วันที่ยกเลิก |
+| UpdatedAt | datetime(6) NULL | วันที่แก้ไข |
+
+Status:
+
+```text
+Pending, Accepted, Preparing, Delivering, Completed, Cancelled
+```
+
+---
+
+## 6. SosRequestItems
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar(10) PK | รหัสรายการ |
+| SosRequestId | varchar(10) FK | SOS |
+| ReliefItemId | varchar(10) FK | สิ่งของ |
+| Quantity | int | จำนวน |
+| Unit | varchar(50) | หน่วย ณ วันที่ร้องขอ |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+
+---
+
+## 7. ReliefCategories
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar(5) PK | รหัสหมวด |
+| Name | varchar(100) | ชื่อหมวด |
+| Icon | varchar(50) | Material Symbol |
+| IsActive | tinyint(1) | สถานะ |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+
+---
+
+## 8. ReliefItems
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar(10) PK | รหัสสิ่งของ |
+| ReliefCategoryId | varchar(5) FK | หมวดหมู่ |
+| Name | varchar(150) | ชื่อ |
+| Unit | varchar(50) | หน่วยมาตรฐาน |
+| IsActive | tinyint(1) | สถานะ |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+
+---
+
+## 9. Donations
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar(10) PK | รหัส Donation |
+| UserId | varchar(10) FK | Donor |
+| CenterId | varchar(5) FK | ศูนย์รับของ |
+| DonationType | longtext | ประเภท |
+| Description | longtext | รายละเอียด |
+| Quantity | int | จำนวนรวม |
+| Unit | longtext | หน่วย |
+| ImageUrl | longtext NULL | รูปภาพ |
+| QRCode | longtext NULL | QR/Tracking |
+| Status | longtext | สถานะ |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+| UpdatedAt | datetime(6) NULL | วันที่แก้ไข |
+
+สถานะที่ควรรองรับ:
+
+```text
+Pending, Confirmed, Received, Cancelled
+```
+
+---
+
+## 10. DonationItems
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar(10) PK | รหัสรายการ |
+| DonationId | varchar(10) FK | Donation |
+| ReliefItemId | varchar(10) FK | สิ่งของ |
+| Quantity | int | จำนวน |
+| Unit | longtext | หน่วย |
+
+---
+
+## 11. CenterInventories
+
+ตารางนี้เก็บยอดคงเหลือของสิ่งของแต่ละชนิดแยกตามศูนย์
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar หรือ char PK | รหัส Inventory |
+| CenterId | varchar(5) FK | ศูนย์ |
+| ReliefItemId | varchar(10) FK | สิ่งของ |
+| Quantity | int | จำนวนคงเหลือ |
+| MinimumQuantity | int | จุดแจ้งเตือน Low Stock |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+| UpdatedAt | datetime(6) NULL | วันที่เปลี่ยนยอดล่าสุด |
+
+Constraint สำคัญ:
+
+```text
+UNIQUE (CenterId, ReliefItemId)
+CHECK Quantity >= 0
+CHECK MinimumQuantity >= 0
+```
+
+Low Stock Condition:
+
+```text
+Quantity <= MinimumQuantity
+```
+
+จำนวนที่ขาด:
+
+```text
+MissingQuantity = max(MinimumQuantity - Quantity, 0)
+```
+
+---
+
+## 12. InventoryTransactions
+
+ตาราง Audit Log ของการเปลี่ยนแปลงสต็อกทุกครั้ง
+
+| Field | Type | Description |
+|---|---|---|
+| Id | varchar หรือ char PK | รหัส Transaction |
+| CenterInventoryId | FK | Inventory ที่เปลี่ยน |
+| CenterId | varchar(5) FK | ศูนย์ |
+| ReliefItemId | varchar(10) FK | สิ่งของ |
+| TransactionType | varchar(30) | ประเภทรายการ |
+| Quantity | int | จำนวนที่เปลี่ยน |
+| QuantityBefore | int NULL | ยอดก่อนทำรายการ |
+| QuantityAfter | int NULL | ยอดหลังทำรายการ |
+| ReferenceType | varchar(30) NULL | เช่น `Donation`, `SOS`, `Manual` |
+| ReferenceId | varchar NULL | Id ของ Donation หรือ SOS |
+| Note | varchar(500) NULL | หมายเหตุ |
+| CreatedByStaffId | varchar(5) FK NULL | Staff ผู้ดำเนินการ |
+| CreatedAt | datetime(6) | วันที่สร้าง |
+
+Transaction Type:
+
+```text
+StockIn
+StockOut
+DonationIn
+SOSOut
+```
+
+กฎ:
+
+- ห้ามแก้ไขหรือลบ Transaction หลังสร้าง ยกเว้นมีระบบ reversal
+- การเปลี่ยน Quantity ต้องทำพร้อม Transaction ใน Database Transaction เดียว
+- `DonationIn` ต้องผูกกับ Donation
+- `SOSOut` ต้องผูกกับ SOS
+- ควรมี Unique Index ป้องกันการประมวลผล Reference ซ้ำ
+
+ตัวอย่าง:
+
+```text
+UNIQUE (TransactionType, ReferenceId, ReliefItemId)
+```
+
+> รูปแบบ Unique Index จริงควรพิจารณากรณี Donation หรือ SOS มีหลายรายการของ ReliefItem เดียวกัน
+
+---
+
+## Database Transaction Requirements
+
+กระบวนการต่อไปนี้ต้องครอบด้วย EF Core Database Transaction:
+
+### Receive Donation
+
+```text
+Update CenterInventory
++ Insert InventoryTransaction(DonationIn)
++ Update Donation.Status
+```
+
+### Deliver SOS
+
+```text
+Validate all requested items
++ Update CenterInventory
++ Insert InventoryTransaction(SOSOut)
++ Update SosRequest.Status
+```
+
+หากรายการใดล้มเหลว ต้อง Rollback ทั้งชุด

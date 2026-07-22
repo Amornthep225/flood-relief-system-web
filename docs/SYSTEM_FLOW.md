@@ -1,61 +1,230 @@
-# System Flow: Flood Relief Management System
-
-
----
-
-## 👥 1. User Roles & Actors (ผู้ใช้งานระบบ)
-ระบบแบ่งผู้ใช้งานออกเป็น 4 ระดับหลัก (RBAC):
-* **Victim (ผู้ประสบภัย):** ผู้ใช้งานทั่วไปที่ต้องการความช่วยเหลือฉุกเฉิน
-* **Donor (ผู้บริจาค):** ผู้ใช้งานที่ต้องการบริจาคสิ่งของหรือทุนทรัพย์
-* **Staff (เจ้าหน้าที่ประจำศูนย์):** ผู้ปฏิบัติงานที่คอยรับเรื่อง SOS และจัดการคลังสินค้า
-* **Admin (ผู้ดูแลระบบกลาง):** ผู้ควบคุมระบบ Command Center และจัดการข้อมูล Master Data
+# System Flow
+## Flood Relief Management System
 
 ---
 
-## 🔄 2. Core System Flows (กระแสการทำงานหลัก)
+## 1. Actors และสิทธิ์
 
-### 2.1 Authentication & Role Assignment Flow (การเข้าสู่ระบบและจัดการสิทธิ์)
-1. **User/Donor/Staff** เข้าสู่หน้าจอ ลงทะเบียน/เข้าสู่ระบบ
-2. กรอกข้อมูลส่วนตัว (ชื่อ, เบอร์โทรศัพท์, รหัสผ่าน)
-3. ระบบตรวจสอบประเภทผู้ใช้งาน:
-   * **กรณี User/Donor:** เข้าสู่ระบบและใช้งานหน้า Homepage ได้ทันที
-   * **กรณี Staff:** ระบบจะตั้งสถานะเป็น `Pending Approval` (รอการอนุมัติ) 
-4. **Admin** ตรวจสอบข้อมูล Staff และกำหนด `center_id` (ศูนย์ปฏิบัติการที่สังกัด)
-5. อนุมัติสิทธิ์ -> Staff เข้าสู่ระบบและใช้งาน Dashboard ของศูนย์นั้นๆ ได้
+| Actor | หน้าที่หลัก |
+|---|---|
+| User/Victim | แจ้ง SOS และติดตามสถานะ |
+| Donor | บริจาคสิ่งของและดูความต้องการของศูนย์ |
+| Staff | รับงาน SOS, อัปเดตสถานะ, รับบริจาค, จัดการคลัง |
+| Admin | จัดการ Master Data, Users, Staffs และ Dashboard |
 
-### 2.2 SOS & Rescue Flow (ระบบแจ้งเหตุและช่วยเหลือผู้ประสบภัย)
-1. **Victim** กดปุ่ม "SOS ขอความช่วยเหลือ" ผ่านเว็บบนมือถือ
-2. ระบบขอสิทธิ์เข้าถึงพิกัด (Geolocation) และให้ผู้ประสบภัยกรอกรายละเอียดจุดสังเกตุรอบบ้าน
-3. ข้อมูลถูกส่งไปที่ **Command Center (Admin / Staff)** พร้อมแจ้งเตือน (Notification)
-4. **Staff** ตรวจสอบข้อมูลและเปลี่ยนสถานะเป็น `Acknowledged` (รับเรื่องแล้ว)
-5. **Staff** จัดเตรียมทีมช่วยเหลือและเปลี่ยนสถานะเป็น `Dispatching` (กำลังเดินทาง)
-6. **Victim** สามารถตรวจสอบสถานะการช่วยเหลือแบบ Real-time (Tracking)
-7. เมื่อภารกิจเสร็จสิ้น **Staff** อัปเดตสถานะเป็น `Resolved` (ช่วยเหลือสำเร็จ)
-
-### 2.3 Donation & Inventory Flow (ระบบบริจาคและคลังสินค้า)
-1. **Donor** เลือกศูนย์รับบริจาคที่ต้องการ และกรอกฟอร์ม "แจ้งความประสงค์บริจาคสิ่งของ"
-2. ระบบสร้าง `Donation Tracking ID และ qr code` ให้กับผู้บริจาค
-3. ผู้บริจาคนำสิ่งของไปส่งที่ศูนย์ (หรือจัดส่งผ่านขนส่ง)
-4. **Staff** ณ ศูนย์รับบริจาค รับของและตรวจสอบความถูกต้อง
-5. **Staff** บันทึกรับเข้า (Goods Receipt) ในระบบ
-6. ระบบอัปเดตจำนวนสิ่งของใน **Inventory (คลังสินค้ากลาง)** อัตโนมัติ
-7. สถานะการบริจาคของ **Donor** เปลี่ยนเป็น `Received` (ได้รับสิ่งของแล้ว)
-
-### 2.4 Command Center & Analytics Flow (ระบบส่วนกลางและรายงาน)
-1. **Admin** เข้าสู่หน้า Dashboard (มักใช้งานผ่าน Desktop)
-2. ดูภาพรวมระบบ (Overview) เช่น:
-   * จำนวนเคส SOS ที่รอดำเนินการ
-   * ปริมาณของบริจาคในแต่ละศูนย์ (Center Inventory)
-3. จัดการข้อมูล Master Data (เพิ่ม/ลด ศูนย์ช่วยเหลือ, จัดการหมวดหมู่สิ่งของ)
-4. ออกรายงาน (Export Reports) เพื่อสรุปผลการดำเนินงาน
+User และ Donor อยู่ในตาราง `Users` เดียวกันและแยกด้วย `Role`
 
 ---
 
-## 🗄️ 3. Database State Changes (การเปลี่ยนสถานะข้อมูลที่สำคัญ)
+## 2. Authentication Flow
 
-* **SOS Status (`sos_tracking`):** 
-  `Pending` -> `Acknowledged` -> `Dispatching` -> `Resolved`
-* **Donation Status (`donation_tracking`):** 
-  `Pledged` (รอจัดส่ง) -> `In Transit` (กำลังจัดส่ง) -> `Received` (รับเข้าคลัง)
-* **User Status:** 
-  `Active` / `Inactive` / `Pending Approval` (สำหรับ Staff)
+```text
+Register/Login
+  ↓
+Backend ตรวจสอบข้อมูล
+  ↓
+สร้าง JWT
+  ↓
+Frontend เก็บ Token
+  ↓
+เรียก API ด้วย Authorization: Bearer
+  ↓
+Backend ตรวจ Role/Policy
+```
+
+---
+
+## 3. SOS Flow
+
+### 3.1 User สร้างคำขอ
+
+1. User เปิดหน้า SOS
+2. ระบบอ่านพิกัด Latitude/Longitude
+3. User กรอกรายละเอียดสถานที่ หมายเหตุ และรายการสิ่งของ
+4. Backend สร้าง `SosRequest`
+5. Backend สร้าง `SosRequestItems`
+6. สถานะเริ่มต้นเป็น `Pending`
+
+### 3.2 Staff รับและดำเนินงาน
+
+```text
+Pending
+  ↓ assign
+Accepted
+  ↓ update status
+Preparing
+  ↓ update status
+Delivering
+  ↓ update status
+Completed
+```
+
+`Cancelled` เป็นสถานะปลายทางกรณียกเลิก
+
+### 3.3 Inventory Integration ตอน Delivering
+
+เมื่อ Staff เปลี่ยน SOS เป็น `Delivering`:
+
+1. โหลดรายการ `SosRequestItems`
+2. ตรวจว่า SOS มี `CenterId`
+3. ตรวจคลังของศูนย์ทุกชิ้น
+4. หากชิ้นใดไม่พอ ให้ยกเลิกทั้งกระบวนการ
+5. ตัดยอดใน `CenterInventories`
+6. สร้าง `InventoryTransactions` ประเภท `SOSOut`
+7. บันทึก `DeliveringAt`
+8. Commit Database Transaction
+
+ระบบต้องป้องกันการตัดซ้ำเมื่อเรียก endpoint เดิมหลายครั้ง
+
+### 3.4 User Tracking
+
+User ดู:
+
+- สถานะปัจจุบัน
+- Timeline
+- Staff/Center ที่รับผิดชอบ
+- รายการสิ่งของ
+- วันที่ Accepted, Preparing, Delivering และ Completed
+
+---
+
+## 4. Donation Flow
+
+### 4.1 Donor สร้าง Donation
+
+1. Donor เลือกศูนย์
+2. เลือกรายการและจำนวน
+3. Backend สร้าง `Donation`
+4. Backend สร้าง `DonationItems`
+5. Donor ดูสถานะจาก Donation History
+
+### 4.2 Staff รับของเข้าคลัง
+
+```text
+Donation Pending
+  ↓ Staff ตรวจรับ
+Receive Donation
+  ↓
+CenterInventory เพิ่ม
+  ↓
+InventoryTransaction(DonationIn)
+  ↓
+Donation = Received
+```
+
+ทุกขั้นตอนต้องอยู่ใน Database Transaction เดียว และห้ามรับซ้ำ
+
+---
+
+## 5. Inventory Flow
+
+### 5.1 Stock In
+
+```text
+Staff ส่ง CenterId + ReliefItemId + Quantity
+  ↓
+Validate
+  ↓
+เพิ่ม CenterInventory.Quantity
+  ↓
+สร้าง InventoryTransaction(StockIn)
+```
+
+### 5.2 Stock Out
+
+```text
+Staff ส่ง CenterId + ReliefItemId + Quantity
+  ↓
+Validate Stock
+  ↓
+ลด CenterInventory.Quantity
+  ↓
+สร้าง InventoryTransaction(StockOut)
+```
+
+Stock Out ห้ามทำให้จำนวนติดลบ
+
+### 5.3 Low Stock
+
+Condition:
+
+```text
+Quantity <= MinimumQuantity
+```
+
+Frontend:
+
+```text
+LowProducts.jsx
+  ↓
+services/user/lowProducts.js
+  ↓
+GET /api/centers
+GET /api/inventories/low-stock
+```
+
+User สามารถ:
+
+- ดูของขาดแคลนทุกศูนย์
+- กรองตามศูนย์
+- ดูจำนวนคงเหลือ
+- ดูจำนวนที่ขาด
+- ดู Progress เทียบ Minimum Quantity
+- ไปยังหน้าบริจาครายการนั้น
+
+### 5.4 Transaction History
+
+ทุกการเปลี่ยนสต็อกต้องสร้าง Transaction:
+
+```text
+StockIn
+StockOut
+DonationIn
+SOSOut
+```
+
+Transaction ใช้สำหรับ Audit และตรวจสอบย้อนหลัง
+
+---
+
+## 6. Frontend Data Flow
+
+```text
+page.jsx
+  ↓
+Main Component
+  ↓
+Service Function
+  ↓
+fetch(API_URL)
+  ↓
+parseResponse()
+  ↓
+setState()
+  ↓
+UI Component
+```
+
+มาตรฐานปัจจุบัน:
+
+- API URL มาจาก `@/services/config`
+- API call อยู่ใน `services/`
+- Component ไม่เรียก fetch โดยตรง
+- Main Component จัดการ state/loading/error
+- UI component รับ props และแสดงผล
+- ไม่ใช้ hooks folder แยก
+
+---
+
+## 7. Critical Business Rules
+
+1. ห้ามอัปเดต SOS ข้ามลำดับสถานะโดยไม่มีเหตุผล
+2. `Completed` และ `Cancelled` เป็นสถานะปลายทาง
+3. SOS ต้องตัดสต็อกเพียงครั้งเดียว
+4. Donation ต้องรับเข้าคลังเพียงครั้งเดียว
+5. Stock ห้ามติดลบ
+6. ทุกการเปลี่ยน Stock ต้องมี Transaction
+7. การเปลี่ยน Stock และ Transaction ต้อง Commit/Rollback พร้อมกัน
+8. Staff ควรจัดการได้เฉพาะข้อมูลของศูนย์ตนเอง
+9. Admin จัดการข้อมูลข้ามศูนย์ได้
+10. API ต้องตรวจ Role ที่ Backend เสมอ ไม่พึ่ง Frontend
