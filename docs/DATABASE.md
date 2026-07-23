@@ -10,7 +10,14 @@ ORM: **Entity Framework Core**
 
 ## ความสัมพันธ์หลัก
 
-```text
+Geographies 1 ── * Provinces
+Provinces 1 ── * Districts
+Districts 1 ── * SubDistricts
+
+Provinces 1 ── * Centers
+Districts 1 ── * Centers
+SubDistricts 1 ── * Centers
+
 Users 1 ── * SosRequests
 Users 1 ── * Donations
 
@@ -23,6 +30,7 @@ SosRequests 1 ── * SosRequestItems
 Donations 1 ── * DonationItems
 
 ReliefCategories 1 ── * ReliefItems
+
 ReliefItems 1 ── * SosRequestItems
 ReliefItems 1 ── * DonationItems
 ReliefItems 1 ── * CenterInventories
@@ -87,16 +95,19 @@ CenterInventories 1 ── * InventoryTransactions
 |---|---|---|
 | Id | varchar(5) PK | รหัสศูนย์ |
 | CenterName | varchar(150) | ชื่อศูนย์ |
-| Address | longtext | ที่อยู่ |
-| Province | longtext | จังหวัด |
-| District | longtext | อำเภอ/เขต |
-| SubDistrict | longtext | ตำบล/แขวง |
+| Address | varchar(500) | ที่อยู่ |
+| ProvinceId | int(11)  | รหัสจังหวัด |
+| DistrictId | int(11)  | รหัสอำเภอ/เขต |
+| SubDistrictId | int(11)  | รหัสตำบล/แขวง |
+| Province | varchar(150) | จังหวัด |
+| District | varchar(150) | อำเภอ/เขต |
+| SubDistrict | varchar(150) | ตำบล/แขวง |
 | ZipCode | varchar(5) | รหัสไปรษณีย์ |
 | PhoneNumber | varchar(10) | เบอร์ศูนย์ |
-| ContactName | longtext | ผู้ประสานงาน |
-| Latitude | double | Latitude |
-| Longitude | double | Longitude |
-| IsActive | tinyint(1) | สถานะ |
+| ContactName | varchar(150) | ผู้ประสานงาน |
+| Latitude | double | ละติจูด |
+| Longitude | double | ลองจิจูด |
+| IsActive | tinyint(1) | สถานะการใช้งาน |
 | CreatedAt | datetime(6) | วันที่สร้าง |
 | UpdatedAt | datetime(6) NULL | วันที่แก้ไข |
 
@@ -273,6 +284,7 @@ DonationIn
 SOSOut
 ```
 
+
 กฎ:
 
 - ห้ามแก้ไขหรือลบ Transaction หลังสร้าง ยกเว้นมีระบบ reversal
@@ -281,15 +293,72 @@ SOSOut
 - `SOSOut` ต้องผูกกับ SOS
 - ควรมี Unique Index ป้องกันการประมวลผล Reference ซ้ำ
 
-ตัวอย่าง:
 
-```text
-UNIQUE (TransactionType, ReferenceId, ReliefItemId)
-```
+## 13. Geographies 
+| Field  |    Type   | Description |
+| Id     |   int(11) PK  |   รหัสภูมิภาค  |
+| Name |  varchar(255)  |  ชื่อภาษาไทย |
 
-> รูปแบบ Unique Index จริงควรพิจารณากรณี Donation หรือ SOS มีหลายรายการของ ReliefItem เดียวกัน
+## 14. Provinces
 
----
+| Field        | Type         | Description                         |
+|--------------|--------------|-------------------------------------|
+| id           | int(11) PK   | รหัสจังหวัด                         |
+| name_th      | varchar(150) | ชื่อจังหวัดภาษาไทย                  |
+| name_en      | varchar(150) | ชื่อจังหวัดภาษาอังกฤษ               |
+| geography_id | int(11)      | รหัสภูมิภาค                         |
+| created_at   | datetime(6)  | วันที่และเวลาที่สร้างข้อมูล         |
+| updated_at   | datetime(6)  | วันที่และเวลาที่แก้ไขข้อมูลล่าสุด   |
+| deleted_at   | datetime(6)  | วันที่และเวลาที่ลบข้อมูลแบบ Soft Delete |
+
+กฎ:
+- `id` เป็น Primary Key และ Auto Increment
+- `name_th`, `name_en` และ `geography_id` ห้ามเป็นค่าว่าง
+- `geography_id` ใช้เชื่อมโยงกับตาราง `Geographies`
+- `created_at`, `updated_at` และ `deleted_at` สามารถเป็น `NULL` ได้
+- เมื่อ `deleted_at` มีค่า หมายถึงข้อมูลถูกลบแบบ Soft Delete
+
+## 15. districts
+
+| Field       | Type         | Description                              |
+|-------------|--------------|------------------------------------------|
+| id          | int(11) PK   | รหัสอำเภอ                                |
+| name_th     | varchar(150) | ชื่ออำเภอภาษาไทย                         |
+| name_en     | varchar(150) | ชื่ออำเภอภาษาอังกฤษ                      |
+| province_id | int(11) FK   | รหัสจังหวัด อ้างอิง `Provinces.id`       |
+| created_at  | datetime(6)  | วันที่และเวลาที่สร้างข้อมูล              |
+| updated_at  | datetime(6)  | วันที่และเวลาที่แก้ไขข้อมูลล่าสุด        |
+| deleted_at  | datetime(6)  | วันที่และเวลาที่ลบข้อมูลแบบ Soft Delete |
+
+
+กฎ:
+- `id` เป็น Primary Key และ Auto Increment
+- `name_th`, `name_en` และ `province_id` ห้ามเป็นค่าว่าง
+- `province_id` ใช้เชื่อมโยงกับ `Provinces.id`
+- `created_at`, `updated_at` และ `deleted_at` สามารถเป็น `NULL` ได้
+- เมื่อ `deleted_at` มีค่า หมายถึงข้อมูลถูกลบแบบ Soft Delete
+
+## 16. Sub_Districts
+
+| Field       | Type         | Description                              |
+|-------------|--------------|------------------------------------------|
+| id          | int(11) PK   | รหัสตำบล                                 |
+| zip_code    | int(11)      | รหัสไปรษณีย์                             |
+| name_th     | varchar(150) | ชื่อตำบลภาษาไทย                          |
+| name_en     | varchar(150) | ชื่อตำบลภาษาอังกฤษ                       |
+| district_id | int(11) FK   | รหัสอำเภอ อ้างอิง `Districts.id`         |
+| lat         | double       | ค่าละติจูด                               |
+| long        | double       | ค่าลองจิจูด                              |
+| created_at  | datetime(6)  | วันที่และเวลาที่สร้างข้อมูล              |
+| updated_at  | datetime(6)  | วันที่และเวลาที่แก้ไขข้อมูลล่าสุด        |
+| deleted_at  | datetime(6)  | วันที่และเวลาที่ลบข้อมูลแบบ Soft Delete |
+
+กฎ:
+- `id` เป็น Primary Key และ Auto Increment
+- `zip_code`, `name_th`, `name_en` และ `district_id` ห้ามเป็นค่าว่าง
+- `district_id` ใช้เชื่อมโยงกับ `Districts.id`
+- `lat`, `long`, `created_at`, `updated_at` และ `deleted_at` สามารถเป็น `NULL` ได้
+- เมื่อ `deleted_at` มีค่า หมายถึงข้อมูลถูกลบแบบ Soft Delete
 
 ## Database Transaction Requirements
 

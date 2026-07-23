@@ -30,15 +30,15 @@ Authorization: Bearer {token}
 
 ---
 
-## 2. Centers
+## #2. Centers
 
 | Method | Endpoint | Description | Auth |
 |---|---|---|:---:|
 | GET | `/api/centers` | รายการศูนย์ทั้งหมด | 🔒 |
 | GET | `/api/centers/{id}` | รายละเอียดศูนย์ | 🔒 |
-| POST | `/api/centers` | เพิ่มศูนย์ | 🔒 |
-| PUT | `/api/centers/{id}` | แก้ไขศูนย์ | 🔒 |
-| DELETE | `/api/centers/{id}` | ลบ/ปิดใช้งานศูนย์ | 🔒 |
+| POST | `/api/centers` | เพิ่มศูนย์ใหม่ | 🔒 |
+| PUT | `/api/centers/{id}` | แก้ไขข้อมูลศูนย์ | 🔒 |
+| DELETE | `/api/centers/{id}` | ปิดใช้งานศูนย์ | 🔒 |
 
 ---
 
@@ -187,6 +187,17 @@ GET /api/inventories/low-stock?centerId=C0001
 | PUT | `/api/users/{id}` | แก้ไข User | 🔒 |
 | PUT | `/api/users/{id}/status` | เปิด/ระงับบัญชี | 🔒 |
 | DELETE | `/api/users/{id}` | ลบ User | 🔒 |
+
+---
+
+## #10. Address (Thai Province / District / SubDistrict)
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| GET | `/api/address/provinces` | รายการจังหวัดทั้งหมด | 🔒 |
+| GET | `/api/address/districts/{provinceId}` | รายการอำเภอตามจังหวัด | 🔒 |
+| GET | `/api/address/sub-districts/{districtId}` | รายการตำบลตามอำเภอ | 🔒 |
+| GET | `/api/address/sub-district/{id}` | รายละเอียดตำบลและรหัสไปรษณีย์ | 🔒 |
 
 ---
 
