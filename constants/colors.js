@@ -41,7 +41,7 @@ export const colors = {
     iconText: "text-slate-600",
   },
   dashboardUserSos: {
-    page: "bg-sky-50 text-slate-600",
+    page: "bg-sky-50 text-slate-900",
     primaryText: "text-slate-800",
     secondaryText: "text-slate-500",
     brandText: "text-sky-500",

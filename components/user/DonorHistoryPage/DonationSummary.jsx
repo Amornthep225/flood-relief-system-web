@@ -7,7 +7,7 @@ export default function DonationSummary({
     return (
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className={cards.donorHistory.summaryPrimary}>
-                <p className="mb-1 text-sm text-sky-100">
+                <p className="mb-1 text-sm text-slate-500">
                     บริจาคไปแล้ว
                 </p>
 
@@ -17,14 +17,14 @@ export default function DonationSummary({
             </div>
 
             <div className={cards.donorHistory.summary}>
-                <p className="mb-1 text-sm text-sky-100">
+                <p className="mb-1 text-sm text-slate-500">
                     สิ่งของรวม
                 </p>
 
                 <h2 className="text-3xl font-bold">
                     {totalItems}
 
-                    <span className="ml-1 text-sm font-normal text-sky-100">
+                    <span className="ml-1 text-sm font-normal text-slate-500">
                         ชิ้น
                     </span>
                 </h2>

@@ -102,7 +102,7 @@ export default function DonationHistoryCard({
 
     return (
         <article
-            className={cards.donorHistory.card}
+            className={`${cards.donorHistory.card} !border-slate-200 !bg-white shadow-sm transition-shadow hover:shadow-md`}
         >
             <div
                 className={`absolute bottom-0 left-0 top-0 w-1.5 ${completed

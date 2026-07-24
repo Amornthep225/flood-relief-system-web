@@ -10,10 +10,11 @@ export default function UserLayout({
     backHref = "/select-role",
     homeHref = "/user/sos-home",
     logoutHref = "/user/users-login",
+    pageClass = "bg-mainColorUserPage"
 }) {
     return (
         <RoleGuard role="User" storageKey="user" loginPath="/user/users-login">
-            <div className={`min-h-screen flex flex-col ${colors.dashboardUserSos.page}`}>
+            <div className={`min-h-screen flex flex-col ${pageClass || colors.dashboardUserSos.page}`}>
                 <UserNavbar
                     theme={theme}
                     hotline="1784"
@@ -31,7 +32,7 @@ export default function UserLayout({
                     }}
                 />
 
-                <main className="w-full max-w-7xl mx-auto px-6 pt-8 pb-8">
+                <main className={`w-full max-w-7xl mx-auto px-6 pt-8 pb-8 ${pageClass}`}>
                     {children}
                 </main>
 

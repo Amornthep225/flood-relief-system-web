@@ -19,7 +19,7 @@ export default function DonationTabs({
     counts,
 }) {
     return (
-        <div className="flex gap-2 overflow-x-auto border-b border-slate-200 pb-1">
+        <div className="flex gap-2 overflow-x-auto rounded-2xl border border-slate-200 bg-white px-3 pt-2 shadow-sm">
             {tabs.map((tab) => {
                 const isActive =
                     activeTab === tab.value;
@@ -38,9 +38,9 @@ export default function DonationTabs({
                         onClick={() =>
                             onChange(tab.value)
                         }
-                        className={`whitespace-nowrap border-b-2 px-4 py-2 text-sm font-bold transition ${isActive
-                                ? "border-sky-600 text-sky-600"
-                                : "border-transparent text-slate-500 hover:text-slate-700"
+                        className={`whitespace-nowrap rounded-t-lg border-b-2 px-4 py-2 text-sm font-bold transition ${isActive
+                                ? "border-sky-600 bg-sky-50 text-sky-700"
+                                : "border-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-700"
                             }`}
                     >
                         {tab.label} ({count})

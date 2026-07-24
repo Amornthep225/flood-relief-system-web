@@ -90,7 +90,7 @@ export const cards = {
 
     userSosTracking: {
         card:
-            "bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden relative",
+            "bg-green-900 rounded-3xl shadow-xl border border-slate-100 overflow-hidden relative",
 
         info:
             "mt-3 bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center gap-3",
@@ -190,10 +190,10 @@ export const cards = {
 
     donorHistory: {
         summaryPrimary:
-            "bg-gradient-to-br from-sky-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg shadow-sky-200 relative overflow-hidden group hover:scale-[1.02] transition-transform",
+            "bg-white/95 rounded-2xl border border-sky-200 p-6 text-slate-800 shadow-lg shadow-sky-900/10 relative overflow-hidden group hover:scale-[1.02] transition-transform",
 
         summary:
-            "bg-gradient-to-br from-sky-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg shadow-sky-200 relative overflow-hidden group hover:scale-[1.02] transition-transform",
+            "bg-white/95 rounded-2xl border border-sky-200 p-6 text-slate-800 shadow-lg shadow-sky-900/10 relative overflow-hidden group hover:scale-[1.02] transition-transform",
 
         card:
             "bg-white rounded-2xl shadow-sm border border-slate-100 p-6 relative overflow-hidden hover:shadow-md transition-all",
