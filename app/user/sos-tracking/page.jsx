@@ -121,7 +121,6 @@ export default function SosTrackingPage() {
             backHref="/user/sos-home"
             logoutHref="/user/users-login"
             pageClass="bg-mainColorUserPage"
-            showHome = {false}
         >   
             {loading ? (
                 <PageState

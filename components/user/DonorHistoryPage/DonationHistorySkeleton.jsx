@@ -6,14 +6,16 @@ export default function DonationHistorySkeleton() {
                 <div className="h-28 rounded-2xl bg-slate-200" />
             </div>
 
-            <div className="h-12 rounded-xl bg-slate-200" />
+            <div className="h-12 rounded-2xl border border-slate-200 bg-white" />
 
-            {[1, 2, 3].map((item) => (
-                <div
-                    key={item}
-                    className="h-40 rounded-2xl bg-slate-200"
-                />
-            ))}
+            <div className="space-y-4 rounded-3xl border border-slate-200 bg-slate-100 p-4">
+                {[1, 2, 3].map((item) => (
+                    <div
+                        key={item}
+                        className="h-40 rounded-2xl bg-white"
+                    />
+                ))}
+            </div>
         </div>
     );
 }

@@ -12,7 +12,7 @@ export default function UserLayout({
     logoutHref = "/user/users-login",
     pageClass = "bg-mainColorUserPage",
     showBack = true,
-    showHome = true,
+    showHome = true
 }) {
     return (
         <RoleGuard role="User" storageKey="user" loginPath="/user/users-login">

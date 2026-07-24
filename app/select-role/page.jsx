@@ -39,8 +39,6 @@ export default function SelectRolePage() {
             homeHref="/user/sos-home"
             backHref="/select-role"
             logoutHref="/user/users-login"
-            showBack = {false}
-            showHome = {false}
         >
             <main className="flex-1 flex items-center justify-center p-6 md:p-12">
                 <div className="max-w-6xl w-full">

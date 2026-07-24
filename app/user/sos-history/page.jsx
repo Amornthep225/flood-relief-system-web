@@ -151,7 +151,6 @@ export default function SosHistoryPage() {
             homeHref="/user/sos-home"
             backHref="/user/sos-home"
             logoutHref="/user/users-login"
-            showHome = {false}
         >
             <section className={`w-full p-4 md:p-6 ${colors.history.page}`}>
                 {/* Header Section */}
