@@ -12,15 +12,18 @@ export default function StaffNavbar({
     homeHref = "/staff/dashboard",
     backHref = "/staff/dashboard",
     logoutHref = "/staff/login",
+    showHome = true,
+    showBack = true,
+    showLogout = true,
     options = {},
 }) {
     const router = useRouter();
     const [staff, setStaff] = useState(null);
 
     const {
-        home = false,
-        back = false,
-        logout = true,
+        home = showHome,
+        back = showBack,
+        logout = showLogout,
         notification = true,
         profile = true,
         hotlineButton = true,

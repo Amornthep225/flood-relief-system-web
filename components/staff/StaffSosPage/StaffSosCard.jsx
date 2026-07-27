@@ -147,7 +147,7 @@ export default function StaffSosCard({
 
                     {!isWaiting && !isCompleted && (
                         <Link
-                            href={`/staff/staff-mission?id=${request.id}`}
+                            href={`/staff/staff-mission-active?id=${request.id}`}
                             className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white shadow-md shadow-orange-200 transition hover:bg-orange-600"
                         >
                             <span className="material-symbols-outlined text-lg">

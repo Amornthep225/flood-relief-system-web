@@ -1,16 +1,12 @@
 import { API_URL } from "@/services/config";
 
 function getToken() {
-    if (typeof window === "undefined") {
-        return null;
-    }
-
+    if (typeof window === "undefined") return null;
     return localStorage.getItem("token");
 }
 
 async function readApiResponse(response) {
     const text = await response.text();
-
     let data = {};
 
     if (text) {
@@ -23,118 +19,110 @@ async function readApiResponse(response) {
 
     if (!response.ok) {
         if (response.status === 401) {
-            throw new Error(
-                "Token หมดอายุหรือไม่มีสิทธิ์ กรุณาเข้าสู่ระบบใหม่"
-            );
+            throw new Error("Token หมดอายุหรือไม่มีสิทธิ์ กรุณาเข้าสู่ระบบใหม่");
         }
-
         if (response.status === 403) {
-            throw new Error("คุณไม่มีสิทธิ์ใช้งานส่วนนี้");
+            throw new Error(data.message || "คุณไม่มีสิทธิ์ใช้งานส่วนนี้");
         }
-
         if (response.status === 404) {
-            throw new Error(
-                data.message || "ไม่พบข้อมูลคำขอความช่วยเหลือ"
-            );
+            throw new Error(data.message || "ไม่พบข้อมูลคำขอความช่วยเหลือ");
         }
-
         throw new Error(
-            data.message ||
-                text ||
-                `เกิดข้อผิดพลาดจากเซิร์ฟเวอร์ (${response.status})`
+            data.message || text || `เกิดข้อผิดพลาดจากเซิร์ฟเวอร์ (${response.status})`
         );
     }
 
     return data;
 }
 
-function createAuthorizedHeaders(token, hasBody = false) {
+function authorizedHeaders(token, hasBody = false) {
     return {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
-        ...(hasBody
-            ? {
-                  "Content-Type": "application/json",
-              }
-            : {}),
+        ...(hasBody ? { "Content-Type": "application/json" } : {}),
     };
 }
 
-export async function getStaffSosRequests(params = {}) {
+async function authorizedFetch(url, options = {}) {
     const token = getToken();
-
-    if (!token) {
-        throw new Error("ไม่พบ Token กรุณาเข้าสู่ระบบใหม่");
-    }
-
-    const query = new URLSearchParams();
-
-    if (params.startDate) {
-        query.set("startDate", params.startDate);
-    }
-
-    if (params.endDate) {
-        query.set("endDate", params.endDate);
-    }
-
-    if (params.status) {
-        query.set("status", params.status);
-    }
-
-    const queryString = query.toString();
-
-    const url = `${API_URL}/sos-requests${
-        queryString ? `?${queryString}` : ""
-    }`;
+    if (!token) throw new Error("ไม่พบ Token กรุณาเข้าสู่ระบบใหม่");
 
     const response = await fetch(url, {
-        method: "GET",
-        headers: createAuthorizedHeaders(token),
+        ...options,
+        headers: {
+            ...authorizedHeaders(token, Boolean(options.body)),
+            ...(options.headers || {}),
+        },
         cache: "no-store",
     });
 
     return readApiResponse(response);
 }
 
-export async function getStaffSosRequestById(id) {
-    const token = getToken();
-
-    if (!token) {
-        throw new Error("ไม่พบ Token กรุณาเข้าสู่ระบบใหม่");
-    }
-
-    if (!id) {
-        throw new Error("ไม่พบรหัสคำขอความช่วยเหลือ");
-    }
-
-    const response = await fetch(
-        `${API_URL}/sos-requests/${encodeURIComponent(id)}`,
-        {
-            method: "GET",
-            headers: createAuthorizedHeaders(token),
-            cache: "no-store",
-        }
-    );
-
-    return readApiResponse(response);
+export async function getPendingSosRequests() {
+    return authorizedFetch(`${API_URL}/sos-requests/pending`);
 }
 
-export async function acceptSosRequest(id) {
-    const token = getToken();
+export async function getMyAssignedSosRequests() {
+    return authorizedFetch(`${API_URL}/sos-requests/staff/me`);
+}
 
-    if (!token) {
-        throw new Error("ไม่พบ Token กรุณาเข้าสู่ระบบใหม่");
+export async function getStaffSosRequests(params = {}) {
+    const [pendingResponse, assignedResponse] = await Promise.all([
+        getPendingSosRequests(),
+        getMyAssignedSosRequests(),
+    ]);
+
+    const pending = Array.isArray(pendingResponse) ? pendingResponse : [];
+    const assigned = Array.isArray(assignedResponse) ? assignedResponse : [];
+    const map = new Map();
+
+    [...pending, ...assigned].forEach((item) => {
+        if (item?.id) map.set(item.id, item);
+    });
+
+    let requests = Array.from(map.values());
+
+    if (params.status) {
+        const status = String(params.status).toLowerCase();
+        requests = requests.filter(
+            (item) => String(item.status || "").toLowerCase() === status
+        );
     }
 
-    const response = await fetch(
-        `${API_URL}/sos-requests/${encodeURIComponent(id)}/accept`,
+    if (params.startDate) {
+        const start = new Date(`${params.startDate}T00:00:00`);
+        requests = requests.filter((item) => new Date(item.createdAt) >= start);
+    }
+
+    if (params.endDate) {
+        const end = new Date(`${params.endDate}T23:59:59.999`);
+        requests = requests.filter((item) => new Date(item.createdAt) <= end);
+    }
+
+    return requests;
+}
+
+export async function getStaffSosRequestById(id) {
+    if (!id) throw new Error("ไม่พบรหัสคำขอความช่วยเหลือ");
+    return authorizedFetch(
+        `${API_URL}/sos-requests/${encodeURIComponent(id)}`
+    );
+}
+
+export async function acceptSosRequest(
+    id,
+    { priority = "Normal", staffRemark = "" } = {}
+) {
+    if (!id) throw new Error("ไม่พบรหัสคำขอความช่วยเหลือ");
+
+    return authorizedFetch(
+        `${API_URL}/sos-requests/${encodeURIComponent(id)}/assign`,
         {
             method: "PUT",
-            headers: createAuthorizedHeaders(token),
+            body: JSON.stringify({ priority, staffRemark }),
         }
     );
-
-    return readApiResponse(response);
 }
 
 export async function updateSosRequestStatus(
@@ -142,23 +130,14 @@ export async function updateSosRequestStatus(
     status,
     staffRemark = ""
 ) {
-    const token = getToken();
+    if (!id) throw new Error("ไม่พบรหัสคำขอความช่วยเหลือ");
+    if (!status) throw new Error("กรุณาระบุสถานะ");
 
-    if (!token) {
-        throw new Error("ไม่พบ Token กรุณาเข้าสู่ระบบใหม่");
-    }
-
-    const response = await fetch(
+    return authorizedFetch(
         `${API_URL}/sos-requests/${encodeURIComponent(id)}/status`,
         {
             method: "PUT",
-            headers: createAuthorizedHeaders(token, true),
-            body: JSON.stringify({
-                status,
-                staffRemark,
-            }),
+            body: JSON.stringify({ status, staffRemark }),
         }
     );
-
-    return readApiResponse(response);
 }

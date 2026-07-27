@@ -35,9 +35,9 @@ const menu = [
 export default function StaffHomePage() {
     return (
         <StaffLayout
-            homeHref="/staff/staff-home"
-            backHref="/"
             logoutHref="/staff/staff-login"
+            showHome = {false}
+            showBack = {false}
         >
             <div className="space-y-8">
                 <StaffHomeHero />
