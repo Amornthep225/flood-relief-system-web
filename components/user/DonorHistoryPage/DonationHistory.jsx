@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-
 import DonationSummary from "./DonationSummary";
 import DonationTabs from "./DonationTabs";
 import DonationHistoryList from "./DonationHistoryList";
@@ -27,7 +26,6 @@ function normalizeDonations(response) {
     if (Array.isArray(response)) return response;
     if (Array.isArray(response?.donations)) return response.donations;
     if (Array.isArray(response?.data)) return response.data;
-
     return [];
 }
 

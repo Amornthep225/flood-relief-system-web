@@ -93,24 +93,45 @@ export async function createSosRequest(payload) {
     return readApiResponse(response);
 }
 
-export async function getMySosRequests() {
+export async function getMySosRequests(params = {}) {
     const token = getToken();
-
     if (!token) {
         throw new Error("ไม่พบ Token กรุณาเข้าสู่ระบบใหม่");
     }
-
+    const query = new URLSearchParams();
+    if (params.startDate) {
+        query.append(
+            "startDate",
+            params.startDate
+        );
+    }
+    if (params.endDate) {
+        query.append(
+            "endDate",
+            params.endDate
+        );
+    }
+    if (params.status) {
+        query.append(
+            "status",
+            params.status
+        );
+    }
+    const url =
+        `${API_URL}/sos-requests/my?${query.toString()}`;
     const response = await fetch(
-        `${API_URL}/sos-requests/my`,
+        url,
         {
             method: "GET",
             headers: {
                 Accept: "application/json",
-                Authorization: `Bearer ${token}`,
+                Authorization:
+                    `Bearer ${token}`,
             },
             cache: "no-store",
         }
     );
+
 
     return readApiResponse(response);
 }

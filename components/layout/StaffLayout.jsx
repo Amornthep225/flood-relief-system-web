@@ -1,30 +1,32 @@
 import { colors } from "@/constants/colors";
 import RoleGuard from "@/components/RoleGuard/RoleGuard";
-import UserNavbar from "@/components/user/UserNavbar/user-navbar";
 import PublicFooter from "@/components/common/Footer/PublicFooter";
+import StaffNavbar from "@/components/staff/StaffNavbar/staff-navbar";
 
 const theme = colors.role;
 
-export default function UserLayout({
+export default function StaffLayout({
     children,
-    backHref = "/select-role",
-    homeHref = "/user/sos-home",
-    logoutHref = "/user/users-login",
-    pageClass = "bg-mainColorUserPage"
+    backHref = "/staff/dashboard",
+    logoutHref = "/staff/staff-login",
+    pageClass = ""
 }) {
     return (
-        <RoleGuard role="User" storageKey="user" loginPath="/user/users-login">
-            <div className={`min-h-screen flex flex-col ${pageClass || colors.dashboardUserSos.page}`}>
-                <UserNavbar
+        <RoleGuard
+            role="Staff"
+            storageKey="staff"
+            loginPath="/staff/staff-login"
+        >
+            <div className="min-h-screen flex flex-col bg-[#eef8ff]">
+                <StaffNavbar
                     theme={theme}
                     hotline="1784"
                     notificationCount={0}
-                    homeHref={homeHref}
                     backHref={backHref}
                     logoutHref={logoutHref}
                     options={{
                         back: true,
-                        home: false,
+                        home: true,
                         logout: true,
                         notification: true,
                         profile: true,
@@ -32,7 +34,7 @@ export default function UserLayout({
                     }}
                 />
 
-                <main className={`w-full max-w-7xl mx-auto px-6 pt-8 pb-8 ${pageClass}`}>
+                <main className="w-full max-w-7xl mx-auto px-6 pt-8 pb-8 flex-1">
                     {children}
                 </main>
 

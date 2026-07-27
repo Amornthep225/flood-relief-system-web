@@ -2,24 +2,29 @@ import SosTimeline from "./SosTimeline";
 import AssignedStaffCard from "./AssignedStaffCard";
 import TrackingMapSection from "./TrackingMapSection";
 import TrackingActions from "./TrackingActions";
+import SosRequestItems from "./SosRequestItems";
 
 export default function SosTrackingCard({ request }) {
     return (
-        <div className="w-full max-w-lg mx-auto">
-            <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+        <div className="min-h-screen w-full py-8 px-4 sm:px-6 bg-sosTrickingPage">
+            <div className="w-full max-w-5xl mx-auto rounded-3xl shadow-xl borde overflow-hidden bg-sky-200">
                 <TrackingHeader requestId={request.id} />
 
-                <div className="p-6 md:p-8">
+                <div className="p-6 md:p-8 space-y-8">
+                    {/* รายการของที่ร้องขอ */}
+                    <SosRequestItems items={request.items} />
+
+                    {/* Timeline */}
                     <SosTimeline request={request} />
 
+                    {/* เจ้าหน้าที่ */}
                     <AssignedStaffCard
                         staffName={request.assignedStaffName}
-                        phoneNumber={
-                            request.assignedStaffPhoneNumber
-                        }
+                        phoneNumber={request.assignedStaffPhoneNumber}
                         centerName={request.centerName}
                     />
 
+                    {/* แผนที่ */}
                     <TrackingMapSection
                         latitude={request.latitude}
                         longitude={request.longitude}
@@ -35,7 +40,7 @@ export default function SosTrackingCard({ request }) {
 
 function TrackingHeader({ requestId }) {
     return (
-        <div className="p-7 md:p-8 text-center border-b border-slate-100 bg-slate-50/60">
+        <div className="p-7 md:p-8 text-center border-b border-blue-500 bg-sky-200">
             <h1 className="text-2xl font-bold text-slate-800">
                 สถานะความช่วยเหลือ
             </h1>
@@ -44,7 +49,6 @@ function TrackingHeader({ requestId }) {
                 <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">
                     CASE ID:
                 </span>
-
                 <span className="text-sm font-mono font-bold text-sky-600">
                     #{requestId}
                 </span>
