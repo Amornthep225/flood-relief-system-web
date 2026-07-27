@@ -15,7 +15,8 @@ import SosCategorySelector from "@/components/user/SosForm/SosCategorySelector";
 import SosItemSelector from "@/components/user/SosForm/SosItemSelector";
 import LocationPicker from "@/components/user/SosForm/LocationPicker";
 import ConfirmSosModal from "@/components/user/SosForm/ConfirmSosModal";
-
+import PrioritySelector from "@/components/user/SosForm/PrioritySelector";
+import UserRemark from "@/components/user/SosForm/UserRemark";
 const initialLocation = {
     latitude: null,
     longitude: null,
@@ -37,10 +38,7 @@ export default function SosRequestForm() {
         useState([]);
 
     const [quantities, setQuantities] = useState({});
-
-    const [
-        reliefBagQuantity,
-    ] = useState(1);
+    const [priority, setPriority] = useState("Normal");
 
     const [userRemark, setUserRemark] = useState("");
     const [location, setLocation] =
@@ -252,8 +250,17 @@ export default function SosRequestForm() {
 
             return false;
         }
+        if (!priority) {
+            await Swal.fire({
+                icon: "warning",
+                title: "กรุณาเลือกระดับความเร่งด่วน",
+                text: "โปรดเลือกระดับความเร่งด่วนก่อนส่งคำขอ",
+            });
 
+            return false;
+        }
         return true;
+
     };
 
     const openConfirmModal = async () => {
@@ -267,133 +274,133 @@ export default function SosRequestForm() {
     };
 
     const handleSubmit = async () => {
-    if (isSubmitting) {
-        return;
-    }
-    setIsSubmitting(true);
+        if (isSubmitting) {
+            return;
+        }
+        setIsSubmitting(true);
 
-    try {
+        try {
 
-        const payload = {
+            const payload = {
 
-            latitude:
-                Number(location.latitude),
+                latitude:
+                    Number(location.latitude),
 
-            longitude:
-                Number(location.longitude),
+                longitude:
+                    Number(location.longitude),
 
-            addressDetail:
-                location.addressDetail.trim(),
+                addressDetail:
+                    location.addressDetail.trim(),
 
-            userRemark:
-                userRemark.trim() || null,
+                userRemark:
+                    userRemark.trim() || null,
+                priority: priority,
 
+                items:
+                    selectedItemIds.map(
+                        (itemId) => ({
 
-            items:
-                selectedItemIds.map(
-                    (itemId) => ({
+                            reliefItemId: itemId,
 
-                        reliefItemId: itemId,
+                            quantity:
+                                Number(
+                                    quantities[itemId]
+                                ) || 1
 
-                        quantity:
-                            Number(
-                                quantities[itemId]
-                            ) || 1
-
-                    })
-                )
-        };
-
-
-        const response =
-            await createSosRequest(payload);
+                        })
+                    )
+            };
 
 
-
-        setShowConfirm(false);
+            const response =
+                await createSosRequest(payload);
 
 
 
-        await Swal.fire({
+            setShowConfirm(false);
 
-            icon:"success",
-
-            title:"ส่งคำขอสำเร็จ",
-
-            text:
-                `รหัสคำขอ: ${response.sosRequestId}`,
-
-            timer:1500,
-
-            showConfirmButton:false,
-
-            allowOutsideClick:false
-
-        });
-
-
-
-        router.push(
-            `/user/sos-success?id=${response.sosRequestId}`
-        );
-
-
-
-    } catch(error){
-
-
-        if(
-            error.message.includes("Token") ||
-            error.message.includes("เข้าสู่ระบบใหม่")
-        ){
-
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
 
 
             await Swal.fire({
 
-                icon:"warning",
+                icon: "success",
 
-                title:"เซสชันหมดอายุ",
+                title: "ส่งคำขอสำเร็จ",
 
-                text:error.message
+                text:
+                    `รหัสคำขอ: ${response.sosRequestId}`,
+
+                timer: 1500,
+
+                showConfirmButton: false,
+
+                allowOutsideClick: false
 
             });
 
 
-            router.replace(
-                "/user/users-login"
+
+            router.push(
+                `/user/sos-success?id=${response.sosRequestId}`
             );
 
 
-            return;
+
+        } catch (error) {
+
+
+            if (
+                error.message.includes("Token") ||
+                error.message.includes("เข้าสู่ระบบใหม่")
+            ) {
+
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+
+
+                await Swal.fire({
+
+                    icon: "warning",
+
+                    title: "เซสชันหมดอายุ",
+
+                    text: error.message
+
+                });
+
+
+                router.replace(
+                    "/user/users-login"
+                );
+
+
+                return;
+
+            }
+
+
+
+            await Swal.fire({
+
+                icon: "error",
+
+                title: "ส่งคำขอไม่สำเร็จ",
+
+                text:
+                    error.message ||
+                    "เกิดข้อผิดพลาด"
+
+            });
+
+
+
+        } finally {
+
+            setIsSubmitting(false);
 
         }
 
-
-
-        await Swal.fire({
-
-            icon:"error",
-
-            title:"ส่งคำขอไม่สำเร็จ",
-
-            text:
-                error.message ||
-                "เกิดข้อผิดพลาด"
-
-        });
-
-
-
-    } finally {
-
-        setIsSubmitting(false);
-
-    }
-
-};
+    };
 
     if (loadingData) {
         return (
@@ -489,11 +496,22 @@ export default function SosRequestForm() {
                                 />
                             </section>
                         )}
+                    <section className="space-y-5">
+                        <FormSectionTitle
+                            number="3"
+                            title="ระดับความเร่งด่วน"
+                            description="กรุณาเลือกระดับความเร่งด่วนตามสถานการณ์จริง"
+                        />
+                        <PrioritySelector
+                            value={priority}
+                            onChange={setPriority}
+                        />
+                    </section>
 
 
                     <section className="space-y-5">
                         <FormSectionTitle
-                            number="3"
+                            number="4"
                             title="ตำแหน่งรับความช่วยเหลือ"
                             description="ใช้พิกัดปัจจุบันและระบุรายละเอียดสถานที่"
                         />
@@ -506,31 +524,19 @@ export default function SosRequestForm() {
                         />
                     </section>
 
+
                     <section className="space-y-5">
                         <FormSectionTitle
                             number="4"
                             title="หมายเหตุเพิ่มเติม"
-                            description="ข้อมูลผู้ประสบภัยหรือความต้องการเร่งด่วน"
+                            description="ระบุรายละเอียดเพิ่มเติม เช่นมีผู้สูงอายุ เด็กเล็ก ผู้ป่วยติดเตียง เป็นต้น"
                         />
 
-                        <textarea
-                            rows={4}
-                            maxLength={500}
+                        <UserRemark
                             value={userRemark}
-                            onChange={(event) =>
-                                setUserRemark(
-                                    event.target.value
-                                )
-                            }
-                            placeholder="เช่น มีเด็กเล็ก ผู้สูงอายุ ผู้ป่วยติดเตียง หรือมีระดับน้ำสูง"
-                            className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                            onChange={setUserRemark}
                         />
-
-                        <p className="text-right text-xs text-slate-400">
-                            {userRemark.length}/500
-                        </p>
                     </section>
-
                     <button
                         type="button"
                         onClick={openConfirmModal}
