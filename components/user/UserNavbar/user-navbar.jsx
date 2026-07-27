@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { buttons } from "@/constants/buttons";
 
-<<<<<<<< HEAD:components/user/UserNavbar/user-navbar.jsx
 export default function UserNavbar({
     theme,
     hotline = "1784",
@@ -17,76 +16,37 @@ export default function UserNavbar({
 }) {
     const router = useRouter();
     const [user, setUser] = useState(null);
-========
-export default function StaffNavbar({
-    theme,
-    hotline = "1784",
-    notificationCount = 0,
-    homeHref = "/staff/dashboard",
-    backHref = "/staff/dashboard",
-    logoutHref = "/staff/login",
-    showHome = true,
-    showBack = true,
-    showLogout = true,
-    options = {},
-}) {
-    const router = useRouter();
-    const [staff, setStaff] = useState(null);
->>>>>>>> staff:components/staff/StaffNavbar/staff-navbar.jsx
 
     const {
-        home = showHome,
-        back = showBack,
-        logout = showLogout,
+        home = true,
+        back = false,
+        logout = true,
         notification = true,
         profile = true,
         hotlineButton = true,
     } = options;
 
     useEffect(() => {
-<<<<<<<< HEAD:components/user/UserNavbar/user-navbar.jsx
-    const token = localStorage.getItem("token");
-    const userStorage = localStorage.getItem("user");
-
-    if (!token || !userStorage) {
-        router.replace("/user/users-login");
-        return;
-    }
-
-    try {
-        setUser(JSON.parse(userStorage));
-    } catch {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        router.replace("/user/users-login");
-    }
-}, [router]);
-
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-========
         const token = localStorage.getItem("token");
-        const staffStorage = localStorage.getItem("staff");
+        const userStorage = localStorage.getItem("user");
 
-        if (!token || !staffStorage) {
-            router.replace("/staff/login");
+        if (!token || !userStorage) {
+            router.replace("/user/users-login");
             return;
         }
 
         try {
-            setStaff(JSON.parse(staffStorage));
+            setUser(JSON.parse(userStorage));
         } catch {
             localStorage.removeItem("token");
-            localStorage.removeItem("staff");
-            router.replace("/staff/login");
+            localStorage.removeItem("user");
+            router.replace("/user/users-login");
         }
     }, [router]);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
-        localStorage.removeItem("staff");
->>>>>>>> staff:components/staff/StaffNavbar/staff-navbar.jsx
+        localStorage.removeItem("user");
         router.replace(logoutHref);
     };
 
@@ -96,32 +56,20 @@ export default function StaffNavbar({
                 {/* Logo */}
                 <Link href={homeHref} className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-[#2a93d5] rounded-lg flex items-center justify-center text-white">
-<<<<<<<< HEAD:components/user/UserNavbar/user-navbar.jsx
-                        <span className="material-symbols-outlined text-2xl">
-                            waves
-                        </span>
-========
                         <span className="material-symbols-outlined">waves</span>
->>>>>>>> staff:components/staff/StaffNavbar/staff-navbar.jsx
                     </div>
 
-                    <h2
-                        className={`${theme.primaryText} text-xl font-black uppercase`}
-                    >
+                    <h2 className={`${theme.primaryText} text-xl font-black uppercase`}>
                         Flood Relief
                     </h2>
                 </Link>
 
                 <div className="flex items-center gap-5">
                     {back && (
-<<<<<<<< HEAD:components/user/UserNavbar/user-navbar.jsx
-                        <Link href={backHref} className="flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-sky-600 transition-colors">
-========
                         <Link
                             href={backHref}
-                            className="flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-sky-600"
+                            className="flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-sky-600 transition-colors"
                         >
->>>>>>>> staff:components/staff/StaffNavbar/staff-navbar.jsx
                             <span className="material-symbols-outlined text-[18px]">
                                 arrow_back
                             </span>
@@ -130,28 +78,19 @@ export default function StaffNavbar({
                     )}
 
                     {home && (
-<<<<<<<< HEAD:components/user/UserNavbar/user-navbar.jsx
-                        <Link href={homeHref} className={`${theme.primaryText} text-sm font-bold hover:text-[#2a93d5] transition-colors`}>
-========
                         <Link
                             href={homeHref}
-                            className={`${theme.primaryText} text-sm font-bold hover:text-[#2a93d5]`}
+                            className={`${theme.primaryText} text-sm font-bold hover:text-[#2a93d5] transition-colors`}
                         >
->>>>>>>> staff:components/staff/StaffNavbar/staff-navbar.jsx
                             หน้าแรก
                         </Link>
                     )}
 
                     {logout && (
                         <button
-<<<<<<<< HEAD:components/user/UserNavbar/user-navbar.jsx
                             type="button"
                             onClick={handleLogout}
                             className="text-sm font-bold text-slate-500 hover:text-red-500 transition-colors"
-========
-                            onClick={handleLogout}
-                            className="text-sm font-bold text-slate-500 hover:text-red-500"
->>>>>>>> staff:components/staff/StaffNavbar/staff-navbar.jsx
                         >
                             Logout
                         </button>
@@ -175,9 +114,8 @@ export default function StaffNavbar({
                         </button>
                     )}
 
-                    {profile && staff && (
+                    {profile && user && (
                         <div className="flex items-center gap-3">
-<<<<<<<< HEAD:components/user/UserNavbar/user-navbar.jsx
                             <div className="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold border border-slate-200">
                                 {user.fullName?.charAt(0) || "U"}
                             </div>
@@ -186,34 +124,18 @@ export default function StaffNavbar({
                                 <p className={`${theme.primaryText} text-sm font-bold`}>
                                     {user.fullName}
                                 </p>
-                                <p className="text-xs text-slate-400">
-                                    {user.email}
-========
-                            <div className="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold">
-                                {staff.fullName?.charAt(0) || "S"}
-                            </div>
-
-                            <div className="hidden md:block">
-                                <p className="text-sm font-bold text-slate-800">
-                                    {staff.fullName}
->>>>>>>> staff:components/staff/StaffNavbar/staff-navbar.jsx
-                                </p>
+                                <p className="text-xs text-slate-400">{user.email}</p>
                             </div>
                         </div>
                     )}
 
                     {hotlineButton && (
                         <div className="flex flex-col items-center">
-                            <span
-                                className={`${theme.emergencyText} text-[10px] font-bold`}
-                            >
+                            <span className={`${theme.emergencyText} text-[10px] font-bold`}>
                                 สายด่วนฉุกเฉิน
                             </span>
 
-                            <a
-                                href={`tel:${hotline}`}
-                                className={buttons.common.hotline}
-                            >
+                            <a href={`tel:${hotline}`} className={buttons.common.hotline}>
                                 {hotline}
                             </a>
                         </div>
