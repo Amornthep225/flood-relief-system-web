@@ -12,15 +12,17 @@ export default function UserNavbar({
     homeHref = "/",
     backHref = "/",
     logoutHref = "/user/users-login",
+    showBack = true,
+    showHome = true,
     options = {},
 }) {
     const router = useRouter();
     const [user, setUser] = useState(null);
 
     const {
-        home = true,
-        back = false,
-        logout = true,
+        home = showHome,
+        back = showBack,
+        logout = false,
         notification = true,
         profile = true,
         hotlineButton = true,

@@ -7,6 +7,7 @@ export default function DonationHistoryPage() {
             homeHref="/user/donor-home"
             backHref="/user/donor-home"
             logoutHref="/user/users-login"
+            showHome = {false}
         >
             <DonationHistory />
         </UserLayout>
