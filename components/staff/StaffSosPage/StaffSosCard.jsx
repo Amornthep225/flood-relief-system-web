@@ -209,19 +209,33 @@ function PriorityBadge({ priority }) {
         .trim()
         .toLowerCase();
 
-    const high = ["high", "urgent", "critical"].includes(
-        value
-    );
+    const priorityConfig = {
+        critical: {
+            label: "วิกฤต",
+            className:
+                "bg-red-100 text-red-700 ring-1 ring-red-200",
+        },
+        urgent: {
+            label: "เร่งด่วน",
+            className:
+                "bg-orange-100 text-orange-700 ring-1 ring-orange-200",
+        },
+        normal: {
+            label: "ปกติ",
+            className:
+                "bg-slate-100 text-slate-600 ring-1 ring-slate-200",
+        },
+    };
+
+    const config =
+        priorityConfig[value] ||
+        priorityConfig.normal;
 
     return (
         <span
-            className={`rounded-full px-3 py-1 text-xs font-bold ${
-                high
-                    ? "bg-red-100 text-red-600"
-                    : "bg-slate-100 text-slate-500"
-            }`}
+            className={`rounded-full px-3 py-1 text-xs font-bold ${config.className}`}
         >
-            {high ? "เร่งด่วน" : "ปกติ"}
+            {config.label}
         </span>
     );
 }
@@ -333,4 +347,4 @@ function formatThaiDateTime(value) {
         hour: "2-digit",
         minute: "2-digit",
     });
-}
+} 

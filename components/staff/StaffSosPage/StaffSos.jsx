@@ -31,6 +31,65 @@ const INITIAL_FILTERS = {
     status: "",
 };
 
+const PRIORITY_ORDER = {
+    critical: 1,
+    urgent: 2,
+    normal: 3,
+};
+
+const STATUS_ORDER = {
+    pending: 1,
+    delivering: 2,
+    preparing: 3,
+    accepted: 4,
+    completed: 5,
+    cancelled: 6,
+    rejected: 7,
+};
+
+function normalizeSortValue(value) {
+    return String(value || "")
+        .trim()
+        .toLowerCase();
+}
+
+function sortSosRequests(requests) {
+    return [...requests].sort((first, second) => {
+        const firstPriority =
+            PRIORITY_ORDER[
+                normalizeSortValue(first.priority)
+            ] ?? 99;
+
+        const secondPriority =
+            PRIORITY_ORDER[
+                normalizeSortValue(second.priority)
+            ] ?? 99;
+
+        if (firstPriority !== secondPriority) {
+            return firstPriority - secondPriority;
+        }
+
+        const firstStatus =
+            STATUS_ORDER[
+                normalizeSortValue(first.status)
+            ] ?? 99;
+
+        const secondStatus =
+            STATUS_ORDER[
+                normalizeSortValue(second.status)
+            ] ?? 99;
+
+        if (firstStatus !== secondStatus) {
+            return firstStatus - secondStatus;
+        }
+
+        return (
+            new Date(second.createdAt || 0).getTime() -
+            new Date(first.createdAt || 0).getTime()
+        );
+    });
+}
+
 export default function StaffSos() {
     const hasLoaded = useRef(false);
 
@@ -64,15 +123,7 @@ export default function StaffSos() {
 
                 const data = normalizeRequests(response);
 
-                const sorted = [...data].sort(
-                    (first, second) =>
-                        new Date(
-                            second.createdAt || 0
-                        ).getTime() -
-                        new Date(
-                            first.createdAt || 0
-                        ).getTime()
-                );
+                const sorted = sortSosRequests(data);
 
                 setRequests(sorted);
             } catch (error) {
