@@ -11,6 +11,7 @@ export default function UserLayout({
     homeHref = "/user/sos-home",
     logoutHref = "/user/users-login",
     pageClass = "bg-mainColorUserPage"
+    
 }) {
     return (
         <RoleGuard role="User" storageKey="user" loginPath="/user/users-login">

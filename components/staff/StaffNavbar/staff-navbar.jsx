@@ -12,6 +12,8 @@ export default function StaffNavbar({
     homeHref = "/staff/dashboard",
     backHref = "/staff/dashboard",
     logoutHref = "/staff/login",
+    showHome = true,
+    showBack = false,
     options = {},
 }) {
     const router = useRouter();
@@ -59,9 +61,7 @@ export default function StaffNavbar({
                         <span className="material-symbols-outlined">waves</span>
                     </div>
 
-                    <h2
-                        className={`${theme.primaryText} text-xl font-black uppercase`}
-                    >
+                    <h2 className={`${theme.primaryText} text-xl font-black uppercase`}>
                         Flood Relief
                     </h2>
                 </Link>
@@ -132,16 +132,11 @@ export default function StaffNavbar({
 
                     {hotlineButton && (
                         <div className="flex flex-col items-center">
-                            <span
-                                className={`${theme.emergencyText} text-[10px] font-bold`}
-                            >
+                            <span className={`${theme.emergencyText} text-[10px] font-bold`}>
                                 สายด่วนฉุกเฉิน
                             </span>
 
-                            <a
-                                href={`tel:${hotline}`}
-                                className={buttons.common.hotline}
-                            >
+                            <a href={`tel:${hotline}`} className={buttons.common.hotline}>
                                 {hotline}
                             </a>
                         </div>

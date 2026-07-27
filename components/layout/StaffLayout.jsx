@@ -1,6 +1,5 @@
 import { colors } from "@/constants/colors";
 import RoleGuard from "@/components/RoleGuard/RoleGuard";
-import PublicFooter from "@/components/common/Footer/PublicFooter";
 import StaffNavbar from "@/components/staff/StaffNavbar/staff-navbar";
 
 const theme = colors.role;
@@ -9,7 +8,9 @@ export default function StaffLayout({
     children,
     backHref = "/staff/dashboard",
     logoutHref = "/staff/staff-login",
-    pageClass = ""
+    pageClass = "",
+    showHome = true,
+    showBack = false,
 }) {
     return (
         <RoleGuard
@@ -25,8 +26,8 @@ export default function StaffLayout({
                     backHref={backHref}
                     logoutHref={logoutHref}
                     options={{
-                        back: true,
-                        home: true,
+                        back: showBack,
+                        home: showHome,
                         logout: true,
                         notification: true,
                         profile: true,
@@ -38,7 +39,6 @@ export default function StaffLayout({
                     {children}
                 </main>
 
-                <PublicFooter theme={theme} />
             </div>
         </RoleGuard>
     );
