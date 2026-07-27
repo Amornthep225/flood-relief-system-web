@@ -7,6 +7,7 @@ export default function RequestHelpFormPage() {
             homeHref="/user/sos-home"
             backHref="/user/sos-home"
             logoutHref="/user/users-login"
+            showHome = {false}
         >
             <SosRequestForm />
         </UserLayout>

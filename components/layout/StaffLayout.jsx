@@ -24,6 +24,7 @@ export default function StaffLayout({
                     notificationCount={0}
                     backHref={backHref}
                     logoutHref={logoutHref}
+                    
                     options={{
                         back: true,
                         home: true,

@@ -8,6 +8,7 @@ export default function UserHomePage() {
             homeHref="/user/sos-home"
             backHref="/select-role"
             logoutHref="/user/users-login"
+            showHome = {false}
         >
             <div className="space-y-8">
                 <UserHero />

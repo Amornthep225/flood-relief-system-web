@@ -10,7 +10,9 @@ export default function UserLayout({
     backHref = "/select-role",
     homeHref = "/user/sos-home",
     logoutHref = "/user/users-login",
-    pageClass = "bg-mainColorUserPage"
+    pageClass = "bg-mainColorUserPage",
+    showBack = true,
+    showHome = true,
 }) {
     return (
         <RoleGuard role="User" storageKey="user" loginPath="/user/users-login">
@@ -23,8 +25,8 @@ export default function UserLayout({
                     backHref={backHref}
                     logoutHref={logoutHref}
                     options={{
-                        back: true,
-                        home: false,
+                        back: showBack,
+                        home: showHome,
                         logout: true,
                         notification: true,
                         profile: true,

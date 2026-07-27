@@ -7,6 +7,7 @@ export default function LowProductsPage() {
             homeHref="/user/donor-home"
             backHref="/user/donor-home"
             logoutHref="/user/users-login"
+            showHome = {false}
         >
             <LowProducts />
         </UserLayout>
