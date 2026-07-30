@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { cards } from "@/constants/cards";
@@ -18,7 +18,13 @@ export default function StaffLoginForm({ links }) {
     const [form, setForm] = useState(initialForm);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    useEffect(() => {
+        const token = localStorage.getItem("token");
 
+        if (token) {
+            router.replace("../../../staff/staff-home");
+        }
+    }, [router]);
     const handleChange = (e) => {
         setForm((prev) => ({
             ...prev,

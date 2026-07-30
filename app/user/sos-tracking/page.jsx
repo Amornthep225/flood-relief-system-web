@@ -16,7 +16,7 @@ export default function SosTrackingPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-    let isMounted = true;
+    const controller = new AbortController();
 
     const loadRequest = async () => {
         try {
@@ -24,96 +24,75 @@ export default function SosTrackingPage() {
 
             let requestData = null;
 
-            // กรณีมี id จากประวัติ
             if (requestId) {
-
                 requestData =
-                    await getSosRequestById(requestId);
-
-            } 
-            // กรณีเข้าจาก Home ไม่มี id
-            else {
-
+                    await getSosRequestById(
+                        requestId,
+                        controller.signal
+                    );
+            } else {
                 const data =
-                    await getMySosRequests();
-
+                    await getMySosRequests(
+                        {},
+                        controller.signal
+                    );
 
                 if (
                     !Array.isArray(data) ||
                     data.length === 0
                 ) {
-                    if(isMounted){
-                        setRequest(null);
-                    }
-
+                    setRequest(null);
                     return;
                 }
 
-
-                // เรียงใหม่ล่าสุดก่อน
                 const latestRequest =
                     [...data].sort(
-                        (a,b)=>
-                        new Date(b.createdAt)
-                        -
-                        new Date(a.createdAt)
+                        (a, b) =>
+                            new Date(b.createdAt) -
+                            new Date(a.createdAt)
                     )[0];
 
-
-                // ดึงรายละเอียดเต็มอีกครั้ง
                 requestData =
                     await getSosRequestById(
-                        latestRequest.id
+                        latestRequest.id,
+                        controller.signal
                     );
             }
 
-
-            if(isMounted){
-                setRequest(requestData);
+            setRequest(requestData);
+        } catch (error) {
+            if (error.name === "AbortError") {
+                return;
             }
-
-
-        } catch(error){
 
             console.error(
                 "โหลดข้อมูลคำขอไม่สำเร็จ:",
                 error
             );
 
-
-            if(isMounted){
-                setRequest(null);
-            }
-
+            setRequest(null);
 
             await Swal.fire({
-                icon:"error",
-                title:"โหลดข้อมูลไม่สำเร็จ",
+                icon: "error",
+                title: "โหลดข้อมูลไม่สำเร็จ",
                 text:
-                error.message ||
-                "ไม่สามารถโหลดข้อมูลได้",
-                confirmButtonText:"ตกลง"
+                    error.message ||
+                    "ไม่สามารถโหลดข้อมูลได้",
+                confirmButtonText: "ตกลง",
             });
-
-
         } finally {
-
-            if(isMounted){
+            if (!controller.signal.aborted) {
                 setLoading(false);
             }
         }
     };
 
-
     loadRequest();
 
-
-    return ()=>{
-        isMounted=false;
+    return () => {
+        controller.abort();
     };
-
-
-},[requestId]);
+}, [requestId]);
 
     return (
         <UserLayout

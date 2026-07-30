@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
@@ -22,7 +22,13 @@ export default function UserLoginForm({ links }) {
         useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    useEffect(() => {
+        const token = localStorage.getItem("token");
 
+        if (token) {
+            router.replace("../../../select-role");
+        }
+    }, [router]);
     const handleChange = (event) => {
         const { name, value } = event.target;
 

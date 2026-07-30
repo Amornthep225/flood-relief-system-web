@@ -40,6 +40,7 @@ export default function SelectRolePage() {
             backHref="/select-role"
             logoutHref="/user/users-login"
             showHome =  {false}
+            showBack = {false}
         >
             <main className="flex-1 flex items-center justify-center p-6 md:p-12">
                 <div className="max-w-6xl w-full">
