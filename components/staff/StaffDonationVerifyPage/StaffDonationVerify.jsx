@@ -87,6 +87,12 @@ export default function StaffDonationVerify() {
             setIsReceiving(true);
             const response = await receiveDonation(donation.id);
 
+            setDonation((current) => ({
+                ...current,
+                status: response?.data?.status || response?.status || "Received",
+                canReceive: false,
+            }));
+
             await Swal.fire({
                 icon: "success",
                 title: "รับของเข้าคลังสำเร็จ",

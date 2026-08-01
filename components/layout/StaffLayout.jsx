@@ -12,6 +12,7 @@ export default function StaffLayout({
     showHome = true,
     showBack = true,
     showLogout = true,
+    contentClass = "",
 }) {
     return (
         <RoleGuard
@@ -26,6 +27,7 @@ export default function StaffLayout({
                     notificationCount={0}
                     backHref={backHref}
                     logoutHref={logoutHref}
+                    contentClass = {contentClass}
                     options={{
                         back: showBack,
                         home: showHome,

@@ -15,6 +15,7 @@ export default function StaffNavbar({
     showHome = true,
     showBack = true,
     showLogout = true,
+
     options = {},
 }) {
     const router = useRouter();

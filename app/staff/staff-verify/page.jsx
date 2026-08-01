@@ -5,8 +5,7 @@ export default function StaffVerifyPage() {
     return (
         <StaffLayout
             backHref="/staff/staff-home"
-            showBack
-            showHome
+            showHome = {false}
         >
             <StaffDonationVerify />
         </StaffLayout>

@@ -69,9 +69,8 @@ export async function receiveDonation(donationId) {
     const response = await fetch(
         `${API_URL}/donations/${encodeURIComponent(donationId)}/receive`,
         {
-            method: "PUT",
+            method: "POST",
             headers: authHeaders(),
-            body: JSON.stringify({}),
         }
     );
 
