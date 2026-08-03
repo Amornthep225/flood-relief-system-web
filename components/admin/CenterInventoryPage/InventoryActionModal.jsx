@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function InventoryActionModal({
     mode,
@@ -9,13 +9,13 @@ export default function InventoryActionModal({
     onClose,
     onSubmit,
 }) {
-    const [quantity, setQuantity] =
-        useState("");
-    const [note, setNote] =
-        useState("");
+    const [quantity, setQuantity] = useState("");
 
-    const isStockIn =
-        mode === "stock-in";
+    useEffect(() => {
+        setQuantity(
+            String(item.minimumQuantity ?? 0)
+        );
+    }, [item]);
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 px-4 backdrop-blur-sm">
@@ -24,82 +24,59 @@ export default function InventoryActionModal({
                     event.preventDefault();
 
                     onSubmit({
-                        reliefItemId:
-                            item.reliefItemId,
                         quantity,
-                        note,
                     });
                 }}
                 className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
             >
                 <div className="border-b border-slate-100 bg-slate-50 p-5">
                     <h2 className="text-lg font-bold text-slate-800">
-                        {isStockIn
-                            ? "เพิ่มสต็อก"
-                            : "ตัดสต็อก"}
+                        กำหนดจุดแจ้งเตือนขั้นต่ำ
                     </h2>
 
                     <p className="mt-1 text-sm text-slate-500">
-                        {
-                            item.reliefItemName
-                        }
+                        {item.reliefItemName}
                     </p>
                 </div>
 
+
                 <div className="space-y-4 p-6">
+
                     <div className="rounded-xl bg-slate-50 p-4">
                         <p className="text-xs text-slate-500">
                             คงเหลือปัจจุบัน
                         </p>
 
                         <p className="text-2xl font-bold text-slate-800">
-                            {item.quantity.toLocaleString(
-                                "th-TH"
-                            )}{" "}
+                            {item.quantity.toLocaleString("th-TH")}{" "}
                             <span className="text-sm font-normal text-slate-500">
                                 {item.unit}
                             </span>
                         </p>
                     </div>
 
+
                     <label className="block">
                         <span className="mb-1 block text-xs font-bold text-slate-500">
-                            จำนวน
+                            จำนวนขั้นต่ำ
                         </span>
 
                         <input
                             type="number"
-                            min="1"
+                            min="0"
                             step="1"
                             value={quantity}
                             onChange={(event) =>
-                                setQuantity(
-                                    event.target.value
-                                )
+                                setQuantity(event.target.value)
                             }
                             required
                             className="w-full rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                         />
                     </label>
 
-                    <label className="block">
-                        <span className="mb-1 block text-xs font-bold text-slate-500">
-                            หมายเหตุ
-                        </span>
-
-                        <textarea
-                            rows="3"
-                            value={note}
-                            onChange={(event) =>
-                                setNote(
-                                    event.target.value
-                                )
-                            }
-                            className="w-full resize-none rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                        />
-                    </label>
 
                     <div className="flex gap-3 pt-2">
+
                         <button
                             type="button"
                             onClick={onClose}
@@ -109,22 +86,19 @@ export default function InventoryActionModal({
                             ยกเลิก
                         </button>
 
+
                         <button
                             type="submit"
                             disabled={saving}
-                            className={
-                                isStockIn
-                                    ? "flex-1 rounded-xl bg-teal-600 py-3 font-bold text-white disabled:opacity-50"
-                                    : "flex-1 rounded-xl bg-orange-600 py-3 font-bold text-white disabled:opacity-50"
-                            }
+                            className="flex-1 rounded-xl bg-sky-600 py-3 font-bold text-white disabled:opacity-50"
                         >
                             {saving
                                 ? "กำลังบันทึก..."
-                                : isStockIn
-                                  ? "ยืนยัน Stock In"
-                                  : "ยืนยัน Stock Out"}
+                                : "บันทึกจำนวนขั้นต่ำ"}
                         </button>
+
                     </div>
+
                 </div>
             </form>
         </div>
