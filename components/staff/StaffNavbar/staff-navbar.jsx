@@ -13,7 +13,9 @@ export default function StaffNavbar({
     backHref = "/staff/dashboard",
     logoutHref = "/staff/login",
     showHome = true,
-    showBack = false,
+    showBack = true,
+    showLogout = true,
+
     options = {},
 }) {
     const router = useRouter();

@@ -10,6 +10,7 @@ export default function StaffSosPage() {
             homeHref="/staff/staff-home"
             backHref="/staff/staff-home"
             logoutHref="/staff/staff-login"
+            showHome={false}
         >
             <StaffSos />
         </StaffLayout>

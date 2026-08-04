@@ -1,4 +1,3 @@
-
 export function getToken() {
     if (typeof window === "undefined") {
         return null;
