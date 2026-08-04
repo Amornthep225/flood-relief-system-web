@@ -6,42 +6,46 @@ const theme = colors.role;
 
 export default function StaffLayout({
     children,
-    backHref = "/staff/dashboard",
+
+    homeHref = "/staff/staff-home",
+    backHref = "/staff/staff-home",
     logoutHref = "/staff/staff-login",
-    pageClass = "",
+
+    pageClass = "bg-mainColorUserPage",
+    contentClass = "",
+
     showHome = true,
     showBack = true,
     showLogout = true,
-    contentClass = "",
 }) {
     return (
-        <RoleGuard
-            role="Staff"
-            storageKey="staff"
-            loginPath="/staff/staff-login"
-        >
-            <div className="min-h-screen flex flex-col bg-[#eef8ff]">
+        <RoleGuard role="Staff" storageKey="staff" loginPath="/staff/staff-login">
+            <div
+                className={`flex min-h-screen flex-col ${pageClass || colors.dashboardUserSos.page
+                    }`}
+            >
                 <StaffNavbar
                     theme={theme}
                     hotline="1784"
                     notificationCount={0}
+                    homeHref={homeHref}
                     backHref={backHref}
                     logoutHref={logoutHref}
-                    contentClass = {contentClass}
                     options={{
                         back: showBack,
                         home: showHome,
-                        logout: true,
+                        logout: showLogout,
                         notification: true,
                         profile: true,
                         hotlineButton: true,
                     }}
                 />
 
-                <main className="w-full max-w-7xl mx-auto px-6 pt-8 pb-8 flex-1">
+                <main
+                    className={`mx-auto w-full max-w-7xl flex-1 px-6 py-8 ${contentClass}`}
+                >
                     {children}
                 </main>
-
             </div>
         </RoleGuard>
     );

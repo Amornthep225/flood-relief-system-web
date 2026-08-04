@@ -39,6 +39,7 @@ export default function StaffHomePage() {
             backHref="/"
             logoutHref="/staff/staff-login"
             showHome = {false}
+            showBack = {false}
         >
             <div className="space-y-8">
                 <StaffHomeHero />

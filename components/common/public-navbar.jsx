@@ -7,6 +7,7 @@ export default function PublicNavbar({
     homeHref = "/",
     theme = colors.role,
     backHref = "/",
+    pageClass = "",
     options = {},
 }) {
     const {

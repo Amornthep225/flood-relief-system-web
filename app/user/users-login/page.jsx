@@ -12,7 +12,7 @@ const loginLinks = {
 export default function LoginPage() {
     return (
         <div
-            className={`relative min-h-screen flex flex-col font-sans ${colors.login.page}`}
+            className="relative min-h-screen flex flex-col font-sans bg-mainPageBackground"
         >
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-sky-200/20 blur-3xl" />

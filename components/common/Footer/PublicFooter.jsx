@@ -9,7 +9,7 @@ export default function PublicFooter({
     const textStyle = theme?.mutedText || "text-slate-500";
 
     return (
-        <footer className="w-full py-8 border-t border-blue-100 mt-auto bg-white/40">
+        <footer className="w-full py-8 border-t border-blue-100 mt-auto bg-mainWhite">
             <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className={`${textStyle} flex flex-wrap items-center justify-center md:justify-start gap-3 text-sm font-medium`}>
                     <span>&copy; {currentYear} Flood Relief System.</span>

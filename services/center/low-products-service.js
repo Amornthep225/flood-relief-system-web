@@ -34,7 +34,7 @@ export async function getCenters() {
 
 export async function getLowStockItems() {
     const response = await fetch(
-        `${API_URL}/inventories/low-stock`,
+        `${API_URL}/CenterInventories/low-stock`,
         {
             method: "GET",
             cache: "no-store",

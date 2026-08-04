@@ -229,7 +229,7 @@ export default function StaffInventory() {
     }
 
     return (
-        <section className="w-full">
+        <section className="w-full p-6 border border-slate-200 rounded-xl bg-[#d2e9f0] shadow-sm shadow-slate-800/5">
             <InventoryHeader
                 centerName={centerName}
                 onRefresh={handleRefresh}

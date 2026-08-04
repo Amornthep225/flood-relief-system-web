@@ -22,24 +22,24 @@ export const buttons = {
 
   userLogin: {
     login:
-      "block text-center w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-slate-800/20 transition-all active:scale-[0.98] mt-2",
+      "block text-center w-full bg-success hover:bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-slate-800/20 transition-all active:scale-[0.98] mt-2",
 
     line:
       "w-full bg-[#06C755] hover:bg-[#05b54d] text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-green-500/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98]",
 
     register:
-      "w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-medium py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm",
+      "w-full bg-white border border-slate-800 hover:bg-slate-50 text-slate-600 font-medium py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm",
   },
 
   userRegister: {
     register:
-      "block text-center w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-slate-800/20 transition-all active:scale-[0.98] mt-4",
+      "block text-center w-full bg-success hover:bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-slate-800/20 transition-all active:scale-[0.98] mt-4",
 
     line:
       "w-full bg-[#06C755] hover:bg-[#05b54d] text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-green-500/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98]",
 
     loginRedirect:
-      "block w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-medium py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm",
+      "block w-full bg-white border border-slate-800 hover:bg-slate-50 text-slate-600 font-medium py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm",
   },
 
   userHome: {
@@ -178,7 +178,7 @@ export const buttons = {
 
   staffLogin: {
     login:
-      "block text-center w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-slate-800/20 transition-all active:scale-[0.98] mt-2",
+      "block text-center w-full bg-success hover:bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-slate-800/20 transition-all active:scale-[0.98] mt-2",
 
     line:
       "w-full bg-[#06C755] hover:bg-[#05b54d] text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-green-500/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98]",
@@ -189,7 +189,7 @@ export const buttons = {
 
   staffRegister: {
     register:
-      "block text-center w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-slate-800/20 transition-all active:scale-[0.98] mt-4",
+      "block text-center w-full bg-success hover:bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-slate-800/20 transition-all active:scale-[0.98] mt-4",
 
     loginRedirect:
       "block w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-medium py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm",

@@ -311,7 +311,7 @@ export default function StaffSos() {
             />
 
             <StaffSosSummary summary={summary} />
-
+            <section className="w-full space-y-6 border border-slate-200 rounded-xl bg-[#f3f3f3] p-6 shadow-sm">
             <StaffSosTabs
                 activeTab={activeTab}
                 onChange={setActiveTab}
@@ -353,6 +353,7 @@ export default function StaffSos() {
                     }
                 />
             )}
+            </section>
         </section>
     );
 }

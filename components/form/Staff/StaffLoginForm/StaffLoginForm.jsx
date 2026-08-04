@@ -120,7 +120,7 @@ export default function StaffLoginForm({ links }) {
             <button
                 type="submit"
                 disabled={loading}
-                className={buttons.staffLogin.login}
+                className="bg-success hover:bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-slate-800/20 transition-all active:scale-[0.98] w-full mt-2"
             >
                 {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
             </button>

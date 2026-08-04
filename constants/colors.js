@@ -9,7 +9,7 @@ export const colors = {
   },
 
   role: {
-    primaryText: "text-[#0c4a6e]",
+    primaryText: "text-[#0e23e6]",
     secondaryText: "text-[#64748b]",
     emergencyText: "text-[#d64550]",
     donationText: "text-[#0077b6]",
@@ -24,7 +24,7 @@ export const colors = {
   },
 
   login: {
-    page: "bg-slate-50 text-slate-800",
+    page: "bg-mainPageBackground text-slate-800",
     primaryText: "text-slate-800",
     secondaryText: "text-slate-500",
     mutedText: "text-slate-400",
@@ -170,7 +170,7 @@ export const colors = {
     emergencyBg: "bg-[#fff5f5]",
   },
   staffLogin: {
-    page: "bg-slate-100 text-slate-800",
+    page: "bg-mainPageBackground text-slate-800",
   },
   staffSos: {
     page: "bg-slate-100",

@@ -9,7 +9,6 @@ export default function StaffInventoryPage() {
             homeHref="/staff/staff-home"
             backHref="/staff/staff-home"
             logoutHref="/staff/staff-login"
-            pageClass="bg-[#eef8ff]"
             showHome={false}
         >
             <StaffInventory />
