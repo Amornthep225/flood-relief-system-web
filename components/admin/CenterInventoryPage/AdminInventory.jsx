@@ -12,9 +12,8 @@ import RoleGuard from "@/components/RoleGuard/RoleGuard";
 import {
     getCenterById,
     getInventoryByCenter,
-    getInventoryTransactions,
-    stockIn,
-    stockOut,
+    getTransactionsByInventories,
+    updateMinimumQuantity,
 } from "@/services/admin/center-inventory";
 import AdminInventoryHeader from "./AdminInventoryHeader";
 import AdminInventorySummary from "./AdminInventorySummary";
@@ -47,14 +46,14 @@ function normalizeArray(data) {
 function normalizeInventory(item) {
     const quantity = Number(
         item.quantity ??
-            item.currentQuantity ??
-            0
+        item.currentQuantity ??
+        0
     );
 
     const minimumQuantity = Number(
         item.minimumQuantity ??
-            item.minQuantity ??
-            0
+        item.minQuantity ??
+        0
     );
 
     return {
@@ -91,8 +90,8 @@ function normalizeInventory(item) {
             (quantity === 0
                 ? "OutOfStock"
                 : quantity <= minimumQuantity
-                  ? "LowStock"
-                  : "Normal"),
+                    ? "LowStock"
+                    : "Normal"),
         updatedAt:
             item.updatedAt ??
             item.createdAt ??
@@ -121,7 +120,13 @@ function normalizeTransaction(item) {
             item.referenceType ?? "-",
         referenceId:
             item.referenceId ?? "-",
-        note: item.note ?? "",
+        note: item.note ?? item.remark ?? "",
+        createdBy:
+            item.createdByName ??
+            item.staffName ??
+            item.createdBy ??
+            "-",
+        unit: item.unit ?? "",
         createdAt:
             item.createdAt ?? null,
     };
@@ -172,15 +177,9 @@ export default function AdminInventory() {
                 const [
                     centerResult,
                     inventoryResult,
-                    transactionResult,
                 ] = await Promise.allSettled([
                     getCenterById(centerId),
-                    getInventoryByCenter(
-                        centerId
-                    ),
-                    getInventoryTransactions(
-                        centerId
-                    ),
+                    getInventoryByCenter(centerId),
                 ]);
 
                 if (
@@ -201,28 +200,30 @@ export default function AdminInventory() {
                     centerResult.value
                 );
 
-                setItems(
-                    normalizeArray(
-                        inventoryResult.value
-                    ).map(
-                        normalizeInventory
-                    )
-                );
+                const normalizedItems = normalizeArray(
+                    inventoryResult.value
+                ).map(normalizeInventory);
+
+                setItems(normalizedItems);
+
+                const transactionResult =
+                    await getTransactionsByInventories(
+                        normalizedItems
+                    );
 
                 setTransactions(
-                    transactionResult.status ===
-                    "fulfilled"
-                        ? normalizeArray(
-                              transactionResult.value
-                          ).map(
-                              normalizeTransaction
-                          )
-                        : []
+                    normalizeArray(transactionResult)
+                        .map(normalizeTransaction)
+                        .sort(
+                            (first, second) =>
+                                new Date(second.createdAt || 0) -
+                                new Date(first.createdAt || 0)
+                        )
                 );
             } catch (requestError) {
                 setError(
                     requestError?.message ||
-                        "เกิดข้อผิดพลาดในการโหลดข้อมูลคลัง"
+                    "เกิดข้อผิดพลาดในการโหลดข้อมูลคลัง"
                 );
             } finally {
                 setLoading(false);
@@ -265,7 +266,7 @@ export default function AdminInventory() {
             const matchStatus =
                 statusFilter === "all" ||
                 item.stockStatus ===
-                    statusFilter;
+                statusFilter;
 
             return (
                 matchSearch &&
@@ -313,7 +314,7 @@ export default function AdminInventory() {
         1,
         Math.ceil(
             currentRows.length /
-                PAGE_SIZE
+            PAGE_SIZE
         )
     );
 
@@ -358,88 +359,43 @@ export default function AdminInventory() {
         };
     }, [items]);
 
-    function openStockModal(
-        mode,
-        item
-    ) {
-        setModal({
-            mode,
-            item,
-        });
-    }
-
-    async function submitStockAction(
-        values
-    ) {
+    async function submitStockAction(values) {
         try {
             setSaving(true);
 
-            const payload = {
-                centerId,
-                reliefItemId:
-                    values.reliefItemId,
-                quantity: Number(
-                    values.quantity
-                ),
-                note:
-                    values.note.trim(),
-            };
+            const minimumQuantity = Number(values.quantity);
 
             if (
-                !payload.reliefItemId
+                !Number.isInteger(minimumQuantity) ||
+                minimumQuantity < 0
             ) {
                 throw new Error(
-                    "ไม่พบรหัสสิ่งของ"
+                    "จำนวนขั้นต่ำต้องเป็นเลขจำนวนเต็มตั้งแต่ 0 ขึ้นไป"
                 );
             }
 
-            if (
-                !Number.isInteger(
-                    payload.quantity
-                ) ||
-                payload.quantity <= 0
-            ) {
-                throw new Error(
-                    "จำนวนต้องเป็นเลขจำนวนเต็มมากกว่า 0"
-                );
-            }
-
-            if (
-                modal.mode ===
-                "stock-in"
-            ) {
-                await stockIn(
-                    payload
-                );
-            } else {
-                await stockOut(
-                    payload
-                );
-            }
+            await updateMinimumQuantity(
+                modal.item.id,
+                minimumQuantity
+            );
 
             setModal(null);
             await loadData();
 
             await Swal.fire({
                 icon: "success",
-                title:
-                    modal.mode ===
-                    "stock-in"
-                        ? "เพิ่มสต็อกสำเร็จ"
-                        : "ตัดสต็อกสำเร็จ",
-                confirmButtonText:
-                    "ตกลง",
+                title: "แก้ไขจำนวนขั้นต่ำสำเร็จ",
+                confirmButtonText: "ตกลง",
             });
+
         } catch (actionError) {
             await Swal.fire({
                 icon: "error",
-                title:
-                    "ทำรายการไม่สำเร็จ",
+                title: "ทำรายการไม่สำเร็จ",
                 text:
                     actionError?.message ||
                     "กรุณาลองใหม่อีกครั้ง",
-                confirmButtonText:
-                    "ตกลง",
+                confirmButtonText: "ตกลง",
             });
         } finally {
             setSaving(false);
@@ -457,6 +413,12 @@ export default function AdminInventory() {
                     center={center}
                     centerId={centerId}
                     onRefresh={loadData}
+                    onOpenCenterHistory={() => {
+                        setActiveTab("transactions");
+                        setSearchText("");
+                        setStatusFilter("all");
+                        setPage(1);
+                    }}
                 />
 
                 <main className="mx-auto w-full max-w-[1500px] space-y-6 p-4 md:p-8">
@@ -504,7 +466,7 @@ export default function AdminInventory() {
                     {loading ? (
                         <AdminInventorySkeleton />
                     ) : currentRows.length ===
-                      0 ? (
+                        0 ? (
                         <AdminInventoryEmpty
                             activeTab={
                                 activeTab
@@ -513,26 +475,14 @@ export default function AdminInventory() {
                     ) : (
                         <>
                             {activeTab ===
-                            "inventory" ? (
+                                "inventory" ? (
                                 <AdminInventoryTable
-                                    items={
-                                        paginatedRows
-                                    }
-                                    onStockIn={(
-                                        item
-                                    ) =>
-                                        openStockModal(
-                                            "stock-in",
-                                            item
-                                        )
-                                    }
-                                    onStockOut={(
-                                        item
-                                    ) =>
-                                        openStockModal(
-                                            "stock-out",
-                                            item
-                                        )
+                                    items={paginatedRows}
+                                    onMinimum={(item) =>
+                                        setModal({
+                                            mode: "minimum",
+                                            item,
+                                        })
                                     }
                                 />
                             ) : (

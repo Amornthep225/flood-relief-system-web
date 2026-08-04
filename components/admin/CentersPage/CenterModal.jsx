@@ -8,11 +8,20 @@ import {
 } from "@/services/thaiAddresses/thaiAddresses";
 import InputField from "./InputField";
 
-function SelectField({ label, value, onChange, options, disabled, loading, required }) {
+function SelectField({
+    label,
+    value,
+    onChange,
+    options,
+    disabled,
+    loading,
+    required,
+}) {
     return (
         <label className="block">
             <span className="mb-1.5 block text-sm font-bold text-slate-700">
-                {label}{required ? <span className="text-red-500"> *</span> : null}
+                {label}
+                {required ? <span className="text-red-500"> *</span> : null}
             </span>
             <select
                 value={value}
@@ -32,7 +41,14 @@ function SelectField({ label, value, onChange, options, disabled, loading, requi
     );
 }
 
-export default function CenterModal({ mode, form, saving, onFormChange, onClose, onSave }) {
+export default function CenterModal({
+    mode,
+    form,
+    saving,
+    onFormChange,
+    onClose,
+    onSave,
+}) {
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [subDistricts, setSubDistricts] = useState([]);
@@ -60,7 +76,9 @@ export default function CenterModal({ mode, form, saving, onFormChange, onClose,
             }
         }
         load();
-        return () => { active = false; };
+        return () => {
+            active = false;
+        };
     }, []);
 
     useEffect(() => {
@@ -82,7 +100,9 @@ export default function CenterModal({ mode, form, saving, onFormChange, onClose,
             }
         }
         load();
-        return () => { active = false; };
+        return () => {
+            active = false;
+        };
     }, [form.provinceId]);
 
     useEffect(() => {
@@ -104,7 +124,9 @@ export default function CenterModal({ mode, form, saving, onFormChange, onClose,
             }
         }
         load();
-        return () => { active = false; };
+        return () => {
+            active = false;
+        };
     }, [form.districtId]);
 
     function handleProvinceChange(value) {
@@ -138,8 +160,14 @@ export default function CenterModal({ mode, form, saving, onFormChange, onClose,
             subDistrictId: value,
             subDistrict: selected?.nameTh ?? "",
             zipCode: selected?.zipCode ?? "",
-            latitude: current.latitude === "" && selected?.latitude != null ? String(selected.latitude) : current.latitude,
-            longitude: current.longitude === "" && selected?.longitude != null ? String(selected.longitude) : current.longitude,
+            latitude:
+                current.latitude === "" && selected?.latitude != null
+                    ? String(selected.latitude)
+                    : current.latitude,
+            longitude:
+                current.longitude === "" && selected?.longitude != null
+                    ? String(selected.longitude)
+                    : current.longitude,
         }));
     }
 
@@ -150,50 +178,151 @@ export default function CenterModal({ mode, form, saving, onFormChange, onClose,
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-900/50 px-4 py-8 backdrop-blur-sm">
-            <form onSubmit={handleSubmit} className="relative my-auto w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <form
+                onSubmit={handleSubmit}
+                className="relative my-auto w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+            >
                 <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-5">
                     <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
-                        <span className="material-symbols-outlined text-teal-600">{mode === "edit" ? "edit_square" : "add_business"}</span>
-                        {mode === "edit" ? `แก้ไขข้อมูลศูนย์ ${form.id}` : "เพิ่มจุดรับบริจาคใหม่"}
+                        <span className="material-symbols-outlined text-teal-600">
+                            {mode === "edit" ? "edit_square" : "add_business"}
+                        </span>
+                        {mode === "edit"
+                            ? `แก้ไขข้อมูลศูนย์ ${form.id}`
+                            : "เพิ่มจุดรับบริจาคใหม่"}
                     </h2>
-                    <button type="button" onClick={onClose} disabled={saving} className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 disabled:opacity-50">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        disabled={saving}
+                        className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 disabled:opacity-50"
+                    >
                         <span className="material-symbols-outlined text-sm">close</span>
                     </button>
                 </div>
 
                 <div className="max-h-[80vh] space-y-4 overflow-y-auto p-6">
-                    <InputField label="ชื่อจุดรับบริจาค" value={form.centerName} onChange={(value) => updateField("centerName", value)} required />
-                    <InputField label="ที่อยู่ เลขที่/หมู่/ถนน" value={form.address} onChange={(value) => updateField("address", value)} required />
+                    <InputField
+                        label="ชื่อจุดรับบริจาค"
+                        value={form.centerName}
+                        onChange={(value) => updateField("centerName", value)}
+                        required
+                    />
+                    <InputField
+                        label="ที่อยู่ เลขที่/หมู่/ถนน"
+                        value={form.address}
+                        onChange={(value) => updateField("address", value)}
+                        required
+                    />
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                        <SelectField label="จังหวัด" value={String(form.provinceId ?? "")} onChange={handleProvinceChange} options={provinces} loading={loadingProvince} required />
-                        <SelectField label="อำเภอ / เขต" value={String(form.districtId ?? "")} onChange={handleDistrictChange} options={districts} loading={loadingDistrict} disabled={!form.provinceId} required />
-                        <SelectField label="ตำบล / แขวง" value={String(form.subDistrictId ?? "")} onChange={handleSubDistrictChange} options={subDistricts} loading={loadingSubDistrict} disabled={!form.districtId} required />
+                        <SelectField
+                            label="จังหวัด"
+                            value={String(form.provinceId ?? "")}
+                            onChange={handleProvinceChange}
+                            options={provinces}
+                            loading={loadingProvince}
+                            required
+                        />
+                        <SelectField
+                            label="อำเภอ / เขต"
+                            value={String(form.districtId ?? "")}
+                            onChange={handleDistrictChange}
+                            options={districts}
+                            loading={loadingDistrict}
+                            disabled={!form.provinceId}
+                            required
+                        />
+                        <SelectField
+                            label="ตำบล / แขวง"
+                            value={String(form.subDistrictId ?? "")}
+                            onChange={handleSubDistrictChange}
+                            options={subDistricts}
+                            loading={loadingSubDistrict}
+                            disabled={!form.districtId}
+                            required
+                        />
                     </div>
 
-                    {addressError ? <p className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{addressError}</p> : null}
+                    {addressError ? (
+                        <p className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                            {addressError}
+                        </p>
+                    ) : null}
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                        <InputField label="รหัสไปรษณีย์" value={form.zipCode} onChange={() => {}} maxLength={5} disabled />
-                        <InputField label="ชื่อผู้ประสานงาน" value={form.contactName} onChange={(value) => updateField("contactName", value)} />
-                        <InputField label="เบอร์โทรศัพท์" value={form.phoneNumber} onChange={(value) => updateField("phoneNumber", value.replace(/\D/g, ""))} maxLength={10} />
+                        <InputField
+                            label="รหัสไปรษณีย์"
+                            value={form.zipCode}
+                            onChange={() => { }}
+                            maxLength={5}
+                            disabled
+                        />
+                        <InputField
+                            label="ชื่อผู้ประสานงาน"
+                            value={form.contactName}
+                            onChange={(value) => updateField("contactName", value)}
+                        />
+                        <InputField
+                            label="เบอร์โทรศัพท์"
+                            value={form.phoneNumber}
+                            onChange={(value) =>
+                                updateField("phoneNumber", value.replace(/\D/g, ""))
+                            }
+                            maxLength={10}
+                        />
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <InputField label="Latitude" type="number" step="any" value={form.latitude} onChange={(value) => updateField("latitude", value)} />
-                        <InputField label="Longitude" type="number" step="any" value={form.longitude} onChange={(value) => updateField("longitude", value)} />
+                        <InputField
+                            label="Latitude"
+                            type="number"
+                            step="any"
+                            value={form.latitude}
+                            onChange={(value) => updateField("latitude", value)}
+                        />
+                        <InputField
+                            label="Longitude"
+                            type="number"
+                            step="any"
+                            value={form.longitude}
+                            onChange={(value) => updateField("longitude", value)}
+                        />
                     </div>
 
                     {mode === "edit" && (
                         <label className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                            <input type="checkbox" checked={Boolean(form.isActive)} onChange={(event) => updateField("isActive", event.target.checked)} className="h-5 w-5 accent-teal-600" />
+                            <input
+                                type="checkbox"
+                                checked={Boolean(form.isActive)}
+                                onChange={(event) =>
+                                    updateField("isActive", event.target.checked)
+                                }
+                                className="h-5 w-5 accent-teal-600"
+                            />
                             <span className="font-bold text-slate-700">เปิดใช้งานศูนย์</span>
                         </label>
                     )}
 
                     <div className="flex gap-3 pt-4">
-                        <button type="button" onClick={onClose} disabled={saving} className="flex-1 rounded-xl border border-slate-200 bg-white py-3 font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50">ยกเลิก</button>
-                        <button type="submit" disabled={saving || loadingProvince || loadingDistrict || loadingSubDistrict} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-teal-600 py-3 font-bold text-white shadow-lg shadow-teal-500/30 hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            disabled={saving}
+                            className="flex-1 rounded-xl border border-slate-200 bg-white py-3 font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+                        >
+                            ยกเลิก
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={
+                                saving ||
+                                loadingProvince ||
+                                loadingDistrict ||
+                                loadingSubDistrict
+                            }
+                            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-teal-600 py-3 font-bold text-white shadow-lg shadow-teal-500/30 hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
                             {saving ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
                         </button>
                     </div>
