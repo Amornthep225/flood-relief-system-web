@@ -233,6 +233,17 @@ export default function StaffSos() {
             setStockCheck(null);
             setCheckingStock(true);
 
+            if (String(request.requestType || "Relief").toLowerCase() === "emergency") {
+                setStockCheck({
+                    sosRequestId: request.id,
+                    centerId: null,
+                    items: [],
+                    isAllEnough: true,
+                    isEmergency: true,
+                });
+                return;
+            }
+
             const rawStaff = localStorage.getItem("staff");
 
             if (!rawStaff) {
