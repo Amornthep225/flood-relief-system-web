@@ -7,11 +7,17 @@ import CrisisMapSidebar from "./CrisisMapSidebar";
 import CrisisMapLegend from "./CrisisMapLegend";
 import CrisisCaseModal from "./CrisisCaseModal";
 import CrisisMapSkeleton from "./CrisisMapSkeleton";
+<<<<<<< Updated upstream
 import {
     acceptSosRequest,
     getMyAssignedSosRequests,
     getPendingSosRequests,
 } from "@/services/staff/sos";
+=======
+import CrisisStockCheckModal from "./CrisisStockCheckModal";
+import { acceptSosRequest, getMyAssignedSosRequests, getPendingSosRequests, getStaffSosRequestById } from "@/services/staff/sos";
+import { getCenterInventory } from "@/services/staff/inventory";
+>>>>>>> Stashed changes
 
 function normalizeList(response) {
     if (Array.isArray(response)) return response;
@@ -83,6 +89,9 @@ export default function StaffCrisisMap() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [acceptingId, setAcceptingId] = useState("");
+    const [stockCase, setStockCase] = useState(null);
+    const [stockCheck, setStockCheck] = useState(null);
+    const [checkingStock, setCheckingStock] = useState(false);
 
     const loadCases = useCallback(async (signal, showLoading = true) => {
         try {
@@ -165,6 +174,7 @@ export default function StaffCrisisMap() {
 
     const handleAccept = async (caseItem) => {
         if (!caseItem?.id || caseItem.assignedStaffId) return;
+<<<<<<< Updated upstream
         const confirmation = await Swal.fire({
             icon: "question",
             title: "ยืนยันรับเคสนี้?",
@@ -182,6 +192,94 @@ export default function StaffCrisisMap() {
             const response = await acceptSosRequest(caseItem.id, {
                 staffRemark: confirmation.value || "",
             });
+=======
+
+        try {
+            setStockCase(caseItem);
+            setStockCheck(null);
+            setCheckingStock(true);
+
+            const rawStaff = localStorage.getItem("staff");
+            if (!rawStaff) throw new Error("ไม่พบข้อมูลเจ้าหน้าที่ กรุณาเข้าสู่ระบบใหม่");
+
+            const staff = JSON.parse(rawStaff);
+            const centerId = staff?.centerId ?? staff?.CenterId ?? "";
+            if (!centerId) throw new Error("ไม่พบรหัสศูนย์ของเจ้าหน้าที่");
+
+            const [detailResponse, inventoryResponse] = await Promise.all([
+                getStaffSosRequestById(caseItem.id),
+                getCenterInventory(centerId),
+            ]);
+
+            const detail = detailResponse?.data ?? detailResponse;
+            const requestedItems = Array.isArray(detail?.items) ? detail.items : [];
+            const inventories = normalizeList(inventoryResponse);
+
+            const items = requestedItems.map((requested) => {
+                const reliefItemId = requested.reliefItemId ?? requested.itemId ?? requested.reliefItem?.id ?? "";
+                const inventory = inventories.find((x) =>
+                    String(x.reliefItemId ?? x.itemId ?? x.reliefItem?.id ?? "") === String(reliefItemId)
+                );
+
+                const requestedQuantity = Number(requested.quantity ?? 0);
+                const availableQuantity = Number(inventory?.quantity ?? 0);
+                const shortageQuantity = Math.max(requestedQuantity - availableQuantity, 0);
+
+                return {
+                    reliefItemId,
+                    reliefItemName: requested.reliefItemName ?? requested.name ?? requested.reliefItem?.name ?? inventory?.reliefItemName ?? inventory?.name ?? "ไม่ระบุรายการ",
+                    unit: requested.unit ?? inventory?.unit ?? requested.reliefItem?.unit ?? "ชิ้น",
+                    requestedQuantity,
+                    availableQuantity,
+                    remainingQuantity: Math.max(availableQuantity - requestedQuantity, 0),
+                    shortageQuantity,
+                    isEnough: availableQuantity >= requestedQuantity,
+                };
+            });
+
+            setStockCheck({
+                sosRequestId: caseItem.id,
+                centerId,
+                items,
+                isAllEnough: items.length > 0 && items.every((x) => x.isEnough),
+            });
+        } catch (error) {
+            setStockCase(null);
+            setStockCheck(null);
+            await Swal.fire({
+                icon: "error",
+                title: "ตรวจสอบคลังไม่สำเร็จ",
+                text: error?.message || "ไม่สามารถตรวจสอบสิ่งของในคลังได้",
+            });
+        } finally {
+            setCheckingStock(false);
+        }
+    };
+
+    const handleConfirmAccept = async () => {
+        if (!stockCase?.id || !stockCheck?.isAllEnough) return;
+
+        const confirmation = await Swal.fire({
+            icon: "question",
+            title: "ยืนยันรับเคสนี้?",
+            text: "ระบบตรวจสอบแล้วว่าสิ่งของในคลังเพียงพอ",
+            input: "textarea",
+            inputLabel: "หมายเหตุเจ้าหน้าที่ (ไม่บังคับ)",
+            showCancelButton: true,
+            confirmButtonText: "ยืนยันรับงาน",
+            cancelButtonText: "ยกเลิก",
+            confirmButtonColor: "#0284c7",
+        });
+
+        if (!confirmation.isConfirmed) return;
+
+        try {
+            setAcceptingId(stockCase.id);
+            const response = await acceptSosRequest(stockCase.id, {
+                staffRemark: confirmation.value || "",
+            });
+
+>>>>>>> Stashed changes
             const patch = {
                 status: response?.data?.status || response?.status || "Accepted",
                 assignedStaffId:
@@ -189,6 +287,7 @@ export default function StaffCrisisMap() {
                     response?.assignedStaffId ||
                     "current-staff",
             };
+<<<<<<< Updated upstream
             setCases((current) =>
                 current.map((item) =>
                     item.id === caseItem.id ? { ...item, ...patch } : item
@@ -201,6 +300,22 @@ export default function StaffCrisisMap() {
                 icon: "success",
                 title: "รับเคสสำเร็จ",
                 text: "เคสนี้ถูกมอบหมายให้คุณแล้ว",
+=======
+
+            setCases((current) => current.map((item) =>
+                item.id === stockCase.id ? { ...item, ...patch } : item
+            ));
+            setSelectedCase((current) =>
+                current?.id === stockCase.id ? { ...current, ...patch } : current
+            );
+            setStockCase(null);
+            setStockCheck(null);
+
+            await Swal.fire({
+                icon: "success",
+                title: "รับเคสสำเร็จ",
+                text: "ตรวจสอบคลังและมอบหมายเคสให้คุณแล้ว",
+>>>>>>> Stashed changes
             });
         } catch (error) {
             await Swal.fire({
@@ -219,6 +334,7 @@ export default function StaffCrisisMap() {
         //<section className="relative h-[calc(100vh-72px)] w-full overflow-hidden bg-slate-100">
         <section className="fixed inset-x-0 bottom-0 top-[65px] z-40 overflow-hidden bg-slate-100">
             <CrisisMapCanvas cases={filteredCases} onSelectCase={setSelectedCase} />
+<<<<<<< Updated upstream
             <CrisisMapSidebar
                 summary={summary}
                 cases={filteredCases}
@@ -236,6 +352,21 @@ export default function StaffCrisisMap() {
                 onClose={() => setSelectedCase(null)}
                 onAccept={handleAccept}
                 accepting={acceptingId === selectedCase?.id}
+=======
+            <CrisisMapSidebar summary={summary} cases={filteredCases} activePriority={activePriority} onPriorityChange={setActivePriority} onSelectCase={setSelectedCase} onRefresh={() => { const c = new AbortController(); loadCases(c.signal, false); }} refreshing={refreshing} />
+            <CrisisCaseModal caseItem={selectedCase} onClose={() => setSelectedCase(null)} onAccept={handleAccept} accepting={acceptingId === selectedCase?.id} />
+            <CrisisStockCheckModal
+                caseItem={stockCase}
+                stockCheck={stockCheck}
+                loading={checkingStock}
+                accepting={acceptingId === stockCase?.id}
+                onClose={() => {
+                    if (acceptingId) return;
+                    setStockCase(null);
+                    setStockCheck(null);
+                }}
+                onConfirm={handleConfirmAccept}
+>>>>>>> Stashed changes
             />
             <CrisisMapLegend />
         </section>

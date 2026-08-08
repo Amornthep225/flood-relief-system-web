@@ -24,7 +24,6 @@ import {
     getStaffSosRequestById,
     getStaffSosRequests,
 } from "@/services/staff/sos";
-import { getCenterInventory } from "@/services/staff/inventory";
 
 const INITIAL_FILTERS = {
     startDate: "",
@@ -101,8 +100,6 @@ export default function StaffSos() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [accepting, setAccepting] = useState(false);
-    const [checkingStock, setCheckingStock] = useState(false);
-    const [stockCheck, setStockCheck] = useState(null);
 
     const [confirmRequest, setConfirmRequest] = useState(null);
     const [gpsRequest, setGpsRequest] = useState(null);
@@ -223,166 +220,17 @@ export default function StaffSos() {
         });
     };
 
-    const handleOpenAccept = async (request) => {
-        if (!request?.id) {
-            return;
-        }
-
-        try {
-            setConfirmRequest(request);
-            setStockCheck(null);
-            setCheckingStock(true);
-
-            const rawStaff = localStorage.getItem("staff");
-
-            if (!rawStaff) {
-                throw new Error(
-                    "ไม่พบข้อมูลเจ้าหน้าที่ กรุณาเข้าสู่ระบบใหม่"
-                );
-            }
-
-            const staff = JSON.parse(rawStaff);
-            const centerId =
-                staff?.centerId ??
-                staff?.CenterId ??
-                "";
-
-            if (!centerId) {
-                throw new Error(
-                    "ไม่พบรหัสศูนย์ของเจ้าหน้าที่"
-                );
-            }
-
-            const [detailResponse, inventoryResponse] =
-                await Promise.all([
-                    getStaffSosRequestById(request.id),
-                    getCenterInventory(centerId),
-                ]);
-
-            const detail =
-                detailResponse?.data ??
-                detailResponse;
-
-            const requestedItems =
-                Array.isArray(detail?.items)
-                    ? detail.items
-                    : [];
-
-            const inventories =
-                normalizeList(inventoryResponse);
-
-            const items = requestedItems.map(
-                (requested) => {
-                    const reliefItemId =
-                        requested.reliefItemId ??
-                        requested.itemId ??
-                        requested.reliefItem?.id ??
-                        "";
-
-                    const inventory =
-                        inventories.find(
-                            (item) =>
-                                String(
-                                    item.reliefItemId ??
-                                        item.itemId ??
-                                        item.reliefItem?.id ??
-                                        ""
-                                ) ===
-                                String(reliefItemId)
-                        );
-
-                    const requestedQuantity =
-                        Number(
-                            requested.quantity ?? 0
-                        );
-
-                    const availableQuantity =
-                        Number(
-                            inventory?.quantity ?? 0
-                        );
-
-                    const shortageQuantity =
-                        Math.max(
-                            requestedQuantity -
-                                availableQuantity,
-                            0
-                        );
-
-                    return {
-                        reliefItemId,
-                        reliefItemName:
-                            requested.reliefItemName ??
-                            requested.name ??
-                            requested.reliefItem?.name ??
-                            inventory?.reliefItemName ??
-                            inventory?.name ??
-                            "ไม่ระบุรายการ",
-                        unit:
-                            requested.unit ??
-                            inventory?.unit ??
-                            requested.reliefItem?.unit ??
-                            "ชิ้น",
-                        requestedQuantity,
-                        availableQuantity,
-                        remainingQuantity:
-                            Math.max(
-                                availableQuantity -
-                                    requestedQuantity,
-                                0
-                            ),
-                        shortageQuantity,
-                        isEnough:
-                            availableQuantity >=
-                            requestedQuantity,
-                    };
-                }
-            );
-
-            setStockCheck({
-                sosRequestId: request.id,
-                centerId,
-                items,
-                isAllEnough:
-                    items.length > 0 &&
-                    items.every(
-                        (item) => item.isEnough
-                    ),
-            });
-        } catch (error) {
-            setConfirmRequest(null);
-            setStockCheck(null);
-
-            await Swal.fire({
-                icon: "error",
-                title: "ตรวจสอบคลังไม่สำเร็จ",
-                text:
-                    error?.message ||
-                    "ไม่สามารถตรวจสอบสิ่งของในคลังได้",
-                confirmButtonText: "ตกลง",
-            });
-        } finally {
-            setCheckingStock(false);
-        }
-    };
-
     const handleConfirmAccept = async () => {
-        if (
-            !confirmRequest?.id ||
-            !stockCheck?.isAllEnough
-        ) {
+        if (!confirmRequest?.id) {
             return;
         }
 
         try {
             setAccepting(true);
 
-            const acceptedId =
-                confirmRequest.id;
-
-            await acceptSosRequest(acceptedId);
+            await acceptSosRequest(confirmRequest.id);
 
             setConfirmRequest(null);
-            setStockCheck(null);
             setActiveTab("progress");
 
             await loadRequests({
@@ -393,7 +241,7 @@ export default function StaffSos() {
             await Swal.fire({
                 icon: "success",
                 title: "รับงานเรียบร้อย",
-                text: `คุณได้รับผิดชอบเคส #${acceptedId} แล้ว`,
+                text: `คุณได้รับผิดชอบเคส #${confirmRequest.id} แล้ว`,
                 confirmButtonText: "ตกลง",
             });
         } catch (error) {
@@ -463,7 +311,7 @@ export default function StaffSos() {
             />
 
             <StaffSosSummary summary={summary} />
-            <section className="w-full space-y-6 border border-slate-200 rounded-xl bg-[#f3f3f3] p-6 shadow-sm">
+
             <StaffSosTabs
                 activeTab={activeTab}
                 onChange={setActiveTab}
@@ -473,7 +321,7 @@ export default function StaffSos() {
             <StaffSosList
                 requests={visibleRequests}
                 activeTab={activeTab}
-                onAccept={handleOpenAccept}
+                onAccept={setConfirmRequest}
                 onOpenGps={setGpsRequest}
                 onOpenDetail={handleOpenDetail}
             />
@@ -481,17 +329,10 @@ export default function StaffSos() {
             {confirmRequest && (
                 <ConfirmModal
                     request={confirmRequest}
-                    stockCheck={stockCheck}
-                    checkingStock={checkingStock}
                     loading={accepting}
-                    onClose={() => {
-                        if (accepting) {
-                            return;
-                        }
-
-                        setConfirmRequest(null);
-                        setStockCheck(null);
-                    }}
+                    onClose={() =>
+                        setConfirmRequest(null)
+                    }
                     onConfirm={handleConfirmAccept}
                 />
             )}
@@ -512,29 +353,8 @@ export default function StaffSos() {
                     }
                 />
             )}
-            </section>
         </section>
     );
-}
-
-function normalizeList(response) {
-    if (Array.isArray(response)) {
-        return response;
-    }
-
-    if (Array.isArray(response?.data)) {
-        return response.data;
-    }
-
-    if (Array.isArray(response?.items)) {
-        return response.items;
-    }
-
-    if (Array.isArray(response?.inventories)) {
-        return response.inventories;
-    }
-
-    return [];
 }
 
 function normalizeRequests(response) {
