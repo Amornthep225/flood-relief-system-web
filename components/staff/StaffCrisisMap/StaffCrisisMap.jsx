@@ -7,17 +7,9 @@ import CrisisMapSidebar from "./CrisisMapSidebar";
 import CrisisMapLegend from "./CrisisMapLegend";
 import CrisisCaseModal from "./CrisisCaseModal";
 import CrisisMapSkeleton from "./CrisisMapSkeleton";
-<<<<<<< Updated upstream
-import {
-    acceptSosRequest,
-    getMyAssignedSosRequests,
-    getPendingSosRequests,
-} from "@/services/staff/sos";
-=======
 import CrisisStockCheckModal from "./CrisisStockCheckModal";
 import { acceptSosRequest, getMyAssignedSosRequests, getPendingSosRequests, getStaffSosRequestById } from "@/services/staff/sos";
 import { getCenterInventory } from "@/services/staff/inventory";
->>>>>>> Stashed changes
 
 function normalizeList(response) {
     if (Array.isArray(response)) return response;
@@ -174,25 +166,6 @@ export default function StaffCrisisMap() {
 
     const handleAccept = async (caseItem) => {
         if (!caseItem?.id || caseItem.assignedStaffId) return;
-<<<<<<< Updated upstream
-        const confirmation = await Swal.fire({
-            icon: "question",
-            title: "ยืนยันรับเคสนี้?",
-            html: `<div style="text-align:left"><p><b>SOS ID:</b> ${caseItem.id}</p><p><b>สถานที่:</b> ${caseItem.address}</p><p><b>ระดับ:</b> ${caseItem.priority}</p></div>`,
-            input: "textarea",
-            inputLabel: "หมายเหตุเจ้าหน้าที่ (ไม่บังคับ)",
-            showCancelButton: true,
-            confirmButtonText: "รับงาน",
-            cancelButtonText: "ยกเลิก",
-            confirmButtonColor: "#0284c7",
-        });
-        if (!confirmation.isConfirmed) return;
-        try {
-            setAcceptingId(caseItem.id);
-            const response = await acceptSosRequest(caseItem.id, {
-                staffRemark: confirmation.value || "",
-            });
-=======
 
         try {
             setStockCase(caseItem);
@@ -279,7 +252,6 @@ export default function StaffCrisisMap() {
                 staffRemark: confirmation.value || "",
             });
 
->>>>>>> Stashed changes
             const patch = {
                 status: response?.data?.status || response?.status || "Accepted",
                 assignedStaffId:
@@ -287,20 +259,6 @@ export default function StaffCrisisMap() {
                     response?.assignedStaffId ||
                     "current-staff",
             };
-<<<<<<< Updated upstream
-            setCases((current) =>
-                current.map((item) =>
-                    item.id === caseItem.id ? { ...item, ...patch } : item
-                )
-            );
-            setSelectedCase((current) =>
-                current?.id === caseItem.id ? { ...current, ...patch } : current
-            );
-            await Swal.fire({
-                icon: "success",
-                title: "รับเคสสำเร็จ",
-                text: "เคสนี้ถูกมอบหมายให้คุณแล้ว",
-=======
 
             setCases((current) => current.map((item) =>
                 item.id === stockCase.id ? { ...item, ...patch } : item
@@ -315,7 +273,6 @@ export default function StaffCrisisMap() {
                 icon: "success",
                 title: "รับเคสสำเร็จ",
                 text: "ตรวจสอบคลังและมอบหมายเคสให้คุณแล้ว",
->>>>>>> Stashed changes
             });
         } catch (error) {
             await Swal.fire({
@@ -334,25 +291,6 @@ export default function StaffCrisisMap() {
         //<section className="relative h-[calc(100vh-72px)] w-full overflow-hidden bg-slate-100">
         <section className="fixed inset-x-0 bottom-0 top-[65px] z-40 overflow-hidden bg-slate-100">
             <CrisisMapCanvas cases={filteredCases} onSelectCase={setSelectedCase} />
-<<<<<<< Updated upstream
-            <CrisisMapSidebar
-                summary={summary}
-                cases={filteredCases}
-                activePriority={activePriority}
-                onPriorityChange={setActivePriority}
-                onSelectCase={setSelectedCase}
-                onRefresh={() => {
-                    const c = new AbortController();
-                    loadCases(c.signal, false);
-                }}
-                refreshing={refreshing}
-            />
-            <CrisisCaseModal
-                caseItem={selectedCase}
-                onClose={() => setSelectedCase(null)}
-                onAccept={handleAccept}
-                accepting={acceptingId === selectedCase?.id}
-=======
             <CrisisMapSidebar summary={summary} cases={filteredCases} activePriority={activePriority} onPriorityChange={setActivePriority} onSelectCase={setSelectedCase} onRefresh={() => { const c = new AbortController(); loadCases(c.signal, false); }} refreshing={refreshing} />
             <CrisisCaseModal caseItem={selectedCase} onClose={() => setSelectedCase(null)} onAccept={handleAccept} accepting={acceptingId === selectedCase?.id} />
             <CrisisStockCheckModal
@@ -366,7 +304,6 @@ export default function StaffCrisisMap() {
                     setStockCheck(null);
                 }}
                 onConfirm={handleConfirmAccept}
->>>>>>> Stashed changes
             />
             <CrisisMapLegend />
         </section>
