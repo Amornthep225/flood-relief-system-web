@@ -90,9 +90,14 @@ export default function SosHistoryCard({
         ? request.items
         : [];
 
-    const title = createRequestTitle(
-        itemList
-    );
+    const isEmergency =
+        String(request.requestType || "Relief")
+            .trim()
+            .toLowerCase() === "emergency";
+
+    const title = isEmergency
+        ? `SOS: ${formatEmergencyType(request.emergencyType)}`
+        : createRequestTitle(itemList);
 
     return (
         <article
@@ -158,7 +163,23 @@ export default function SosHistoryCard({
                         )}
 
                         <div className="flex flex-wrap gap-2">
-                            {itemList
+                            {isEmergency && (
+                                <>
+                                    <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-700">
+                                        SOS ฉุกเฉิน
+                                    </span>
+                                    <span className={cards.userSosHistory.tag}>
+                                        ผู้ประสบภัย {request.victimCount || 1} คน
+                                    </span>
+                                    {request.waterLevel != null && (
+                                        <span className={cards.userSosHistory.tag}>
+                                            ระดับน้ำ {request.waterLevel} เมตร
+                                        </span>
+                                    )}
+                                </>
+                            )}
+
+                            {!isEmergency && itemList
                                 .slice(0, 3)
                                 .map((item) => (
                                     <span
@@ -185,7 +206,7 @@ export default function SosHistoryCard({
                                     </span>
                                 ))}
 
-                            {itemList.length >
+                            {!isEmergency && itemList.length >
                                 3 && (
                                 <span
                                     className={
@@ -300,4 +321,18 @@ function formatThaiDateTime(value) {
         hour: "2-digit",
         minute: "2-digit",
     });
+}
+
+function formatEmergencyType(type) {
+    const labels = {
+        Evacuation: "ต้องการอพยพ",
+        Trapped: "ติดอยู่ในพื้นที่น้ำท่วม",
+        Injured: "มีผู้บาดเจ็บ",
+        Medical: "ผู้ป่วยฉุกเฉิน",
+        RoofTrapped: "ติดอยู่บนอาคาร/หลังคา",
+        RapidFlood: "น้ำเพิ่มระดับอย่างรวดเร็ว",
+        Other: "เหตุฉุกเฉินอื่น ๆ",
+    };
+
+    return labels[type] || "เหตุฉุกเฉิน";
 }

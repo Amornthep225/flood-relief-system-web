@@ -93,6 +93,30 @@ export async function createSosRequest(payload) {
     return readApiResponse(response);
 }
 
+
+export async function createEmergencySosRequest(payload) {
+    const token = getToken();
+
+    if (!token) {
+        throw new Error("ไม่พบ Token กรุณาเข้าสู่ระบบใหม่");
+    }
+
+    const response = await fetch(
+        `${API_URL}/sos-requests/emergency`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+        }
+    );
+
+    return readApiResponse(response);
+}
+
 export async function getMySosRequests(params = {}) {
     const token = getToken();
     if (!token) {

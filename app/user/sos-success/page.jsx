@@ -74,7 +74,9 @@ export default function RequestSuccessPage() {
                 <div className="w-full max-w-lg">
                     <div className={cards.userSosSuccess.card}>
                         <h1 className="text-2xl font-bold text-center text-slate-800 mb-2">
-                            ส่งคำขอความช่วยเหลือสำเร็จ!
+                            {String(request.requestType || "Relief").toLowerCase() === "emergency"
+                                ? "ส่ง SOS ฉุกเฉินสำเร็จ!"
+                                : "ส่งคำขอรับสิ่งของสำเร็จ!"}
                         </h1>
 
                         {/* Request Info Box */}
@@ -85,15 +87,23 @@ export default function RequestSuccessPage() {
 
                         {/* Summary List */}
                         <div className="space-y-4 border-t border-b py-6 my-6 border-slate-100">
-                            <SummaryItem
-                                icon="inventory_2"
-                                label="รายการสิ่งของ"
-                                value={
-                                    request.items?.length > 0
-                                        ? request.items.map((x) => `${x.reliefItemName} ${x.quantity} ${x.unit}`).join(", ")
-                                        : "ไม่ได้ระบุรายการสิ่งของ"
-                                }
-                            />
+                            {String(request.requestType || "Relief").toLowerCase() === "emergency" ? (
+                                <SummaryItem
+                                    icon="sos"
+                                    label="ประเภทเหตุ"
+                                    value={formatEmergencyType(request.emergencyType)}
+                                />
+                            ) : (
+                                <SummaryItem
+                                    icon="inventory_2"
+                                    label="รายการสิ่งของ"
+                                    value={
+                                        request.items?.length > 0
+                                            ? request.items.map((x) => `${x.reliefItemName} ${x.quantity} ${x.unit}`).join(", ")
+                                            : "ไม่ได้ระบุรายการสิ่งของ"
+                                    }
+                                />
+                            )}
 
                             <SummaryItem
                                 icon="location_on"
@@ -118,7 +128,11 @@ export default function RequestSuccessPage() {
                             </Link>
 
                             <Link
-                                href="/user/sos-home"
+                                href={
+                                    String(request.requestType || "Relief").toLowerCase() === "emergency"
+                                        ? "/select-role"
+                                        : "/user/sos-home"
+                                }
                                 className={buttons.userSosSuccess.home}
                             >
                                 กลับหน้าหลัก
@@ -144,4 +158,17 @@ function SummaryItem({ icon, label, value }) {
             </div>
         </div>
     );
+}
+
+function formatEmergencyType(type) {
+    const labels = {
+        Evacuation: "ต้องการอพยพ",
+        Trapped: "ติดอยู่ในพื้นที่น้ำท่วม",
+        Injured: "มีผู้บาดเจ็บ",
+        Medical: "ผู้ป่วยฉุกเฉิน",
+        RoofTrapped: "ติดอยู่บนอาคาร/หลังคา",
+        RapidFlood: "น้ำเพิ่มระดับอย่างรวดเร็ว",
+        Other: "เหตุฉุกเฉินอื่น ๆ",
+    };
+    return labels[type] || "เหตุฉุกเฉิน";
 }
