@@ -18,8 +18,8 @@ export default function UserHero() {
                     </h1>
 
                     <p className="text-sky-50 text-lg opacity-95 leading-relaxed font-light">
-                        เราพร้อมอยู่เคียงข้างคุณเสมอ ขอให้คุณและครอบครัวปลอดภัย
-                        หากต้องการความช่วยเหลือเร่งด่วน กรุณากดปุ่ม SOS
+                        หน้านี้สำหรับขอรับสิ่งของช่วยเหลือจากศูนย์ เช่น อาหาร น้ำ ยา และของใช้จำเป็น
+                        หากเป็นเหตุฉุกเฉินที่ต้องการเจ้าหน้าที่เข้าช่วยทันที กรุณาใช้เมนู SOS ฉุกเฉิน
                     </p>
                 </div>
 
@@ -28,10 +28,10 @@ export default function UserHero() {
                     className={buttons.userHome.sos}
                 >
                     <span className="material-symbols-outlined text-red-500">
-                        emergency
+                        inventory_2
                     </span>
 
-                    แจ้งขอความช่วยเหลือ (SOS)
+                    ขอรับสิ่งของช่วยเหลือ
                 </Link>
             </div>
         </section>

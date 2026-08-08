@@ -427,12 +427,11 @@ export default function SosRequestForm() {
                     </div>
 
                     <h1 className="text-3xl font-black text-slate-800">
-                        แจ้งขอความช่วยเหลือ SOS
+                        ขอรับของบริจาค
                     </h1>
 
                     <p className="mt-2 text-sm text-slate-500">
-                        กรุณากรอกข้อมูลให้ครบถ้วน
-                        เพื่อให้เจ้าหน้าที่สามารถช่วยเหลือได้รวดเร็ว
+                        เลือกสิ่งของที่ต้องการรับ ระบุจำนวน และตำแหน่งสำหรับจัดส่งความช่วยเหลือ
                     </p>
                 </div>
 
@@ -499,8 +498,8 @@ export default function SosRequestForm() {
                     <section className="space-y-5">
                         <FormSectionTitle
                             number="3"
-                            title="ระดับความเร่งด่วน"
-                            description="กรุณาเลือกระดับความเร่งด่วนตามสถานการณ์จริง"
+                            title="ระดับความจำเป็น"
+                            description="เลือกระดับความจำเป็นของคำขอรับสิ่งของ"
                         />
                         <PrioritySelector
                             value={priority}
