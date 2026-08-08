@@ -96,6 +96,29 @@ export default function StaffSosCard({
                         />
                     </div>
 
+                    {String(request.requestType || "Relief").toLowerCase() === "emergency" && (
+                        <div className="mt-4 flex flex-wrap gap-2">
+                            <span className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">
+                                ผู้ประสบภัย {request.victimCount || 1} คน
+                            </span>
+                            {(request.patientCount || 0) > 0 && (
+                                <span className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">
+                                    ผู้ป่วย {request.patientCount} คน
+                                </span>
+                            )}
+                            {(request.elderlyCount || 0) > 0 && (
+                                <span className="rounded-lg bg-orange-50 px-3 py-1.5 text-xs font-bold text-orange-700">
+                                    ผู้สูงอายุ {request.elderlyCount} คน
+                                </span>
+                            )}
+                            {request.waterLevel != null && (
+                                <span className="rounded-lg bg-sky-50 px-3 py-1.5 text-xs font-bold text-sky-700">
+                                    น้ำ {request.waterLevel} ม.
+                                </span>
+                            )}
+                        </div>
+                    )}
+
                     {request.userRemark && (
                         <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm italic text-slate-500">
                             “{request.userRemark}”
@@ -310,6 +333,19 @@ function getStatusIcon(status) {
 }
 
 function getRequestTitle(request) {
+    if (String(request.requestType || "Relief").toLowerCase() === "emergency") {
+        const labels = {
+            Evacuation: "SOS: ต้องการอพยพ",
+            Trapped: "SOS: ติดอยู่ในพื้นที่น้ำท่วม",
+            Injured: "SOS: มีผู้บาดเจ็บ",
+            Medical: "SOS: ผู้ป่วยฉุกเฉิน",
+            RoofTrapped: "SOS: ติดอยู่บนอาคาร/หลังคา",
+            RapidFlood: "SOS: น้ำเพิ่มระดับอย่างรวดเร็ว",
+            Other: "SOS: เหตุฉุกเฉินอื่น ๆ",
+        };
+        return labels[request.emergencyType] || "SOS ฉุกเฉิน";
+    }
+
     const items = Array.isArray(request.items)
         ? request.items
         : [];

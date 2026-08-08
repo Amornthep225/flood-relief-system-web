@@ -9,10 +9,10 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                 <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
                     <div className="flex items-center gap-3">
                         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-100 text-sky-600">
-                            <span className="material-symbols-outlined">inventory_2</span>
+                            <span className="material-symbols-outlined">{stockCheck?.isEmergency ? "sos" : "inventory_2"}</span>
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-slate-800">ตรวจสอบคลังก่อนรับเคส</h2>
+                            <h2 className="text-xl font-black text-slate-800">{stockCheck?.isEmergency ? "รับเคส SOS ฉุกเฉิน" : "ตรวจสอบคลังก่อนรับเคส"}</h2>
                             <p className="text-sm text-slate-500">SOS #{caseItem.id}</p>
                         </div>
                     </div>
@@ -36,14 +36,26 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                                     </span>
                                     <div>
                                         <p className={`font-black ${stockCheck?.isAllEnough ? "text-emerald-700" : "text-red-700"}`}>
-                                            {stockCheck?.isAllEnough ? "สิ่งของเพียงพอทุกรายการ" : "สิ่งของในคลังไม่เพียงพอ"}
+                                            {stockCheck?.isEmergency
+                                                ? "SOS ฉุกเฉิน พร้อมรับเคสได้ทันที"
+                                                : stockCheck?.isAllEnough
+                                                  ? "สิ่งของเพียงพอทุกรายการ"
+                                                  : "สิ่งของในคลังไม่เพียงพอ"}
                                         </p>
-                                        <p className="text-sm text-slate-500">ศูนย์ {stockCheck?.centerId || "-"} • ต้องตรวจผ่านก่อนจึงจะรับเคสได้</p>
+                                        <p className="text-sm text-slate-500">
+                                            {stockCheck?.isEmergency
+                                                ? "ภารกิจช่วยเหลือฉุกเฉิน ไม่ต้องตรวจคลังสินค้า"
+                                                : `ศูนย์ ${stockCheck?.centerId || "-"} • ต้องตรวจผ่านก่อนจึงจะรับเคสได้`}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
 
-                            {!stockCheck?.items?.length ? (
+                            {stockCheck?.isEmergency ? (
+                                <div className="rounded-2xl border border-red-100 bg-red-50 p-5 text-center font-bold text-red-700">
+                                    เปิดรายละเอียดเคสเพื่อดูประเภทเหตุ จำนวนผู้ประสบภัย และพิกัดก่อนออกช่วยเหลือ
+                                </div>
+                            ) : !stockCheck?.items?.length ? (
                                 <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-center font-bold text-amber-700">
                                     ไม่พบรายการสิ่งของที่ร้องขอ จึงยังไม่สามารถยืนยันรับเคสได้
                                 </div>

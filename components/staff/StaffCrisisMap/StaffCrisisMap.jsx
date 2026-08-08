@@ -134,6 +134,17 @@ export default function StaffCrisisMap() {
             setStockCheck(null);
             setCheckingStock(true);
 
+            if (String(caseItem.requestType || "Relief").toLowerCase() === "emergency") {
+                setStockCheck({
+                    sosRequestId: caseItem.id,
+                    centerId: null,
+                    items: [],
+                    isAllEnough: true,
+                    isEmergency: true,
+                });
+                return;
+            }
+
             const rawStaff = localStorage.getItem("staff");
             if (!rawStaff) throw new Error("ไม่พบข้อมูลเจ้าหน้าที่ กรุณาเข้าสู่ระบบใหม่");
 
@@ -197,7 +208,9 @@ export default function StaffCrisisMap() {
         const confirmation = await Swal.fire({
             icon: "question",
             title: "ยืนยันรับเคสนี้?",
-            text: "ระบบตรวจสอบแล้วว่าสิ่งของในคลังเพียงพอ",
+            text: stockCheck?.isEmergency
+                ? "เคส SOS ฉุกเฉินไม่ต้องตรวจคลังสินค้า"
+                : "ระบบตรวจสอบแล้วว่าสิ่งของในคลังเพียงพอ",
             input: "textarea",
             inputLabel: "หมายเหตุเจ้าหน้าที่ (ไม่บังคับ)",
             showCancelButton: true,

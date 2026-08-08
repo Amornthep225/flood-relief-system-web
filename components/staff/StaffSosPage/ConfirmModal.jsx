@@ -26,7 +26,9 @@ export default function ConfirmModal({
                     </h3>
 
                     <p className="mt-2 text-sm text-slate-500">
-                        ตรวจสอบสิ่งของในคลังก่อนรับผิดชอบเคส
+                        {stockCheck?.isEmergency
+                            ? "เคส SOS ฉุกเฉินสำหรับเข้าช่วยเหลือ ณ จุดเกิดเหตุ"
+                            : "ตรวจสอบสิ่งของในคลังก่อนรับผิดชอบเคส"}
                     </p>
 
                     <p className="mt-1 font-mono font-bold text-sky-600">
@@ -74,19 +76,27 @@ export default function ConfirmModal({
                                                 : "text-red-700"
                                         }`}
                                     >
-                                        {stockCheck?.isAllEnough
-                                            ? "สิ่งของในคลังเพียงพอสำหรับเคสนี้"
-                                            : "สิ่งของในคลังไม่เพียงพอ"}
+                                        {stockCheck?.isEmergency
+                                            ? "SOS ฉุกเฉิน พร้อมรับเคสได้ทันที"
+                                            : stockCheck?.isAllEnough
+                                              ? "สิ่งของในคลังเพียงพอสำหรับเคสนี้"
+                                              : "สิ่งของในคลังไม่เพียงพอ"}
                                     </p>
 
                                     <p className="mt-1 text-xs text-slate-500">
-                                        ศูนย์ {stockCheck?.centerId || "-"}
+                                        {stockCheck?.isEmergency
+                                            ? "ไม่ตรวจคลังสินค้า เนื่องจากเป็นภารกิจช่วยเหลือฉุกเฉิน"
+                                            : `ศูนย์ ${stockCheck?.centerId || "-"}`}
                                     </p>
                                 </div>
                             </div>
                         </div>
 
-                        {!items.length ? (
+                        {stockCheck?.isEmergency ? (
+                            <div className="rounded-2xl border border-red-100 bg-red-50 p-5 text-center text-sm font-bold text-red-700">
+                                เจ้าหน้าที่สามารถรับเคสและเดินทางไปยังพิกัด SOS ได้ทันที
+                            </div>
+                        ) : !items.length ? (
                             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-center text-sm font-bold text-amber-700">
                                 ไม่พบรายการสิ่งของที่ผู้ประสบภัยร้องขอ
                             </div>
@@ -147,9 +157,11 @@ export default function ConfirmModal({
                             </div>
                         )}
 
-                        <p className="mt-5 text-center text-xs text-slate-400">
-                            ระบบยังไม่ได้หักสินค้าในขั้นตอนนี้ เป็นเพียงการตรวจสอบก่อนรับงาน
-                        </p>
+                        {!stockCheck?.isEmergency && (
+                            <p className="mt-5 text-center text-xs text-slate-400">
+                                ระบบยังไม่ได้หักสินค้าในขั้นตอนนี้ เป็นเพียงการตรวจสอบก่อนรับงาน
+                            </p>
+                        )}
                     </div>
                 )}
 
