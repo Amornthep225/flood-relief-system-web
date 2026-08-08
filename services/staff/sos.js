@@ -516,3 +516,19 @@ export async function updateSosRequestStatus(
         }
     );
 }
+export async function checkSosStock(id) {
+    if (!id) {
+        throw new Error(
+            "ไม่พบรหัสคำขอความช่วยเหลือ"
+        );
+    }
+
+    return authorizedFetch(
+        `${API_URL}/sos-requests/${encodeURIComponent(
+            id
+        )}/stock-check`,
+        {
+            method: "GET",
+        }
+    );
+}
