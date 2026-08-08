@@ -108,8 +108,10 @@ Pending → Accepted → Preparing → Delivering → Completed
 | GET | `/api/Donations` | Donation ทั้งหมด | 🔒 |
 | GET | `/api/Donations/my` | Donation ของผู้ใช้ปัจจุบัน | 🔒 |
 | GET | `/api/Donations/{id}` | รายละเอียด Donation | 🔒 |
-| PUT | `/api/Donations/{id}/status` | อัปเดตสถานะ | 🔒 |
 | DELETE | `/api/Donations/{id}` | ยกเลิก/ลบ Donation | 🔒 |
+| PUT | `/api/Donations/{id}/status` | อัปเดตสถานะ | 🔒 |
+| GET | `/api/Donations/receive/search` | ค้นหารายการบริจาคเพื่อรับมอบ | 🔒 |
+| POST | `/api/Donations/{id}/receive` | รับมอบสิ่งของบริจาค | 🔒 |
 
 ### Receive Donation
 
@@ -119,22 +121,22 @@ Pending → Accepted → Preparing → Delivering → Completed
 2. เพิ่มจำนวนใน Center Inventory
 3. สร้าง Inventory Transaction ประเภท `DonationIn`
 4. อัปเดต Donation เป็น `Received`
-5. Rollback ทั้งหมดหากขั้นตอนใดล้มเหลว
+5. Rollback ทั้งหมดหากขั้นตอนล้มเหลว
 
 > ให้ตรวจชื่อ route รับ Donation จาก `DonationsController` หรือ `InventoriesController` ในโค้ดจริง และบันทึกชื่อ endpoint ที่ตรงกันก่อนส่ง Production
 
 ---
 
-## 7. Inventories
+## 7. CenterInventories
 
 | Method | Endpoint | Description | Auth |
 |---|---|---|:---:|
-| GET | `/api/inventories` | รายการคลังทั้งหมด หรือกรองตามสิทธิ์ | 🔒 |
-| GET | `/api/inventories/center/{centerId}` | คลังของศูนย์ | 🔒 |
-| GET | `/api/inventories/low-stock` | รายการที่ต่ำกว่าหรือเท่ากับ Minimum Quantity | ตาม Controller |
-| POST | `/api/inventories/stock-in` | เพิ่มสต็อกด้วยรายการปรับปรุงคลัง | 🔒 |
-| POST | `/api/inventories/stock-out` | ตัดสต็อกด้วยรายการปรับปรุงคลัง | 🔒 |
-| GET | `/api/inventories/transactions` | ประวัติ Stock In/Out, DonationIn และ SOSOut | 🔒 |
+| GET | `/api/CenterInventories` | รายการคลังทั้งหมด หรือกรองตามสิทธิ์ | 🔒 |
+| GET | `/api/CenterInventories/center/{centerId}` | คลังของศูนย์ | 🔒 |
+| GET | `/api/CenterInventories/low-stock` | รายการที่ต่ำกว่าหรือเท่ากับ Minimum Quantity | ตาม Controller |
+| POST | `/api/CenterInventories/stock-in` | เพิ่มสต็อกด้วยรายการปรับปรุงคลัง | 🔒 |
+| POST | `/api/CenterInventories/stock-out` | ตัดสต็อกด้วยรายการปรับปรุงคลัง | 🔒 |
+| GET | `/api/CenterInventories/{id}/transactions` | ประวัติ Stock In/Out, DonationIn และ SOSOut | 🔒 |
 
 ### Query Parameter ของ Low Stock
 
@@ -190,7 +192,7 @@ GET /api/inventories/low-stock?centerId=C0001
 
 ---
 
-## #10. Address (Thai Province / District / SubDistrict)
+## 10. Address (Thai Province / District / SubDistrict)
 
 | Method | Endpoint | Description | Auth |
 |---|---|---|:---:|
@@ -200,6 +202,14 @@ GET /api/inventories/low-stock?centerId=C0001
 | GET | `/api/address/sub-district/{id}` | รายละเอียดตำบลและรหัสไปรษณีย์ | 🔒 |
 
 ---
+
+
+## 11.Public Statistics
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|:---:|
+| GET | `/api/public-statistics/home` | ข้อมูลสถิติสำหรับหน้าแรก | 🔓 |
+
 
 ## Standard Error Response
 

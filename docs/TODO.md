@@ -31,7 +31,7 @@ Priority:
 - [x] Staff Login
 - [x] Admin Login
 - [x] JWT Token
-- [x] Role Permission เบื้องต้น
+- [x] Role Permission
 
 ## User / SOS
 
