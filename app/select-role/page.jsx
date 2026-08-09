@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import UserLayout from "@/components/layout/UserLayout";
 
 const menu = [
@@ -135,6 +135,8 @@ function CardIcon({ item, config }) {
 }
 
 export default function SelectRolePage() {
+    const router = useRouter();
+
     return (
         <UserLayout
             homeHref="/user/sos-home"
@@ -144,25 +146,6 @@ export default function SelectRolePage() {
             showBack={false}
         >
             <section className="relative isolate overflow-hidden rounded-[38px] px-2 py-8 sm:px-5 md:py-12 lg:px-7">
-                <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-                    <div className="absolute -left-24 -top-20 h-72 w-72 rounded-full bg-white/28 blur-3xl" />
-                    <div className="absolute -right-24 top-16 h-80 w-80 rounded-full bg-sky-100/35 blur-3xl" />
-                    <div className="absolute bottom-[-160px] left-1/2 h-80 w-[75%] -translate-x-1/2 rounded-[50%] bg-white/22 blur-3xl" />
-                    <div className="absolute left-4 top-8 grid grid-cols-4 gap-2 opacity-25">
-                        {Array.from({ length: 12 }).map((_, index) => (
-                            <span
-                                key={index}
-                                className="h-1.5 w-1.5 rounded-full bg-white"
-                            />
-                        ))}
-                    </div>
-                    <span className="material-symbols-outlined absolute right-8 top-12 rotate-12 text-4xl text-white/35">
-                        favorite
-                    </span>
-                    <span className="material-symbols-outlined absolute bottom-16 left-10 -rotate-12 text-5xl text-white/25">
-                        volunteer_activism
-                    </span>
-                </div>
 
                 <div className="mx-auto w-full max-w-7xl">
                     <header className="mb-9 text-center md:mb-12">
@@ -189,7 +172,20 @@ export default function SelectRolePage() {
                             return (
                                 <article
                                     key={item.href}
-                                    className={`group relative flex min-h-[610px] flex-col overflow-hidden rounded-[32px] border p-2 backdrop-blur-xl transition duration-300 hover:-translate-y-1 ${config.card}`}
+                                    role="link"
+                                    tabIndex={0}
+                                    aria-label={`${item.title} - ${item.buttonText}`}
+                                    onClick={() => router.push(item.href)}
+                                    onKeyDown={(event) => {
+                                        if (
+                                            event.key === "Enter" ||
+                                            event.key === " "
+                                        ) {
+                                            event.preventDefault();
+                                            router.push(item.href);
+                                        }
+                                    }}
+                                    className={`group relative flex min-h-[610px] h-full cursor-pointer flex-col overflow-hidden rounded-[32px] border p-2 backdrop-blur-xl transition duration-300 hover:-translate-y-1 focus:outline-none focus-visible:-translate-y-1 focus-visible:ring-4 focus-visible:ring-white/80 ${config.card}`}
                                 >
                                     <div
                                         className={`pointer-events-none absolute inset-4 rounded-[26px] ring-1 ring-inset ${config.innerRing}`}
@@ -228,15 +224,15 @@ export default function SelectRolePage() {
                                         </p>
 
                                         <div className="mt-auto pt-7">
-                                            <Link
-                                                href={item.href}
-                                                className={`mx-auto flex h-16 w-full max-w-[310px] items-center justify-center gap-3 rounded-2xl border border-white/70 text-lg font-black transition duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-white/60 ${config.button}`}
+                                            <div
+                                                className={`mx-auto flex h-16 w-full max-w-[310px] items-center justify-center gap-3 rounded-2xl border border-white/70 text-lg font-black transition duration-200 group-hover:-translate-y-0.5 ${config.button}`}
+                                                aria-hidden="true"
                                             >
                                                 <span className="material-symbols-outlined text-[25px]">
                                                     {item.buttonIcon}
                                                 </span>
                                                 {item.buttonText}
-                                            </Link>
+                                            </div>
 
                                             <div
                                                 className={`mx-auto mt-7 flex max-w-[310px] items-start justify-center gap-2.5 text-center text-sm font-bold leading-6 ${config.note}`}

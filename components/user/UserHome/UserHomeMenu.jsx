@@ -38,9 +38,13 @@ export default function UserHomeMenu() {
     return (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {menu.map((item) => (
-                <div key={item.href} className={cards.userHome.menu}>
+                <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`${cards.userHome.menu} group cursor-pointer`}
+                >
                     <div
-                        className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${item.iconBox}`}
+                        className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-105 ${item.iconBox}`}
                     >
                         <span className="material-symbols-outlined text-3xl">
                             {item.icon}
@@ -55,18 +59,13 @@ export default function UserHomeMenu() {
                         {item.description}
                     </p>
 
-                    <div className="mt-auto">
-                        <Link
-                            className="inline-flex items-center gap-2 text-sky-500 font-bold hover:gap-3 transition-all"
-                            href={item.href}
-                        >
-                            {item.actionText}
-                            <span className="material-symbols-outlined text-sm">
-                                {item.actionIcon}
-                            </span>
-                        </Link>
+                    <div className="mt-auto inline-flex items-center gap-2 text-sky-500 font-bold transition-all group-hover:gap-3">
+                        {item.actionText}
+                        <span className="material-symbols-outlined text-sm">
+                            {item.actionIcon}
+                        </span>
                     </div>
-                </div>
+                </Link>
             ))}
         </section>
     );
