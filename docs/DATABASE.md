@@ -135,6 +135,18 @@ CenterInventories 1 ── * InventoryTransactions
 | CompletedAt | datetime(6) NULL | วันที่เสร็จ |
 | CancelledAt | datetime(6) NULL | วันที่ยกเลิก |
 | UpdatedAt | datetime(6) NULL | วันที่แก้ไข |
+<<<<<<< Updated upstream
+=======
+| ChildCount | int(11) | จำนวนเด็ก |
+| DisabledCount | int(11) | จำนวนผู้พิการ |
+| ElderlyCount | int(11) | จำนวนผู้สูงอายุ |
+| EmergencyDetail | varchar(1000) NULL | รายละเอียดเหตุฉุกเฉิน |
+| EmergencyType | varchar(50) NULL | ประเภทเหตุฉุกเฉิน |
+| PatientCount | int(11) | จำนวนผู้ป่วย |
+| RequestType | varchar(20) | ประเภทคำขอ (`Relief` ฯลฯ) |
+| VictimCount | int(11) | จำนวนผู้ประสบภัย |
+| WaterLevel | decimal(5,2) NULL | ระดับน้ำ |
+>>>>>>> Stashed changes
 
 Status:
 
