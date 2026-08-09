@@ -15,7 +15,7 @@ export default function AdminSosHeader({
                     </h1>
 
                     <p className="mt-1 text-sm text-slate-400">
-                        ดูระดับความเร่งด่วนและมอบหมายเคสให้เจ้าหน้าที่
+                        SOS ฉุกเฉินจะแสดงเป็นระดับวิกฤตและอยู่บนสุดเสมอ
                     </p>
                 </div>
 

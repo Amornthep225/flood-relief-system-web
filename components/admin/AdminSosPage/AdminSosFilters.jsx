@@ -26,8 +26,6 @@ export default function AdminSosFilters({
     onSearchChange,
     filter,
     onFilterChange,
-    priorityFilter,
-    onPriorityChange,
 }) {
     return (
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -49,27 +47,6 @@ export default function AdminSosFilters({
                 </div>
 
                 <div className="flex flex-col gap-3 lg:flex-row">
-                    <select
-                        value={priorityFilter}
-                        onChange={(event) =>
-                            onPriorityChange(event.target.value)
-                        }
-                        className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 outline-none"
-                    >
-                        <option value="all">
-                            ทุกระดับ
-                        </option>
-                        <option value="critical">
-                            วิกฤต
-                        </option>
-                        <option value="urgent">
-                            เร่งด่วน
-                        </option>
-                        <option value="normal">
-                            ปกติ
-                        </option>
-                    </select>
-
                     <div className="flex gap-2 overflow-x-auto">
                         {statusFilters.map((item) => (
                             <button

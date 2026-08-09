@@ -65,6 +65,12 @@ function normalizeSos(item) {
         priority:
             item.priority ??
             "Normal",
+        requestType:
+            item.requestType ??
+            "Relief",
+        emergencyType:
+            item.emergencyType ??
+            null,
         status:
             item.status ??
             "Pending",
@@ -155,14 +161,12 @@ function statusGroup(status) {
     return value;
 }
 
-function priorityRank(priority) {
-    const value = String(priority || "")
-        .trim()
-        .toLowerCase();
-
-    if (value === "critical") return 1;
-    if (value === "urgent") return 2;
-    return 3;
+function isEmergencySos(item) {
+    return (
+        String(item?.requestType || "Relief")
+            .trim()
+            .toLowerCase() === "emergency"
+    );
 }
 
 export default function AdminSos() {
@@ -170,7 +174,6 @@ export default function AdminSos() {
     const [staffs, setStaffs] = useState([]);
     const [searchText, setSearchText] = useState("");
     const [filter, setFilter] = useState("all");
-    const [priorityFilter, setPriorityFilter] = useState("all");
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -201,12 +204,11 @@ export default function AdminSos() {
             const sosList = normalizeArray(sosResult.value)
                 .map(normalizeSos)
                 .sort((first, second) => {
-                    const rank =
-                        priorityRank(first.priority) -
-                        priorityRank(second.priority);
+                    const firstEmergency = isEmergencySos(first);
+                    const secondEmergency = isEmergencySos(second);
 
-                    if (rank !== 0) {
-                        return rank;
+                    if (firstEmergency !== secondEmergency) {
+                        return firstEmergency ? -1 : 1;
                     }
 
                     return (
@@ -255,7 +257,7 @@ export default function AdminSos() {
 
     useEffect(() => {
         setPage(1);
-    }, [searchText, filter, priorityFilter]);
+    }, [searchText, filter]);
 
     const summary = useMemo(() => {
         const waiting = cases.filter(
@@ -271,10 +273,7 @@ export default function AdminSos() {
         ).length;
 
         const critical = cases.filter(
-            (item) =>
-                String(item.priority)
-                    .trim()
-                    .toLowerCase() === "critical"
+            (item) => isEmergencySos(item)
         ).length;
 
         return {
@@ -313,23 +312,12 @@ export default function AdminSos() {
                 filter === "all" ||
                 statusGroup(item.status) === filter;
 
-            const matchPriority =
-                priorityFilter === "all" ||
-                String(item.priority)
-                    .trim()
-                    .toLowerCase() === priorityFilter;
-
-            return (
-                matchSearch &&
-                matchStatus &&
-                matchPriority
-            );
+            return matchSearch && matchStatus;
         });
     }, [
         cases,
         searchText,
         filter,
-        priorityFilter,
     ]);
 
     const totalPages = Math.max(
@@ -464,8 +452,6 @@ export default function AdminSos() {
                         onSearchChange={setSearchText}
                         filter={filter}
                         onFilterChange={setFilter}
-                        priorityFilter={priorityFilter}
-                        onPriorityChange={setPriorityFilter}
                     />
 
                     {paginatedCases.length === 0 ? (

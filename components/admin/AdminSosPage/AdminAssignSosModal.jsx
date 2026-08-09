@@ -34,6 +34,11 @@ export default function AdminAssignSosModal({
         return null;
     }
 
+    const isEmergency =
+        String(caseItem.requestType || "Relief")
+            .trim()
+            .toLowerCase() === "emergency";
+
     const handleSubmit = () => {
         onConfirm({
             caseItem,
@@ -56,9 +61,9 @@ export default function AdminAssignSosModal({
                         </p>
                     </div>
 
-                    <AdminSosPriorityBadge
-                        priority={caseItem.priority}
-                    />
+                    {isEmergency && (
+                        <AdminSosPriorityBadge priority="Critical" />
+                    )}
                 </div>
 
                 <div className="space-y-5 p-6">

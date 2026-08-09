@@ -10,7 +10,7 @@ const cards = [
     },
     {
         key: "critical",
-        title: "ระดับวิกฤต",
+        title: "SOS วิกฤต",
         icon: "crisis_alert",
         cardClass:
             "border-red-100 bg-red-50 text-red-600",
