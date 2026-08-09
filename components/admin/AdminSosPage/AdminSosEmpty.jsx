@@ -10,7 +10,7 @@ export default function AdminSosEmpty() {
             </h2>
 
             <p className="mt-1 text-sm text-slate-400">
-                ลองเปลี่ยนคำค้นหา สถานะ หรือระดับความเร่งด่วน
+                ลองเปลี่ยนคำค้นหาหรือสถานะ
             </p>
         </div>
     );

@@ -24,6 +24,11 @@ export default function AdminSosDetailModal({
         return null;
     }
 
+    const isEmergency =
+        String(caseItem.requestType || "Relief")
+            .trim()
+            .toLowerCase() === "emergency";
+
     const mapsUrl =
         caseItem.latitude &&
         caseItem.longitude
@@ -45,9 +50,9 @@ export default function AdminSosDetailModal({
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <AdminSosPriorityBadge
-                            priority={caseItem.priority}
-                        />
+                        {isEmergency && (
+                            <AdminSosPriorityBadge priority="Critical" />
+                        )}
                         <AdminSosStatusBadge
                             status={caseItem.status}
                         />

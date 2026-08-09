@@ -16,6 +16,15 @@ function formatDate(value) {
     }).format(date);
 }
 
+
+function isEmergencySos(item) {
+    return (
+        String(item?.requestType || "Relief")
+            .trim()
+            .toLowerCase() === "emergency"
+    );
+}
+
 function isPending(status) {
     return (
         String(status || "")
@@ -64,8 +73,7 @@ export default function AdminSosTable({
                             <tr
                                 key={item.id}
                                 className={
-                                    String(item.priority)
-                                        .toLowerCase() === "critical"
+                                    isEmergencySos(item)
                                         ? "bg-red-50/30 hover:bg-red-50"
                                         : "hover:bg-slate-50"
                                 }
@@ -101,9 +109,11 @@ export default function AdminSosTable({
                                 </td>
 
                                 <td className="p-4 text-center">
-                                    <AdminSosPriorityBadge
-                                        priority={item.priority}
-                                    />
+                                    {isEmergencySos(item) && (
+                                        <AdminSosPriorityBadge
+                                            priority="Critical"
+                                        />
+                                    )}
                                 </td>
 
                                 <td className="p-4 text-center">
