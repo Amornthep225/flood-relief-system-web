@@ -5,7 +5,7 @@ import Link from "next/link";
 import { colors } from "@/constants/colors";
 import { cards } from "@/constants/cards";
 import { buttons } from "@/constants/buttons";
-import StaffNavbar from "@/components/staff/staff-navbar";
+import StaffNavbar from "@/components/staff/StaffNavbar/staff-navbar";
 const theme = colors.staff;
 
 const mockData = {

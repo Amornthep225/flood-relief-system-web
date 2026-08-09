@@ -202,3 +202,17 @@ export async function cancelSosRequest(id) {
 
     return readApiResponse(response);
 }
+export async function getEmergencyTypes() {
+    const response = await fetch(
+        `${API_URL}/sos-requests/emergency-types`,
+        {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+            },
+            cache: "no-store",
+        }
+    );
+
+    return readApiResponse(response);
+}
