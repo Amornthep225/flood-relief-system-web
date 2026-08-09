@@ -6,6 +6,13 @@ export default function DetailsModal({
     const items = Array.isArray(request?.items)
         ? request.items
         : [];
+<<<<<<< Updated upstream
+=======
+    const isEmergency =
+        String(request?.requestType || "Relief")
+            .trim()
+            .toLowerCase() === "emergency";
+>>>>>>> Stashed changes
 
     return (
         <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/60 px-4 py-10 backdrop-blur-sm">
@@ -59,6 +66,7 @@ export default function DetailsModal({
                                 }
                             />
 
+<<<<<<< Updated upstream
                             <DetailBox
                                 icon="flag"
                                 label="ระดับความเร่งด่วน"
@@ -67,6 +75,15 @@ export default function DetailsModal({
                                     "Normal"
                                 }
                             />
+=======
+                            {isEmergency && (
+                                <DetailBox
+                                    icon="flag"
+                                    label="ระดับความเร่งด่วน"
+                                    value={formatPriorityLabel(request?.priority)}
+                                />
+                            )}
+>>>>>>> Stashed changes
 
                             <DetailBox
                                 icon="info"
@@ -175,4 +192,24 @@ function DetailBox({ icon, label, value }) {
             </div>
         </div>
     );
+<<<<<<< Updated upstream
 }
+=======
+}
+
+function formatPriorityLabel(priority) {
+    const value = String(priority || "")
+        .trim()
+        .toLowerCase();
+
+    if (value === "critical") {
+        return "วิกฤต";
+    }
+
+    if (value === "urgent") {
+        return "เร่งด่วน";
+    }
+
+    return "ปกติ";
+}
+>>>>>>> Stashed changes
