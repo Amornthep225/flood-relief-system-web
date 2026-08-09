@@ -1,11 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { colors } from "@/constants/colors";
-import { cards } from "@/constants/cards";
-import { buttons } from "@/constants/buttons";
-import StaffNavbar from "@/components/staff/StaffNavbar/staff-navbar";
+import StaffLayout from "@/components/layout/StaffLayout";
 const theme = colors.staff;
 
 import StaffSos from "@/components/staff/StaffSosPage/StaffSos";

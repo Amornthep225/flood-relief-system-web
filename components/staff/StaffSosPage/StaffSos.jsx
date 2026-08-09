@@ -54,8 +54,23 @@ function normalizeSortValue(value) {
         .toLowerCase();
 }
 
+function isEmergencyRequest(request) {
+    return (
+        String(request?.requestType || "Relief")
+            .trim()
+            .toLowerCase() === "emergency"
+    );
+}
+
 function sortSosRequests(requests) {
     return [...requests].sort((first, second) => {
+        const firstIsEmergency = isEmergencyRequest(first);
+        const secondIsEmergency = isEmergencyRequest(second);
+
+        if (firstIsEmergency !== secondIsEmergency) {
+            return firstIsEmergency ? -1 : 1;
+        }
+
         const firstPriority =
             PRIORITY_ORDER[
                 normalizeSortValue(first.priority)
@@ -474,6 +489,7 @@ export default function StaffSos() {
             />
 
             <StaffSosSummary summary={summary} />
+
             <section className="w-full space-y-6 border border-slate-200 rounded-xl bg-[#f3f3f3] p-6 shadow-sm">
             <StaffSosTabs
                 activeTab={activeTab}
@@ -523,8 +539,8 @@ export default function StaffSos() {
                     }
                 />
             )}
-            </section>
         </section>
+    </section>
     );
 }
 
