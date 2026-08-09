@@ -9,10 +9,7 @@ export default function StaffSosCard({
     const status = normalizeStatus(request.status);
     const isWaiting = status === "pending";
     const isCompleted = status === "completed";
-<<<<<<< Updated upstream
-=======
     const isEmergency = isEmergencyRequest(request);
->>>>>>> Stashed changes
 
     const style = getStatusStyle(status);
 
@@ -61,17 +58,11 @@ export default function StaffSosCard({
                             {getStatusLabel(status)}
                         </span>
 
-<<<<<<< Updated upstream
-                        <PriorityBadge
-                            priority={request.priority}
-                        />
-=======
                         {isEmergency && (
                             <PriorityBadge
                                 priority={request.priority}
                             />
                         )}
->>>>>>> Stashed changes
                     </div>
 
                     <div className="grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
@@ -344,10 +335,6 @@ function getStatusIcon(status) {
     return icons[status] || "emergency";
 }
 
-<<<<<<< Updated upstream
-function getRequestTitle(request) {
-    if (String(request.requestType || "Relief").toLowerCase() === "emergency") {
-=======
 function isEmergencyRequest(request) {
     return (
         String(request?.requestType || "Relief")
@@ -358,7 +345,6 @@ function isEmergencyRequest(request) {
 
 function getRequestTitle(request) {
     if (isEmergencyRequest(request)) {
->>>>>>> Stashed changes
         const labels = {
             Evacuation: "SOS: ต้องการอพยพ",
             Trapped: "SOS: ติดอยู่ในพื้นที่น้ำท่วม",
