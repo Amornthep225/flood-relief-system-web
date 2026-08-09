@@ -1,6 +1,6 @@
 "use client";
 
-const STATUS_ORDER = {
+const RELIEF_STATUS_ORDER = {
     Pending: 0,
     Accepted: 1,
     Preparing: 2,
@@ -8,10 +8,29 @@ const STATUS_ORDER = {
     Completed: 4,
 };
 
+const EMERGENCY_STATUS_ORDER = {
+    Pending: 0,
+    Accepted: 1,
+    // Emergency SOS ไม่มีขั้นเตรียมสิ่งของในหน้าติดตาม
+    // หาก Backend อยู่สถานะ Preparing ให้ถือว่ายังอยู่ช่วงรับเรื่อง
+    Preparing: 1,
+    Delivering: 2,
+    Completed: 3,
+};
+
 export default function SosTimeline({ request }) {
     const status = request?.status;
     const isCancelled = status?.toLowerCase() === "cancelled";
-    const currentStatusIndex = STATUS_ORDER[status] ?? 0;
+    const isEmergency =
+        String(request?.requestType || "Relief")
+            .trim()
+            .toLowerCase() === "emergency";
+
+    const statusOrder = isEmergency
+        ? EMERGENCY_STATUS_ORDER
+        : RELIEF_STATUS_ORDER;
+
+    const currentStatusIndex = statusOrder[status] ?? 0;
 
     const steps = [
         {
@@ -24,21 +43,29 @@ export default function SosTimeline({ request }) {
         {
             key: "Accepted",
             title: "เจ้าหน้าที่รับเรื่องแล้ว",
-            detail: "เจ้าหน้าที่รับคำขอและกำลังตรวจสอบ",
+            detail: isEmergency
+                ? "เจ้าหน้าที่รับแจ้งและกำลังดำเนินการช่วยเหลือ"
+                : "เจ้าหน้าที่รับคำขอและกำลังตรวจสอบ",
             time: request?.acceptedAt,
             icon: "support_agent",
         },
-        {
-            key: "Preparing",
-            title: "กำลังจัดเตรียม",
-            detail: "เจ้าหน้าที่กำลังจัดเตรียมสิ่งของ",
-            time: request?.preparingAt,
-            icon: "inventory_2",
-        },
+        ...(!isEmergency
+            ? [
+                  {
+                      key: "Preparing",
+                      title: "กำลังจัดเตรียม",
+                      detail: "เจ้าหน้าที่กำลังจัดเตรียมสิ่งของ",
+                      time: request?.preparingAt,
+                      icon: "inventory_2",
+                  },
+              ]
+            : []),
         {
             key: "Delivering",
             title: "กำลังเดินทาง",
-            detail: "เจ้าหน้าที่กำลังนำความช่วยเหลือไปส่ง",
+            detail: isEmergency
+                ? "เจ้าหน้าที่กำลังเดินทางไปยังจุดเกิดเหตุ"
+                : "เจ้าหน้าที่กำลังนำความช่วยเหลือไปส่ง",
             time: request?.deliveringAt,
             icon: "local_shipping",
         },
@@ -80,7 +107,7 @@ export default function SosTimeline({ request }) {
 
             <div className="relative space-y-7 w-full">
                 {steps.map((step) => {
-                    const stepIndex = STATUS_ORDER[step.key];
+                    const stepIndex = statusOrder[step.key];
                     let state = "pending";
 
                     if (stepIndex < currentStatusIndex) {
