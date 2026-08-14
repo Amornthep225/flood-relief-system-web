@@ -20,7 +20,6 @@ export default function UserLayout({
                 <UserNavbar
                     theme={theme}
                     hotline="1784"
-                    notificationCount={0}
                     homeHref={homeHref}
                     backHref={backHref}
                     logoutHref={logoutHref}
