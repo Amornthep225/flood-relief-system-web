@@ -146,13 +146,10 @@ export default function StaffMission() {
     }
 
     const items = Array.isArray(request.items) ? request.items : [];
-<<<<<<< Updated upstream
-=======
     const isEmergency =
         String(request.requestType || "Relief")
             .trim()
             .toLowerCase() === "emergency";
->>>>>>> Stashed changes
     const latitude = Number(request.latitude);
     const longitude = Number(request.longitude);
     const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude);
@@ -200,16 +197,12 @@ export default function StaffMission() {
                         <div className="mt-5 grid gap-4 sm:grid-cols-2">
                             <InfoBox label="ชื่อผู้แจ้ง" value={request.userFullName || "ไม่ระบุ"} />
                             <InfoBox label="เบอร์โทร" value={request.userPhoneNumber || "ไม่ระบุ"} />
-<<<<<<< Updated upstream
-                            <InfoBox label="ระดับความเร่งด่วน" value={request.priority || "Normal"} />
-=======
                             {isEmergency && (
                                 <InfoBox
                                     label="ระดับความเร่งด่วน"
                                     value={formatPriorityLabel(request.priority)}
                                 />
                             )}
->>>>>>> Stashed changes
                             <InfoBox label="ศูนย์รับผิดชอบ" value={request.centerName || "ไม่ระบุ"} />
                         </div>
 
@@ -362,8 +355,6 @@ function MissionState({ icon, title, description = "กรุณารอสั�
         </div>
     );
 }
-<<<<<<< Updated upstream
-=======
 
 
 function formatPriorityLabel(priority) {
@@ -381,4 +372,3 @@ function formatPriorityLabel(priority) {
 
     return "ปกติ";
 }
->>>>>>> Stashed changes
