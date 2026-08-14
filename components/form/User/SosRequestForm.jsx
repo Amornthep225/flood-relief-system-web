@@ -15,7 +15,6 @@ import SosCategorySelector from "@/components/user/SosForm/SosCategorySelector";
 import SosItemSelector from "@/components/user/SosForm/SosItemSelector";
 import LocationPicker from "@/components/user/SosForm/LocationPicker";
 import ConfirmSosModal from "@/components/user/SosForm/ConfirmSosModal";
-import PrioritySelector from "@/components/user/SosForm/PrioritySelector";
 import UserRemark from "@/components/user/SosForm/UserRemark";
 const initialLocation = {
     latitude: null,
@@ -38,7 +37,6 @@ export default function SosRequestForm() {
         useState([]);
 
     const [quantities, setQuantities] = useState({});
-    const [priority, setPriority] = useState("Normal");
 
     const [userRemark, setUserRemark] = useState("");
     const [location, setLocation] =
@@ -250,15 +248,6 @@ export default function SosRequestForm() {
 
             return false;
         }
-        if (!priority) {
-            await Swal.fire({
-                icon: "warning",
-                title: "กรุณาเลือกระดับความเร่งด่วน",
-                text: "โปรดเลือกระดับความเร่งด่วนก่อนส่งคำขอ",
-            });
-
-            return false;
-        }
         return true;
 
     };
@@ -294,8 +283,6 @@ export default function SosRequestForm() {
 
                 userRemark:
                     userRemark.trim() || null,
-                priority: priority,
-
                 items:
                     selectedItemIds.map(
                         (itemId) => ({
@@ -498,19 +485,6 @@ export default function SosRequestForm() {
                     <section className="space-y-5">
                         <FormSectionTitle
                             number="3"
-                            title="ระดับความจำเป็น"
-                            description="เลือกระดับความจำเป็นของคำขอรับสิ่งของ"
-                        />
-                        <PrioritySelector
-                            value={priority}
-                            onChange={setPriority}
-                        />
-                    </section>
-
-
-                    <section className="space-y-5">
-                        <FormSectionTitle
-                            number="4"
                             title="ตำแหน่งรับความช่วยเหลือ"
                             description="ใช้พิกัดปัจจุบันและระบุรายละเอียดสถานที่"
                         />
