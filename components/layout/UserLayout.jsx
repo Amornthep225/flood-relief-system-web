@@ -12,7 +12,7 @@ export default function UserLayout({
     logoutHref = "/user/users-login",
     pageClass = "bg-mainColorUserPage",
     showBack = true,
-    showHome = true,
+    showHome = true
 }) {
     return (
         <RoleGuard role="User" storageKey="user" loginPath="/user/users-login">
@@ -20,7 +20,6 @@ export default function UserLayout({
                 <UserNavbar
                     theme={theme}
                     hotline="1784"
-                    notificationCount={0}
                     homeHref={homeHref}
                     backHref={backHref}
                     logoutHref={logoutHref}
