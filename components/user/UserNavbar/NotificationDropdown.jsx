@@ -1,24 +1,55 @@
 "use client";
 
 function getNotificationStyle(type) {
-    if (type === "DonationDelivered") {
-        return {
-            icon: "volunteer_activism",
-            iconClass: "bg-emerald-100 text-emerald-600",
-        };
-    }
-
-    if (type === "DonationReceived") {
-        return {
+    const styles = {
+        DonationReceived: {
             icon: "inventory_2",
             iconClass: "bg-sky-100 text-sky-600",
-        };
-    }
-
-    return {
-        icon: "notifications",
-        iconClass: "bg-slate-100 text-slate-600",
+        },
+        DonationInTransit: {
+            icon: "volunteer_activism",
+            iconClass: "bg-amber-100 text-amber-600",
+        },
+        DonationDelivered: {
+            icon: "volunteer_activism",
+            iconClass: "bg-emerald-100 text-emerald-600",
+        },
+        ReliefAccepted: {
+            icon: "support_agent",
+            iconClass: "bg-sky-100 text-sky-600",
+        },
+        ReliefDelivering: {
+            icon: "local_shipping",
+            iconClass: "bg-blue-100 text-blue-600",
+        },
+        ReliefCompleted: {
+            icon: "task_alt",
+            iconClass: "bg-emerald-100 text-emerald-600",
+        },
+        SosCreated: {
+            icon: "emergency",
+            iconClass: "bg-red-100 text-red-600",
+        },
+        SosAccepted: {
+            icon: "support_agent",
+            iconClass: "bg-orange-100 text-orange-600",
+        },
+        SosResponderOnTheWay: {
+            icon: "emergency",
+            iconClass: "bg-red-100 text-red-600",
+        },
+        SosCompleted: {
+            icon: "task_alt",
+            iconClass: "bg-emerald-100 text-emerald-600",
+        },
     };
+
+    return (
+        styles[type] || {
+            icon: "notifications",
+            iconClass: "bg-slate-100 text-slate-600",
+        }
+    );
 }
 
 function formatNotificationTime(value) {

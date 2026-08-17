@@ -144,6 +144,18 @@ export default function UserNavbar({
                     notificationItem.referenceId
                 )}`
             );
+            return;
+        }
+
+        if (
+            notificationItem.referenceType === "SosRequest" &&
+            notificationItem.referenceId
+        ) {
+            router.push(
+                `/user/sos-tracking?id=${encodeURIComponent(
+                    notificationItem.referenceId
+                )}`
+            );
         }
     };
 
