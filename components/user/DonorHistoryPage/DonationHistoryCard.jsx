@@ -25,14 +25,14 @@ function getStatusLabel(status) {
     const normalized = normalizeStatus(status);
 
     const labels = {
-        pending: "ลงทะเบียนสำเร็จ",
-        processing: "กำลังดำเนินการ",
+        pending: "รอส่งมอบที่ศูนย์",
+        processing: "กำลังตรวจรับสิ่งของ",
         accepted: "ศูนย์รับรายการแล้ว",
-        preparing: "กำลังเตรียมรับของ",
-        delivering: "กำลังจัดส่ง",
-        received: "ศูนย์ได้รับของแล้ว",
-        completed: "เสร็จสิ้น",
-        success: "เสร็จสิ้น",
+        preparing: "กำลังตรวจรับสิ่งของ",
+        delivering: "รอส่งมอบที่ศูนย์",
+        received: "ศูนย์รับของแล้ว",
+        completed: "ศูนย์รับของแล้ว",
+        success: "ศูนย์รับของแล้ว",
         rejected: "ปฏิเสธรายการ",
         cancelled: "ยกเลิกรายการ",
     };
@@ -122,7 +122,7 @@ export default function DonationHistoryCard({
                         <span className="material-symbols-outlined">
                             {completed
                                 ? "check"
-                                : "local_shipping"}
+                                : "storefront"}
                         </span>
                     </div>
 
