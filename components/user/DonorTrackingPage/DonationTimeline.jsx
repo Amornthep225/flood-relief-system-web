@@ -1,40 +1,47 @@
 "use client";
 
-import { useMemo } from "react";
-
 export default function DonationTimeline({ status }) {
     // นิยามขั้นตอนทั้งหมดของกระบวนการบริจาค
     const STEPS = [
         {
             key: "REGISTERED",
             title: "ลงทะเบียนบริจาคสำเร็จ",
-            description: "บันทึกรายการบริจาคเข้าสู่ระบบแล้ว",
+            description: "ระบบบันทึกรายการบริจาคของคุณเรียบร้อยแล้ว",
         },
         {
-            key: "IN_TRANSIT",
-            title: "กำลังจัดส่ง / อยู่ระหว่างขนส่ง",
-            description: "สิ่งของกำลังเดินทางไปยังศูนย์รับบริจาค",
+            key: "WAITING_DROPOFF",
+            title: "รอส่งมอบสิ่งของที่ศูนย์",
+            description: "กรุณานำสิ่งของพร้อม QR Code หรือรหัสบริจาคมาส่งที่ศูนย์",
         },
         {
             key: "RECEIVED",
-            title: "ศูนย์รับบริจาคได้รับของแล้ว",
-            description: "เจ้าหน้าที่ปลายทางตรวจสอบและลงรับเรียบร้อย",
+            title: "ศูนย์รับของบริจาคเรียบร้อยแล้ว",
+            description: "เจ้าหน้าที่ตรวจสอบและรับสิ่งของเข้าสู่คลังเรียบร้อยแล้ว",
         },
     ];
 
-    // คำนวณลำดับ Current Step ตามสถานะที่ส่งมาจาก Backend
-    const currentStepIndex = useMemo(() => {
-        if (!status) return 0;
-        const normalizedStatus = status.toUpperCase();
+    const normalizedStatus = String(status || "")
+        .trim()
+        .toUpperCase();
 
-        if (normalizedStatus.includes("REC") || normalizedStatus.includes("SUCCESS") || normalizedStatus.includes("COMPLETED")) {
-            return 2;
-        }
-        if (normalizedStatus.includes("TRANSIT") || normalizedStatus.includes("DELIVER")) {
-            return 1;
-        }
-        return 0; // Default: ลงทะเบียนสำเร็จ / รอดำเนินการ
-    }, [status]);
+    // 0 = เพิ่งลงทะเบียน
+    // 1 = ลงทะเบียนแล้ว กำลังรอนำของมาส่งที่ศูนย์
+    // 3 = ศูนย์รับของแล้ว ทุกขั้นเสร็จสมบูรณ์
+    let currentStepIndex = 0;
+
+    if (
+        normalizedStatus === "RECEIVED" ||
+        normalizedStatus === "COMPLETED" ||
+        normalizedStatus === "SUCCESS"
+    ) {
+        currentStepIndex = 3;
+    } else if (
+        normalizedStatus === "PENDING" ||
+        normalizedStatus === "ACCEPTED" ||
+        normalizedStatus === "PROCESSING"
+    ) {
+        currentStepIndex = 1;
+    }
 
     return (
         <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 mb-6">
@@ -93,7 +100,6 @@ export default function DonationTimeline({ status }) {
                                     {step.title}
                                 </p>
                                 <p className="text-xs text-slate-500 mt-0.5">
-                                    {isCurrent && status ? `(${status}) - ` : ""}
                                     {step.description}
                                 </p>
                             </div>
