@@ -10,6 +10,7 @@ import {
     markAllNotificationsAsRead,
     markNotificationAsRead,
 } from "@/services/user/notification";
+import { connectNotificationRealtime } from "@/services/common/notificationRealtime";
 
 export default function UserNavbar({
     theme,
@@ -98,13 +99,20 @@ export default function UserNavbar({
 
         loadNotifications();
 
-        const intervalId = window.setInterval(() => {
+        const disconnectRealtime = connectNotificationRealtime(() => {
             loadNotifications({ silent: true });
-        }, 30000);
+        });
+
+        // Safety sync เท่านั้น: ปกติ notification มาทันทีผ่าน SignalR
+        // ใช้รอบยาวเพื่อเก็บตกกรณี realtime event พลาดโดยไม่ยิง API ถี่
+        const fallbackIntervalId = window.setInterval(() => {
+            loadNotifications({ silent: true });
+        }, 120000);
 
         return () => {
             cancelled = true;
-            window.clearInterval(intervalId);
+            disconnectRealtime();
+            window.clearInterval(fallbackIntervalId);
         };
     }, [user]);
 
