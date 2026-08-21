@@ -26,6 +26,14 @@ function getNotificationStyle(type) {
             icon: "task_alt",
             iconClass: "bg-emerald-100 text-emerald-600",
         },
+        ReliefRejected: {
+            icon: "cancel",
+            iconClass: "bg-rose-100 text-rose-600",
+        },
+        ReliefCancelled: {
+            icon: "cancel",
+            iconClass: "bg-slate-200 text-slate-600",
+        },
         SosCreated: {
             icon: "emergency",
             iconClass: "bg-red-100 text-red-600",
@@ -41,6 +49,14 @@ function getNotificationStyle(type) {
         SosCompleted: {
             icon: "task_alt",
             iconClass: "bg-emerald-100 text-emerald-600",
+        },
+        SosRejected: {
+            icon: "cancel",
+            iconClass: "bg-rose-100 text-rose-600",
+        },
+        SosCancelled: {
+            icon: "cancel",
+            iconClass: "bg-slate-200 text-slate-600",
         },
     };
 
