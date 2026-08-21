@@ -1,8 +1,8 @@
 "use client";
 
-import { colors } from "@/constants/colors";
+
 import StaffLayout from "@/components/layout/StaffLayout";
-const theme = colors.staff;
+
 
 import StaffSos from "@/components/staff/StaffSosPage/StaffSos";
 

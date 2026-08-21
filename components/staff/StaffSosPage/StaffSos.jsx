@@ -7,6 +7,7 @@ import {
     useRef,
     useState,
 } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
 import StaffSosHeader from "./StaffSosHeader";
@@ -107,6 +108,9 @@ function sortSosRequests(requests) {
 }
 
 export default function StaffSos() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const linkedRequestId = searchParams.get("id");
     const hasLoaded = useRef(false);
 
     const [requests, setRequests] = useState([]);
@@ -176,6 +180,67 @@ export default function StaffSos() {
             filterParams: INITIAL_FILTERS,
         });
     }, [loadRequests]);
+
+    useEffect(() => {
+        if (!linkedRequestId) {
+            return;
+        }
+
+        let cancelled = false;
+
+        const openLinkedRequest = async () => {
+            try {
+                setDetailLoading(true);
+
+                const detail = await getStaffSosRequestById(
+                    linkedRequestId
+                );
+
+                if (cancelled) {
+                    return;
+                }
+
+                setDetailRequest(detail);
+
+                const status = normalizeStatus(detail?.status);
+
+                if (isWaitingStatus(status)) {
+                    setActiveTab("waiting");
+                } else if (isProgressStatus(status)) {
+                    setActiveTab("progress");
+                } else if (isCompletedStatus(status)) {
+                    setActiveTab("completed");
+                }
+            } catch (error) {
+                if (cancelled) {
+                    return;
+                }
+
+                setDetailRequest(null);
+
+                await Swal.fire({
+                    icon: "error",
+                    title: "เปิดเคสไม่สำเร็จ",
+                    text:
+                        error.message ||
+                        "ไม่สามารถโหลดเคสจากการแจ้งเตือนได้",
+                    confirmButtonText: "ตกลง",
+                });
+
+                router.replace("/staff/staff-sos");
+            } finally {
+                if (!cancelled) {
+                    setDetailLoading(false);
+                }
+            }
+        };
+
+        openLinkedRequest();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [linkedRequestId, router]);
 
     const summary = useMemo(() => {
         const waiting = requests.filter((request) =>
@@ -534,9 +599,15 @@ export default function StaffSos() {
                 <DetailsModal
                     request={detailRequest}
                     loading={detailLoading}
-                    onClose={() =>
-                        setDetailRequest(null)
-                    }
+                    onClose={() => {
+                        setDetailRequest(null);
+
+                        if (linkedRequestId) {
+                            router.replace(
+                                "/staff/staff-sos"
+                            );
+                        }
+                    }}
                 />
             )}
         </section>

@@ -10,6 +10,7 @@ import {
     markAllNotificationsAsRead,
     markNotificationAsRead,
 } from "@/services/staff/notification";
+import { connectNotificationRealtime } from "@/services/common/notificationRealtime";
 
 export default function StaffNavbar({
     theme,
@@ -97,13 +98,20 @@ export default function StaffNavbar({
 
         loadNotifications();
 
-        const intervalId = window.setInterval(() => {
+        const disconnectRealtime = connectNotificationRealtime(() => {
             loadNotifications({ silent: true });
-        }, 30000);
+        });
+
+        // Safety sync เท่านั้น: ปกติ notification มาทันทีผ่าน SignalR
+        // ใช้รอบยาวเพื่อเก็บตกกรณี realtime event พลาดโดยไม่ยิง API ถี่
+        const fallbackIntervalId = window.setInterval(() => {
+            loadNotifications({ silent: true });
+        }, 120000);
 
         return () => {
             cancelled = true;
-            window.clearInterval(intervalId);
+            disconnectRealtime();
+            window.clearInterval(fallbackIntervalId);
         };
     }, [staff]);
 
@@ -150,7 +158,11 @@ export default function StaffNavbar({
             notificationItem.referenceType === "SosRequest" &&
             notificationItem.referenceId
         ) {
-            router.push("/staff/staff-sos");
+            router.push(
+                `/staff/staff-sos?id=${encodeURIComponent(
+                    notificationItem.referenceId
+                )}`
+            );
         }
     };
 
