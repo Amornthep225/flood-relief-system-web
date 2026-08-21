@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import dynamic from "next/dynamic";
 import CrisisMapSidebar from "./CrisisMapSidebar";
@@ -8,6 +8,12 @@ import CrisisMapLegend from "./CrisisMapLegend";
 import CrisisCaseModal from "./CrisisCaseModal";
 import CrisisMapSkeleton from "./CrisisMapSkeleton";
 import CrisisStockCheckModal from "./CrisisStockCheckModal";
+import {
+    filterCrisisCases,
+    isVisibleCrisisCase,
+    summarizeCrisisCases,
+} from "./crisisMapState.mjs";
+import { normalizeCrisisCaseDetail } from "./crisisCaseDetailState.mjs";
 import { acceptSosRequest, getMyAssignedSosRequests, getPendingSosRequests, getStaffSosRequestById } from "@/services/staff/sos";
 import { getCenterInventory } from "@/services/staff/inventory";
 
@@ -42,6 +48,7 @@ function normalizeCase(item) {
         latitude: Number(item.latitude ?? 0),
         longitude: Number(item.longitude ?? 0),
         address: item.addressDetail ?? item.address ?? "ไม่ระบุสถานที่",
+        requestType: item.requestType ?? "Relief",
         priority: item.priority ?? "Normal",
         status: item.status ?? "Pending",
         centerId: item.centerId ?? "",
@@ -52,15 +59,6 @@ function normalizeCase(item) {
         updatedAt: item.updatedAt ?? null,
         remark: item.userRemark ?? item.remark ?? "",
     };
-}
-
-function getPriorityRank(priority) {
-    const value = String(priority || "")
-        .trim()
-        .toLowerCase();
-    if (value === "critical") return 1;
-    if (value === "urgent") return 2;
-    return 3;
 }
 
 function deduplicateCases(cases) {
@@ -77,7 +75,9 @@ function deduplicateCases(cases) {
 export default function StaffCrisisMap() {
     const [cases, setCases] = useState([]);
     const [selectedCase, setSelectedCase] = useState(null);
-    const [activePriority, setActivePriority] = useState("all");
+    const [detailLoading, setDetailLoading] = useState(false);
+    const detailRequestRef = useRef(0);
+    const [activeStatus, setActiveStatus] = useState("all");
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [acceptingId, setAcceptingId] = useState("");
@@ -100,14 +100,16 @@ export default function StaffCrisisMap() {
                 assignedResult.status === "fulfilled"
                     ? normalizeList(assignedResult.value).map(normalizeCase)
                     : [];
-            const merged = deduplicateCases([...pendingCases, ...assignedCases]).sort(
-                (a, b) => {
-                    const p = getPriorityRank(a.priority) - getPriorityRank(b.priority);
-                    return p !== 0
-                        ? p
-                        : new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-                }
-            );
+            const merged = deduplicateCases([
+                ...pendingCases,
+                ...assignedCases,
+            ])
+                .filter(isVisibleCrisisCase)
+                .sort(
+                    (a, b) =>
+                        new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+                );
+
             setCases(merged);
             if (
                 pendingResult.status === "rejected" &&
@@ -140,29 +142,46 @@ export default function StaffCrisisMap() {
         return () => controller.abort();
     }, [loadCases]);
 
+    const handleSelectCase = useCallback(async (caseItem) => {
+        if (!caseItem?.id) return;
+
+        const requestSequence = ++detailRequestRef.current;
+        setSelectedCase(caseItem);
+        setDetailLoading(true);
+
+        try {
+            const detailResponse = await getStaffSosRequestById(caseItem.id);
+
+            if (detailRequestRef.current !== requestSequence) return;
+
+            setSelectedCase((current) =>
+                current?.id === caseItem.id
+                    ? normalizeCrisisCaseDetail(detailResponse, current)
+                    : current
+            );
+        } catch (error) {
+            if (detailRequestRef.current !== requestSequence) return;
+
+            await Swal.fire({
+                icon: "warning",
+                title: "โหลดรายละเอียดไม่สำเร็จ",
+                text:
+                    error?.message ||
+                    "ยังสามารถดูข้อมูลเบื้องต้นของเคสได้ กรุณาลองใหม่อีกครั้ง",
+            });
+        } finally {
+            if (detailRequestRef.current === requestSequence) {
+                setDetailLoading(false);
+            }
+        }
+    }, []);
+
     const filteredCases = useMemo(
-        () =>
-            activePriority === "all"
-                ? cases
-                : cases.filter(
-                    (item) =>
-                        String(item.priority).trim().toLowerCase() === activePriority
-                ),
-        [cases, activePriority]
+        () => filterCrisisCases(cases, activeStatus),
+        [cases, activeStatus]
     );
-    const summary = useMemo(
-        () => ({
-            total: cases.length,
-            critical: cases.filter(
-                (x) => String(x.priority).toLowerCase() === "critical"
-            ).length,
-            urgent: cases.filter((x) => String(x.priority).toLowerCase() === "urgent")
-                .length,
-            assigned: cases.filter((x) => x.assignedStaffId).length,
-            pending: cases.filter((x) => !x.assignedStaffId).length,
-        }),
-        [cases]
-    );
+
+    const summary = useMemo(() => summarizeCrisisCases(cases), [cases]);
 
     const handleAccept = async (caseItem) => {
         if (!caseItem?.id || caseItem.assignedStaffId) return;
@@ -303,9 +322,9 @@ export default function StaffCrisisMap() {
     return (
         //<section className="relative h-[calc(100vh-72px)] w-full overflow-hidden bg-slate-100">
         <section className="fixed inset-x-0 bottom-0 top-[65px] z-40 overflow-hidden bg-slate-100">
-            <CrisisMapCanvas cases={filteredCases} onSelectCase={setSelectedCase} />
-            <CrisisMapSidebar summary={summary} cases={filteredCases} activePriority={activePriority} onPriorityChange={setActivePriority} onSelectCase={setSelectedCase} onRefresh={() => { const c = new AbortController(); loadCases(c.signal, false); }} refreshing={refreshing} />
-            <CrisisCaseModal caseItem={selectedCase} onClose={() => setSelectedCase(null)} onAccept={handleAccept} accepting={acceptingId === selectedCase?.id} />
+            <CrisisMapCanvas cases={filteredCases} onSelectCase={handleSelectCase} />
+            <CrisisMapSidebar summary={summary} cases={filteredCases} activeStatus={activeStatus} onStatusChange={setActiveStatus} onSelectCase={handleSelectCase} onRefresh={() => { const c = new AbortController(); loadCases(c.signal, false); }} refreshing={refreshing} />
+            <CrisisCaseModal caseItem={selectedCase} loading={detailLoading} onClose={() => setSelectedCase(null)} onAccept={handleAccept} accepting={acceptingId === selectedCase?.id} />
             <CrisisStockCheckModal
                 caseItem={stockCase}
                 stockCheck={stockCheck}
