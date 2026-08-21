@@ -4,6 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { buttons } from "@/constants/buttons";
+import StaffNotificationDropdown from "./StaffNotificationDropdown";
+import {
+    getMyNotifications,
+    markAllNotificationsAsRead,
+    markNotificationAsRead,
+} from "@/services/staff/notification";
+import { connectNotificationRealtime } from "@/services/common/notificationRealtime";
 
 export default function StaffNavbar({
     theme,
@@ -44,6 +51,133 @@ export default function StaffNavbar({
         }
     }, [router]);
 
+    useEffect(() => {
+        if (!staff) {
+            return;
+        }
+
+        let cancelled = false;
+
+        const loadNotifications = async ({ silent = false } = {}) => {
+            try {
+                if (!silent) {
+                    setNotificationLoading(true);
+                }
+
+                const response = await getMyNotifications(20);
+
+                if (cancelled) {
+                    return;
+                }
+
+                setNotifications(
+                    Array.isArray(response?.notifications)
+                        ? response.notifications
+                        : []
+                );
+                setUnreadCount(Number(response?.unreadCount || 0));
+            } catch (error) {
+                if (!cancelled) {
+                    console.error(
+                        "Load staff notifications error:",
+                        error
+                    );
+                }
+            } finally {
+                if (!cancelled && !silent) {
+                    setNotificationLoading(false);
+                }
+            }
+        };
+
+        loadNotifications();
+
+        const disconnectRealtime = connectNotificationRealtime(() => {
+            loadNotifications({ silent: true });
+        });
+
+        // Safety sync เท่านั้น: ปกติ notification มาทันทีผ่าน SignalR
+        // ใช้รอบยาวเพื่อเก็บตกกรณี realtime event พลาดโดยไม่ยิง API ถี่
+        const fallbackIntervalId = window.setInterval(() => {
+            loadNotifications({ silent: true });
+        }, 120000);
+
+        return () => {
+            cancelled = true;
+            disconnectRealtime();
+            window.clearInterval(fallbackIntervalId);
+        };
+    }, [staff]);
+
+    const handleNotificationSelect = async (notificationItem) => {
+        if (!notificationItem) {
+            return;
+        }
+
+        if (!notificationItem.isRead) {
+            try {
+                await markNotificationAsRead(notificationItem.id);
+
+                setNotifications((current) =>
+                    current.map((item) =>
+                        item.id === notificationItem.id
+                            ? { ...item, isRead: true }
+                            : item
+                    )
+                );
+                setUnreadCount((count) => Math.max(count - 1, 0));
+            } catch (error) {
+                console.error(
+                    "Mark staff notification as read error:",
+                    error
+                );
+            }
+        }
+
+        setNotificationOpen(false);
+
+        if (
+            notificationItem.type === "StaffCaseAssigned" &&
+            notificationItem.referenceId
+        ) {
+            router.push(
+                `/staff/staff-mission-active?id=${encodeURIComponent(
+                    notificationItem.referenceId
+                )}`
+            );
+            return;
+        }
+
+        if (
+            notificationItem.referenceType === "SosRequest" &&
+            notificationItem.referenceId
+        ) {
+            router.push(
+                `/staff/staff-sos?id=${encodeURIComponent(
+                    notificationItem.referenceId
+                )}`
+            );
+        }
+    };
+
+    const handleReadAllNotifications = async () => {
+        try {
+            await markAllNotificationsAsRead();
+            setNotifications((current) =>
+                current.map((item) => ({
+                    ...item,
+                    isRead: true,
+                }))
+            );
+            setUnreadCount(0);
+        } catch (error) {
+            console.error(
+                "Mark all staff notifications as read error:",
+                error
+            );
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("staff");
@@ -59,9 +193,7 @@ export default function StaffNavbar({
                         <span className="material-symbols-outlined">waves</span>
                     </div>
 
-                    <h2
-                        className={`${theme.primaryText} text-xl font-black uppercase`}
-                    >
+                    <h2 className={`${theme.primaryText} text-xl font-black uppercase`}>
                         Flood Relief
                     </h2>
                 </Link>
@@ -132,9 +264,7 @@ export default function StaffNavbar({
 
                     {hotlineButton && (
                         <div className="flex flex-col items-center">
-                            <span
-                                className={`${theme.emergencyText} text-[10px] font-bold`}
-                            >
+                            <span className={`${theme.emergencyText} text-[10px] font-bold`}>
                                 สายด่วนฉุกเฉิน
                             </span>
 
