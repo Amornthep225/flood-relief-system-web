@@ -2,7 +2,7 @@ import { colors } from "@/constants/colors";
 import RoleGuard from "@/components/RoleGuard/RoleGuard";
 import UserNavbar from "@/components/user/UserNavbar/user-navbar";
 import PublicFooter from "@/components/common/Footer/PublicFooter";
-
+import ChatbotFloatingWidget from "@/components/user/Chatbot/ChatbotFloatingWidget";
 const theme = colors.role;
 
 export default function UserLayout({
@@ -36,7 +36,8 @@ export default function UserLayout({
                 <main className={`w-full max-w-7xl mx-auto px-6 pt-8 pb-8 ${pageClass}`}>
                     {children}
                 </main>
-
+                
+                <ChatbotFloatingWidget />
                 <PublicFooter theme={theme} />
             </div>
         </RoleGuard>
