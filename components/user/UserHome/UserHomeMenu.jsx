@@ -3,14 +3,14 @@ import { cards } from "@/constants/cards";
 
 const menu = [
     {
-        title: "คุยกับน้องห่วงใย",
+        title: "ศูนย์ความรู้ภัยน้ำท่วม",
         description:
-            "ผู้ช่วย AI อัจฉริยะ พร้อมตอบคำถาม ให้คำแนะนำ และเป็นเพื่อนคุยคลายเครียด 24 ชม.",
-        icon: "smart_toy",
+            "เรียนรู้เกี่ยวกับภัยน้ำท่วมและวิธีการป้องกันตนเองและครอบครัวจากสถานการณ์น้ำท่วม",
+        icon: "school",
         iconBox: "bg-sky-50 text-sky-500",
-        href: "/user/users-chatBot",
-        actionText: "เริ่มสนทนาเลย",
-        actionIcon: "chat_bubble_outline",
+        href: "/user/users-knowledge",
+        actionText: "เริ่มเรียนรู้เลย",
+        actionIcon: "book",
     },
     {
         title: "สถานะความช่วยเหลือ",
