@@ -24,30 +24,26 @@ function normalizeList(response) {
     if (Array.isArray(response?.requests)) return response.requests;
     return [];
 }
-const CrisisMapCanvas = dynamic(
-    () => import("./CrisisMapCanvas"),
-    {
-        ssr: false,
-        loading: () => (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
-                <div className="text-center">
-                    <span className="material-symbols-outlined animate-spin text-4xl text-sky-500">
-                        progress_activity
-                    </span>
+const CrisisMapCanvas = dynamic(() => import("./CrisisMapCanvas"), {
+    ssr: false,
+    loading: () => (
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
+            <div className="text-center">
+                <span className="material-symbols-outlined animate-spin text-4xl text-sky-500">
+                    progress_activity
+                </span>
 
-                    <p className="mt-3 text-sm text-slate-500">
-                        กำลังโหลดแผนที่...
-                    </p>
-                </div>
+                <p className="mt-3 text-sm text-slate-500">กำลังโหลดแผนที่...</p>
             </div>
-        ),
-    }
-);
+        </div>
+    ),
+});
 function normalizeCase(item) {
     return {
         id: item.id ?? item.sosRequestId ?? item.requestId ?? "",
         userId: item.userId ?? "",
-        userName: item.userFullName ?? item.userName ?? item.fullName ?? "ไม่ระบุชื่อ",
+        userName:
+            item.userFullName ?? item.userName ?? item.fullName ?? "ไม่ระบุชื่อ",
         phone: item.userPhoneNumber ?? item.userPhone ?? item.phoneNumber ?? "-",
         latitude: Number(item.latitude ?? 0),
         longitude: Number(item.longitude ?? 0),
@@ -70,7 +66,8 @@ function deduplicateCases(cases) {
     for (const item of cases) {
         if (!item?.id) continue;
         const existing = map.get(item.id);
-        if (!existing || (item.assignedStaffId && !existing.assignedStaffId)) map.set(item.id, item);
+        if (!existing || (item.assignedStaffId && !existing.assignedStaffId))
+            map.set(item.id, item);
     }
     return [...map.values()];
 }
@@ -114,14 +111,28 @@ export default function StaffCrisisMap() {
                 );
 
             setCases(merged);
-            if (pendingResult.status === "rejected" && assignedResult.status === "rejected") {
-                throw pendingResult.reason || assignedResult.reason || new Error("โหลดข้อมูลไม่สำเร็จ");
+            if (
+                pendingResult.status === "rejected" &&
+                assignedResult.status === "rejected"
+            ) {
+                throw (
+                    pendingResult.reason ||
+                    assignedResult.reason ||
+                    new Error("โหลดข้อมูลไม่สำเร็จ")
+                );
             }
         } catch (error) {
             if (error?.name === "AbortError") return;
-            await Swal.fire({ icon: "error", title: "โหลดข้อมูลไม่สำเร็จ", text: error?.message || "ไม่สามารถโหลดรายการ SOS ได้" });
+            await Swal.fire({
+                icon: "error",
+                title: "โหลดข้อมูลไม่สำเร็จ",
+                text: error?.message || "ไม่สามารถโหลดรายการ SOS ได้",
+            });
         } finally {
-            if (!signal?.aborted) { setLoading(false); setRefreshing(false); }
+            if (!signal?.aborted) {
+                setLoading(false);
+                setRefreshing(false);
+            }
         }
     }, []);
 
@@ -275,7 +286,10 @@ export default function StaffCrisisMap() {
 
             const patch = {
                 status: response?.data?.status || response?.status || "Accepted",
-                assignedStaffId: response?.data?.assignedStaffId || response?.assignedStaffId || "current-staff",
+                assignedStaffId:
+                    response?.data?.assignedStaffId ||
+                    response?.assignedStaffId ||
+                    "current-staff",
             };
 
             setCases((current) => current.map((item) =>
