@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import RoleGuard from "@/components/RoleGuard/RoleGuard";
-import AdminUsersHeader from "@/components/admin/Userpage/AdminUsersHeader";
-import UserSummarySection from "@/components/admin/Userpage/UserSummarySection";
-import UserFilterBar from "@/components/admin/Userpage/UserFilterBar";
-import UserTable from "@/components/admin/Userpage/UserTable";
-import ManageUserModal from "@/components/admin/Userpage/ManageUserModal";
+import AdminUsersHeader from "@/components/admin/UserPage/AdminUsersHeader";
+import UserSummarySection from "@/components/admin/UserPage/UserSummarySection";
+import UserFilterBar from "@/components/admin/UserPage/UserFilterBar";
+import UserTable from "@/components/admin/UserPage/UserTable";
+import ManageUserModal from "@/components/admin/UserPage/ManageUserModal";
 import { getUsers, updateUserStatus } from "@/services/admin/user";
 
 export default function AdminUsersPage() {
