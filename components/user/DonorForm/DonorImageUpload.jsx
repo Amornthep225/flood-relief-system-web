@@ -1,19 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function DonorImageUpload({ image, onChange }) {
+    const { t } = useLanguage();
     const [preview, setPreview] = useState(image || null);
 
     useEffect(() => {
         setPreview(image || null);
     }, [image]);
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
+    useEffect(() => {
+        return () => {
+            if (preview && preview.startsWith("blob:")) {
+                URL.revokeObjectURL(preview);
+            }
+        };
+    }, [preview]);
+
+    const handleImageChange = (event) => {
+        const file = event.target.files?.[0];
         if (!file) return;
 
-        // เคลียร์ URL เดิมออกเพื่อป้องกัน Memory Leak
         if (preview && preview.startsWith("blob:")) {
             URL.revokeObjectURL(preview);
         }
@@ -23,11 +32,13 @@ export default function DonorImageUpload({ image, onChange }) {
         onChange(file);
     };
 
-    const handleRemoveImage = (e) => {
-        e.stopPropagation(); // ป้องกันการเปิดไฟล์เลือกรูปซ้ำ
+    const handleRemoveImage = (event) => {
+        event.stopPropagation();
+
         if (preview && preview.startsWith("blob:")) {
             URL.revokeObjectURL(preview);
         }
+
         setPreview(null);
         onChange(null);
     };
@@ -36,10 +47,10 @@ export default function DonorImageUpload({ image, onChange }) {
         <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100">
             <div className="mb-4">
                 <h2 className="text-xl font-bold text-slate-800">
-                    แนบรูปสิ่งของบริจาค
+                    {t("donation.form.imageTitle")}
                 </h2>
                 <p className="mt-1 text-sm text-slate-500">
-                    เพิ่มรูปเพื่อให้เจ้าหน้าที่ตรวจสอบข้อมูลได้ง่ายขึ้น
+                    {t("donation.form.imageSubtitle")}
                 </p>
             </div>
 
@@ -51,7 +62,6 @@ export default function DonorImageUpload({ image, onChange }) {
                             alt="Donation Preview"
                             className="h-52 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
-                        {/* Overlay Gradient & Remove Button */}
                         <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40 opacity-0 transition-opacity group-hover:opacity-100">
                             <button
                                 type="button"
@@ -61,7 +71,7 @@ export default function DonorImageUpload({ image, onChange }) {
                                 <span className="material-symbols-outlined text-base">
                                     delete
                                 </span>
-                                ลบรูปภาพ
+                                {t("donation.form.removeImage")}
                             </button>
                         </div>
                     </div>
@@ -72,11 +82,12 @@ export default function DonorImageUpload({ image, onChange }) {
                                 add_photo_alternate
                             </span>
                         </div>
+
                         <p className="mt-3 text-sm font-medium text-slate-600 group-hover:text-slate-800">
-                            คลิกเพื่อเลือกรูปภาพ
+                            {t("donation.form.chooseImage")}
                         </p>
                         <p className="mt-1 text-xs text-slate-400">
-                            รองรับไฟล์ JPG, PNG หรือ WEBP
+                            {t("donation.form.imageTypes")}
                         </p>
                     </div>
                 )}

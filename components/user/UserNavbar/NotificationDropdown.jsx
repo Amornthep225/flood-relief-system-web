@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/contexts/LanguageContext";
+
 function getNotificationStyle(type) {
     const styles = {
         DonationReceived: {
@@ -68,7 +70,7 @@ function getNotificationStyle(type) {
     );
 }
 
-function formatNotificationTime(value) {
+function formatNotificationTime(value, language) {
     if (!value) {
         return "";
     }
@@ -79,7 +81,7 @@ function formatNotificationTime(value) {
         return "";
     }
 
-    return date.toLocaleString("th-TH", {
+    return date.toLocaleString(language === "en" ? "en-US" : "th-TH", {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -95,15 +97,17 @@ export default function NotificationDropdown({
     onSelect,
     onReadAll,
 }) {
+    const { language, t } = useLanguage();
+
     return (
         <div className="absolute right-0 top-12 z-[80] w-[min(92vw,390px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15">
             <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                 <div>
                     <p className="font-black text-slate-800">
-                        การแจ้งเตือน
+                        {t("common.notifications")}
                     </p>
                     <p className="text-xs text-slate-400">
-                        ยังไม่ได้อ่าน {unreadCount} รายการ
+                        {t("common.unread", { count: unreadCount })}
                     </p>
                 </div>
 
@@ -113,7 +117,7 @@ export default function NotificationDropdown({
                         onClick={onReadAll}
                         className="text-xs font-bold text-sky-600 transition hover:text-sky-700"
                     >
-                        อ่านทั้งหมด
+                        {t("common.readAll")}
                     </button>
                 )}
             </div>
@@ -124,7 +128,7 @@ export default function NotificationDropdown({
                         <span className="material-symbols-outlined animate-spin text-lg">
                             progress_activity
                         </span>
-                        กำลังโหลดการแจ้งเตือน...
+                        {t("common.loadingNotifications")}
                     </div>
                 ) : notifications.length === 0 ? (
                     <div className="px-5 py-10 text-center">
@@ -134,7 +138,7 @@ export default function NotificationDropdown({
                             </span>
                         </div>
                         <p className="mt-3 text-sm font-bold text-slate-500">
-                            ยังไม่มีการแจ้งเตือน
+                            {t("common.noNotifications")}
                         </p>
                     </div>
                 ) : (
@@ -175,7 +179,8 @@ export default function NotificationDropdown({
                                     </p>
                                     <p className="mt-2 text-[11px] font-medium text-slate-400">
                                         {formatNotificationTime(
-                                            notification.createdAt
+                                            notification.createdAt,
+                                            language
                                         )}
                                     </p>
                                 </div>

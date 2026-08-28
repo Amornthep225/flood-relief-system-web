@@ -1,8 +1,13 @@
+"use client";
+
 import DonationHistoryCard from "./DonationHistoryCard";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function DonationHistoryList({
     donations,
 }) {
+    const { t } = useLanguage();
+
     if (!donations.length) {
         return (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm">
@@ -11,7 +16,7 @@ export default function DonationHistoryList({
                 </span>
 
                 <p className="font-medium text-slate-500">
-                    ไม่พบรายการบริจาค
+                    {t("donation.history.none")}
                 </p>
             </div>
         );

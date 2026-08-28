@@ -1,16 +1,11 @@
+"use client";
+
+import { useLanguage } from "@/contexts/LanguageContext";
+
 const tabs = [
-    {
-        value: "all",
-        label: "ทั้งหมด",
-    },
-    {
-        value: "processing",
-        label: "กำลังดำเนินการ",
-    },
-    {
-        value: "completed",
-        label: "เสร็จสิ้น",
-    },
+    { value: "all", key: "all" },
+    { value: "processing", key: "processing" },
+    { value: "completed", key: "completed" },
 ];
 
 export default function DonationTabs({
@@ -18,6 +13,8 @@ export default function DonationTabs({
     onChange,
     counts,
 }) {
+    const { t } = useLanguage();
+
     return (
         <div className="flex gap-2 overflow-x-auto rounded-2xl border border-slate-200 bg-white px-3 pt-2 shadow-sm">
             {tabs.map((tab) => {
@@ -28,8 +25,8 @@ export default function DonationTabs({
                     tab.value === "all"
                         ? counts.all
                         : tab.value === "processing"
-                            ? counts.processing
-                            : counts.completed;
+                          ? counts.processing
+                          : counts.completed;
 
                 return (
                     <button
@@ -38,12 +35,16 @@ export default function DonationTabs({
                         onClick={() =>
                             onChange(tab.value)
                         }
-                        className={`whitespace-nowrap rounded-t-lg border-b-2 px-4 py-2 text-sm font-bold transition ${isActive
+                        className={`whitespace-nowrap rounded-t-lg border-b-2 px-4 py-2 text-sm font-bold transition ${
+                            isActive
                                 ? "border-sky-600 bg-sky-50 text-sky-700"
                                 : "border-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-                            }`}
+                        }`}
                     >
-                        {tab.label} ({count})
+                        {t(
+                            `donation.history.tabs.${tab.key}`
+                        )}{" "}
+                        ({count})
                     </button>
                 );
             })}

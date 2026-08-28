@@ -1,3 +1,7 @@
+"use client";
+
+import { useLanguage } from "@/contexts/LanguageContext";
+
 export default function SosItemSelector({
     categories,
     itemsByCategory,
@@ -9,6 +13,8 @@ export default function SosItemSelector({
     onDecrease,
     onQuantityChange,
 }) {
+    const { t } = useLanguage();
+
     return (
         <div className="space-y-6">
             {selectedCategoryIds.map((categoryId) => {
@@ -36,7 +42,7 @@ export default function SosItemSelector({
 
                         {items.length === 0 ? (
                             <p className="text-sm text-slate-500">
-                                ยังไม่มีรายการสิ่งของในหมวดนี้
+                                {t("sos.relief.noItems")}
                             </p>
                         ) : (
                             <div className="space-y-3">
@@ -78,7 +84,7 @@ export default function SosItemSelector({
                                                         </p>
 
                                                         <p className="text-xs text-slate-400 mt-1">
-                                                            หน่วย:{" "}
+                                                            {t("sos.relief.unit")}:{" "}
                                                             {
                                                                 item.unit
                                                             }

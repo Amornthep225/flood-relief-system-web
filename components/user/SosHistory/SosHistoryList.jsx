@@ -1,10 +1,12 @@
+"use client";
+
 import SosHistoryCard from "./SosHistoryCard";
 import SosHistoryState from "./SosHistoryState";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-export default function SosHistoryList({
-    requests,
-    selectedFilter,
-}) {
+export default function SosHistoryList({ requests, selectedFilter }) {
+    const { t } = useLanguage();
+
     if (!Array.isArray(requests)) {
         return null;
     }
@@ -13,12 +15,8 @@ export default function SosHistoryList({
         return (
             <SosHistoryState
                 icon="history"
-                title={getEmptyTitle(
-                    selectedFilter
-                )}
-                description={getEmptyDescription(
-                    selectedFilter
-                )}
+                title={getEmptyTitle(selectedFilter, t)}
+                description={getEmptyDescription(selectedFilter, t)}
             />
         );
     }
@@ -26,35 +24,32 @@ export default function SosHistoryList({
     return (
         <div className="space-y-5">
             {requests.map((request) => (
-                <SosHistoryCard
-                    key={request.id}
-                    request={request}
-                />
+                <SosHistoryCard key={request.id} request={request} />
             ))}
         </div>
     );
 }
 
-function getEmptyTitle(filter) {
+function getEmptyTitle(filter, t) {
     if (filter === "active") {
-        return "ไม่มีคำขอที่กำลังดำเนินการ";
+        return t("sos.history.empty.activeTitle");
     }
 
     if (filter === "completed") {
-        return "ยังไม่มีคำขอที่เสร็จสิ้น";
+        return t("sos.history.empty.completedTitle");
     }
 
     if (filter === "cancelled") {
-        return "ไม่มีคำขอที่ถูกยกเลิก";
+        return t("sos.history.empty.cancelledTitle");
     }
 
-    return "ยังไม่มีประวัติคำขอ";
+    return t("sos.history.empty.allTitle");
 }
 
-function getEmptyDescription(filter) {
+function getEmptyDescription(filter, t) {
     if (filter === "all") {
-        return "เมื่อคุณส่งคำขอความช่วยเหลือ รายการจะแสดงที่หน้านี้";
+        return t("sos.history.empty.allDescription");
     }
 
-    return "ไม่พบคำขอที่ตรงกับสถานะที่เลือก";
+    return t("sos.history.empty.filteredDescription");
 }

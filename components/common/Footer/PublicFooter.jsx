@@ -1,11 +1,15 @@
 "use client";
 
+import { useLanguage } from "@/contexts/LanguageContext";
+
 export default function PublicFooter({
     theme,
-    lastUpdate = "5 นาทีที่แล้ว",
+    lastUpdate = null,
     version = "v1.0.0",
 }) {
+    const { t } = useLanguage();
     const currentYear = new Date().getFullYear();
+    const resolvedLastUpdate = lastUpdate || t("footer.defaultLastUpdate");
     const textStyle = theme?.mutedText || "text-slate-500";
 
     return (
@@ -22,21 +26,21 @@ export default function PublicFooter({
                         <span className="material-symbols-outlined text-sm">
                             update
                         </span>
-                        อัปเดตข้อมูลล่าสุด: {lastUpdate}
+                        {t("footer.lastUpdate", { time: resolvedLastUpdate })}
                     </div>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
                     <a href="#" className={`${textStyle} hover:text-sky-600 transition-colors`}>
-                        นโยบายความเป็นส่วนตัว
+                        {t("footer.privacy")}
                     </a>
 
                     <a href="#" className={`${textStyle} hover:text-sky-600 transition-colors`}>
-                        ติดต่อศูนย์ช่วยเหลือ
+                        {t("footer.contact")}
                     </a>
 
                     <a href="#" className={`${textStyle} hover:text-sky-600 transition-colors`}>
-                        รายงานปัญหา
+                        {t("footer.report")}
                     </a>
 
                     <div className="hidden sm:inline-block w-px h-4 bg-slate-300" />

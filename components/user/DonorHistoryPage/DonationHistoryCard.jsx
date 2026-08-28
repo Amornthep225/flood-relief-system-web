@@ -1,7 +1,10 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
 import { cards } from "@/constants/cards";
 import { buttons } from "@/constants/buttons";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translateMasterDataText } from "@/locales/uiPhrases";
 
 const completedStatuses = [
     "completed",
@@ -21,29 +24,8 @@ function isCompletedStatus(status) {
     );
 }
 
-function getStatusLabel(status) {
-    const normalized = normalizeStatus(status);
-
-    const labels = {
-        pending: "รอส่งมอบที่ศูนย์",
-        processing: "กำลังตรวจรับสิ่งของ",
-        accepted: "ศูนย์รับรายการแล้ว",
-        preparing: "กำลังตรวจรับสิ่งของ",
-        delivering: "รอส่งมอบที่ศูนย์",
-        received: "ศูนย์รับของแล้ว",
-        completed: "ศูนย์รับของแล้ว",
-        success: "ศูนย์รับของแล้ว",
-        rejected: "ปฏิเสธรายการ",
-        cancelled: "ยกเลิกรายการ",
-    };
-
-    return labels[normalized] || status || "ไม่ระบุสถานะ";
-}
-
-function formatDate(dateValue) {
-    if (!dateValue) {
-        return "-";
-    }
+function formatDate(dateValue, language) {
+    if (!dateValue) return "-";
 
     const date = new Date(dateValue);
 
@@ -51,22 +33,25 @@ function formatDate(dateValue) {
         return dateValue;
     }
 
-    return new Intl.DateTimeFormat("th-TH", {
-        day: "numeric",
-        month: "short",
-        year: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-    }).format(date);
+    return new Intl.DateTimeFormat(
+        language === "en" ? "en-US" : "th-TH",
+        {
+            day: "numeric",
+            month: "short",
+            year: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        }
+    ).format(date);
 }
 
-function getItemName(item) {
+function getItemName(item, fallback) {
     return (
         item?.reliefItemName ||
         item?.itemName ||
         item?.name ||
         item?.reliefItem?.name ||
-        "สิ่งของบริจาค"
+        fallback
     );
 }
 
@@ -81,43 +66,78 @@ function getItemUnit(item) {
 export default function DonationHistoryCard({
     donation,
 }) {
+    const { language, t } = useLanguage();
     const completed = isCompletedStatus(
         donation.status
     );
+
+    const normalizedStatusValue =
+        normalizeStatus(donation.status);
+    const statusKey = [
+        "pending",
+        "processing",
+        "accepted",
+        "preparing",
+        "delivering",
+        "received",
+        "completed",
+        "success",
+        "rejected",
+        "cancelled",
+    ].includes(normalizedStatusValue)
+        ? normalizedStatusValue
+        : "unknown";
 
     const items = Array.isArray(donation.items)
         ? donation.items
         : [];
 
-    const firstItemName =
+    const firstItemRaw =
         items.length > 0
-            ? getItemName(items[0])
-            : "รายการบริจาค";
+            ? getItemName(
+                  items[0],
+                  t("donation.history.defaultItem")
+              )
+            : t("donation.history.defaultRecord");
+
+    const firstItemName = translateMasterDataText(
+        firstItemRaw,
+        language
+    );
 
     const title =
         items.length > 1
-            ? `${firstItemName} และอีก ${items.length - 1
-            } รายการ`
-            : `บริจาค${firstItemName}`;
+            ? t(
+                  "donation.history.multipleItemsTitle",
+                  {
+                      item: firstItemName,
+                      count: items.length - 1,
+                  }
+              )
+            : t("donation.history.singleItemTitle", {
+                  item: firstItemName,
+              });
 
     return (
         <article
             className={`${cards.donorHistory.card} !border-slate-200 !bg-white shadow-sm transition-shadow hover:shadow-md`}
         >
             <div
-                className={`absolute bottom-0 left-0 top-0 w-1.5 ${completed
+                className={`absolute bottom-0 left-0 top-0 w-1.5 ${
+                    completed
                         ? "bg-green-500"
                         : "bg-sky-500"
-                    }`}
+                }`}
             />
 
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                 <div className="flex items-start gap-4">
                     <div
-                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${completed
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${
+                            completed
                                 ? "bg-green-50 text-green-600"
                                 : "bg-sky-50 text-sky-600"
-                            }`}
+                        }`}
                     >
                         <span className="material-symbols-outlined">
                             {completed
@@ -133,58 +153,80 @@ export default function DonationHistoryCard({
                             </h3>
 
                             <span
-                                className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${completed
+                                className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                                    completed
                                         ? "bg-green-100 text-green-700"
                                         : "bg-sky-100 text-sky-700"
-                                    }`}
+                                }`}
                             >
-                                {getStatusLabel(
-                                    donation.status
+                                {t(
+                                    `donation.history.statuses.${statusKey}`
                                 )}
                             </span>
                         </div>
 
                         <p className="mb-2 text-sm text-slate-500">
-                            รหัส: #{donation.id} •{" "}
+                            {t("donation.history.code", {
+                                id: donation.id,
+                            })}{" "}
+                            •{" "}
                             {formatDate(
-                                donation.createdAt
+                                donation.createdAt,
+                                language
                             )}
                         </p>
 
                         <div className="flex flex-wrap gap-2">
                             {items.map(
-                                (donatedItem, index) => (
-                                    <span
-                                        key={
-                                            donatedItem.id ||
-                                            `${donation.id}-${index}`
-                                        }
-                                        className={
-                                            cards
-                                                .donorHistory
-                                                .tag
-                                        }
-                                    >
-                                        <span className="material-symbols-outlined text-sm text-sky-500">
-                                            inventory_2
-                                        </span>
+                                (donatedItem, index) => {
+                                    const itemName =
+                                        translateMasterDataText(
+                                            getItemName(
+                                                donatedItem,
+                                                t(
+                                                    "donation.history.defaultItem"
+                                                )
+                                            ),
+                                            language
+                                        );
+                                    const unit =
+                                        translateMasterDataText(
+                                            getItemUnit(
+                                                donatedItem
+                                            ),
+                                            language
+                                        );
 
-                                        {getItemName(
-                                            donatedItem
-                                        )}{" "}
-                                        x
-                                        {donatedItem.quantity ??
-                                            0}{" "}
-                                        {getItemUnit(
-                                            donatedItem
-                                        )}
-                                    </span>
-                                )
+                                    return (
+                                        <span
+                                            key={
+                                                donatedItem.id ||
+                                                `${donation.id}-${index}`
+                                            }
+                                            className={
+                                                cards
+                                                    .donorHistory
+                                                    .tag
+                                            }
+                                        >
+                                            <span className="material-symbols-outlined text-sm text-sky-500">
+                                                inventory_2
+                                            </span>
+
+                                            {itemName} x
+                                            {donatedItem.quantity ??
+                                                0}{" "}
+                                            {unit}
+                                        </span>
+                                    );
+                                }
                             )}
 
                             {items.length === 0 && (
                                 <span className="text-sm text-slate-400">
-                                    ไม่มีรายละเอียดสิ่งของ
+                                    {t(
+                                        "donation.history.noItemDetails"
+                                    )}
                                 </span>
                             )}
                         </div>
@@ -199,9 +241,9 @@ export default function DonationHistoryCard({
                         className={
                             completed
                                 ? buttons.donorHistory
-                                    .detail
+                                      .detail
                                 : buttons.donorHistory
-                                    .tracking
+                                      .tracking
                         }
                     >
                         <span className="material-symbols-outlined text-sm">
@@ -211,8 +253,12 @@ export default function DonationHistoryCard({
                         </span>
 
                         {completed
-                            ? "ดูรายละเอียด"
-                            : "ติดตามสถานะ"}
+                            ? t(
+                                  "donation.history.viewDetails"
+                              )
+                            : t(
+                                  "donation.history.trackStatus"
+                              )}
                     </Link>
                 </div>
             </div>

@@ -3,9 +3,11 @@
 import { useState } from "react";
 import ChatbotFloatingButton from "./ChatbotFloatingButton";
 import FloodChatbot from "./FloodChatbot";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ChatbotFloatingWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const { dictionary, t } = useLanguage();
 
   const toggleChatbot = () => {
     setIsOpen((current) => !current);
@@ -26,16 +28,16 @@ export default function ChatbotFloatingWidget() {
         >
           <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
             <div>
-              <p className="font-semibold text-slate-800">น้องห่วงใย</p>
+              <p className="font-semibold text-slate-800">{dictionary.chatbot.name}</p>
               <p className="text-xs text-slate-500">
-                ผู้ช่วยแนะนำความปลอดภัยช่วงน้ำท่วม
+                {dictionary.chatbot.subtitle}
               </p>
             </div>
 
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              aria-label="ปิดแชทบอท"
+              aria-label={t("common.closeChatbot")}
               className="
                 flex h-9 w-9 items-center justify-center
                 rounded-full text-slate-500

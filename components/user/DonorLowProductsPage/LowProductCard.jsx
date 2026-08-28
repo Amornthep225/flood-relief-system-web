@@ -1,9 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { cards } from "@/constants/cards";
 import { buttons } from "@/constants/buttons";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translateMasterDataText } from "@/locales/uiPhrases";
 
 function getProductStyle(item) {
-    const isOutOfStock = item.stockStatus === "OutOfStock";
+    const isOutOfStock =
+        item.stockStatus === "OutOfStock";
 
     if (isOutOfStock) {
         return {
@@ -27,12 +32,22 @@ function getProductStyle(item) {
 }
 
 export default function LowProductCard({ item }) {
+    const { language, t } = useLanguage();
+
     const quantity = Number(item.quantity ?? 0);
-    const minimumQuantity = Number(item.minimumQuantity ?? 0);
-    const missing = Math.max(minimumQuantity - quantity, 0);
+    const minimumQuantity = Number(
+        item.minimumQuantity ?? 0
+    );
+    const missing = Math.max(
+        minimumQuantity - quantity,
+        0
+    );
     const progress =
         minimumQuantity > 0
-            ? Math.min((quantity / minimumQuantity) * 100, 100)
+            ? Math.min(
+                  (quantity / minimumQuantity) * 100,
+                  100
+              )
             : 0;
 
     const style = getProductStyle(item);
@@ -42,6 +57,21 @@ export default function LowProductCard({ item }) {
         item.reliefItemId ?? ""
     )}`;
 
+    const itemName = translateMasterDataText(
+        item.reliefItemName ||
+            t("donation.lowStock.unspecifiedItem"),
+        language
+    );
+    const centerName = translateMasterDataText(
+        item.centerName ||
+            t("donation.lowStock.unspecifiedCenter"),
+        language
+    );
+    const unit = translateMasterDataText(
+        item.unit || t("donation.lowStock.piece"),
+        language
+    );
+
     return (
         <article className={cards.donorLowProducts.card}>
             {item.stockStatus === "OutOfStock" && (
@@ -49,7 +79,7 @@ export default function LowProductCard({ item }) {
                     <span className="material-symbols-outlined text-sm">
                         warning
                     </span>
-                    หมดสต็อก
+                    {t("donation.lowStock.outOfStock")}
                 </div>
             )}
 
@@ -64,27 +94,32 @@ export default function LowProductCard({ item }) {
             <div className="mb-2 flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <h3 className="truncate text-lg font-bold text-slate-800">
-                        {item.reliefItemName || "ไม่ระบุรายการ"}
+                        {itemName}
                     </h3>
                     <p className="mt-1 truncate text-xs text-slate-400">
-                        {item.centerName || "ไม่ระบุศูนย์"}
+                        {centerName}
                     </p>
                 </div>
 
                 <span className="shrink-0 rounded bg-slate-100 px-2 py-1 text-xs font-bold text-slate-600">
-                    {item.unit || "ชิ้น"}
+                    {unit}
                 </span>
             </div>
 
             <div className="mb-4 mt-3">
                 <div className="mb-1 flex justify-between gap-3 text-xs">
                     <span className="text-slate-500">
-                        คงเหลือ:{" "}
-                        <b className="text-sky-600">{quantity}</b>
+                        {t("donation.lowStock.remaining", {
+                            count: quantity,
+                        })}
                     </span>
 
-                    <span className={`font-bold ${style.missingColor}`}>
-                        ขาดอีก: {missing}
+                    <span
+                        className={`font-bold ${style.missingColor}`}
+                    >
+                        {t("donation.lowStock.missing", {
+                            count: missing,
+                        })}
                     </span>
                 </div>
 
@@ -96,7 +131,10 @@ export default function LowProductCard({ item }) {
                 </div>
 
                 <p className="mt-1 text-right text-[10px] text-slate-400">
-                    ระดับขั้นต่ำ: {minimumQuantity} {item.unit || "ชิ้น"}
+                    {t("donation.lowStock.minimum", {
+                        count: minimumQuantity,
+                        unit,
+                    })}
                 </p>
             </div>
 
@@ -105,7 +143,7 @@ export default function LowProductCard({ item }) {
                     href={donationUrl}
                     className={`${buttons.donorLowProducts.primary} ${style.button}`}
                 >
-                    บริจาครายการนี้
+                    {t("donation.lowStock.donateThis")}
                 </Link>
             </div>
         </article>

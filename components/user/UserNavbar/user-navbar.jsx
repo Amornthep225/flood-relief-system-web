@@ -11,6 +11,8 @@ import {
     markNotificationAsRead,
 } from "@/services/user/notification";
 import { connectNotificationRealtime } from "@/services/common/notificationRealtime";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function UserNavbar({
     theme,
@@ -23,6 +25,7 @@ export default function UserNavbar({
     options = {},
 }) {
     const router = useRouter();
+    const { t } = useLanguage();
     const [user, setUser] = useState(null);
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -214,7 +217,7 @@ export default function UserNavbar({
                             <span className="material-symbols-outlined text-[18px]">
                                 arrow_back
                             </span>
-                            กลับ
+                            {t("common.back")}
                         </Link>
                     )}
 
@@ -223,7 +226,7 @@ export default function UserNavbar({
                             href={homeHref}
                             className={`${theme.primaryText} text-sm font-bold hover:text-[#2a93d5] transition-colors`}
                         >
-                            หน้าแรก
+                            {t("common.home")}
                         </Link>
                     )}
 
@@ -233,7 +236,7 @@ export default function UserNavbar({
                             onClick={handleLogout}
                             className="text-sm font-bold text-slate-500 hover:text-red-500 transition-colors"
                         >
-                            Logout
+                            {t("common.logout")}
                         </button>
                     )}
 
@@ -241,11 +244,13 @@ export default function UserNavbar({
                         <div className="hidden md:block h-6 w-px bg-slate-200" />
                     )}
 
+                    <LanguageSwitcher />
+
                     {notification && (
                         <div className="relative">
                             <button
                                 type="button"
-                                aria-label="การแจ้งเตือน"
+                                aria-label={t("common.notifications")}
                                 aria-expanded={notificationOpen}
                                 onClick={() =>
                                     setNotificationOpen((open) => !open)
@@ -299,7 +304,7 @@ export default function UserNavbar({
                     {hotlineButton && (
                         <div className="flex flex-col items-center">
                             <span className={`${theme.emergencyText} text-[10px] font-bold`}>
-                                สายด่วนฉุกเฉิน
+                                {t("common.emergencyHotline")}
                             </span>
 
                             <a href={`tel:${hotline}`} className={buttons.common.hotline}>

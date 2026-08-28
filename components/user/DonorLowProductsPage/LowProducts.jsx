@@ -9,12 +9,17 @@ import LowProductsFilters from "./LowProductsFilters";
 import LowProductsSummary from "./LowProductsSummary";
 import LowProductsList from "./LowProductsList";
 import LowProductsSkeleton from "./LowProductsSkeleton";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translateUiText } from "@/locales/uiPhrases";
 
 export default function LowProducts() {
+    const { language, t } = useLanguage();
     const [centers, setCenters] = useState([]);
     const [products, setProducts] = useState([]);
-    const [selectedCenter, setSelectedCenter] = useState("all");
-    const [selectedStatus, setSelectedStatus] = useState("all");
+    const [selectedCenter, setSelectedCenter] =
+        useState("all");
+    const [selectedStatus, setSelectedStatus] =
+        useState("all");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -26,29 +31,38 @@ export default function LowProducts() {
                 setLoading(true);
                 setError("");
 
-                const [centersData, lowStockData] = await Promise.all([
-                    getCenters(),
-                    getLowStockItems(),
-                ]);
+                const [centersData, lowStockData] =
+                    await Promise.all([
+                        getCenters(),
+                        getLowStockItems(),
+                    ]);
 
                 if (cancelled) return;
 
                 setCenters(
                     Array.isArray(centersData)
-                        ? centersData.filter((center) => center.isActive !== false)
+                        ? centersData.filter(
+                              (center) =>
+                                  center.isActive !== false
+                          )
                         : []
                 );
 
                 setProducts(
-                    Array.isArray(lowStockData) ? lowStockData : []
+                    Array.isArray(lowStockData)
+                        ? lowStockData
+                        : []
                 );
             } catch (loadError) {
                 if (cancelled) return;
 
                 setProducts([]);
                 setError(
-                    loadError?.message ||
-                        "เกิดข้อผิดพลาดในการโหลดข้อมูล"
+                    translateUiText(
+                        loadError?.message || "",
+                        language
+                    ) ||
+                    t("donation.lowStock.loadError")
                 );
             } finally {
                 if (!cancelled) {
@@ -76,27 +90,40 @@ export default function LowProducts() {
 
             return matchesCenter && matchesStatus;
         });
-    }, [products, selectedCenter, selectedStatus]);
+    }, [
+        products,
+        selectedCenter,
+        selectedStatus,
+    ]);
 
     const summary = useMemo(() => {
-        const totalMissing = filteredProducts.reduce(
-            (sum, item) => {
-                const quantity = Number(item.quantity ?? 0);
-                const minimumQuantity = Number(
-                    item.minimumQuantity ?? 0
-                );
+        const totalMissing =
+            filteredProducts.reduce(
+                (sum, item) => {
+                    const quantity = Number(
+                        item.quantity ?? 0
+                    );
+                    const minimumQuantity = Number(
+                        item.minimumQuantity ?? 0
+                    );
 
-                return (
-                    sum +
-                    Math.max(minimumQuantity - quantity, 0)
-                );
-            },
-            0
-        );
+                    return (
+                        sum +
+                        Math.max(
+                            minimumQuantity - quantity,
+                            0
+                        )
+                    );
+                },
+                0
+            );
 
-        const outOfStockCount = filteredProducts.filter(
-            (item) => item.stockStatus === "OutOfStock"
-        ).length;
+        const outOfStockCount =
+            filteredProducts.filter(
+                (item) =>
+                    item.stockStatus ===
+                    "OutOfStock"
+            ).length;
 
         return {
             totalItems: filteredProducts.length,
@@ -112,11 +139,11 @@ export default function LowProducts() {
                     <span className="material-symbols-outlined text-orange-500">
                         inventory_2
                     </span>
-                    สิ่งของที่ขาดแคลน
+                    {t("donation.lowStock.title")}
                 </h1>
 
                 <p className="mt-2 text-slate-500">
-                    เลือกศูนย์รับบริจาคเพื่อดูรายการที่กำลังขาดแคลน
+                    {t("donation.lowStock.subtitle")}
                 </p>
             </header>
 
@@ -142,7 +169,9 @@ export default function LowProducts() {
             {loading ? (
                 <LowProductsSkeleton />
             ) : (
-                <LowProductsList products={filteredProducts} />
+                <LowProductsList
+                    products={filteredProducts}
+                />
             )}
         </div>
     );

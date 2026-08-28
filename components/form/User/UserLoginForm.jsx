@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
 import { buttons } from "@/constants/buttons";
 import { cards } from "@/constants/cards";
 import { userLogin } from "@/services/auth/UserLogin";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const initialForm = {
     phoneOrEmail: "",
@@ -16,54 +17,37 @@ const initialForm = {
 
 export default function UserLoginForm({ links }) {
     const router = useRouter();
-
+    const { t } = useLanguage();
     const [form, setForm] = useState(initialForm);
-    const [showPassword, setShowPassword] =
-        useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
     useEffect(() => {
         const token = localStorage.getItem("token");
-
-        if (token) {
-            router.replace("../../../select-role");
-        }
+        if (token) router.replace("../../../select-role");
     }, [router]);
+
     const handleChange = (event) => {
         const { name, value } = event.target;
-
-        setForm((previous) => ({
-            ...previous,
-            [name]: value,
-        }));
-
-        if (error) {
-            setError("");
-        }
+        setForm((previous) => ({ ...previous, [name]: value }));
+        if (error) setError("");
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        if (loading) {
-            return;
-        }
+        if (loading) return;
 
         setError("");
-
-        const phoneOrEmail =
-            form.phoneOrEmail.trim();
+        const phoneOrEmail = form.phoneOrEmail.trim();
 
         if (!phoneOrEmail) {
-            setError(
-                "กรุณากรอกเบอร์โทรศัพท์หรืออีเมล"
-            );
-
+            setError(t("auth.login.phoneRequired"));
             return;
         }
 
         if (!form.password) {
-            setError("กรุณากรอกรหัสผ่าน");
+            setError(t("auth.login.passwordRequired"));
             return;
         }
 
@@ -76,28 +60,16 @@ export default function UserLoginForm({ links }) {
             });
 
             if (!data.token) {
-                throw new Error(
-                    "Backend ไม่ได้ส่ง Token กลับมา"
-                );
+                throw new Error(t("auth.login.tokenMissing"));
             }
 
             if (data.role !== "User") {
-                throw new Error(
-                    "บัญชีนี้ไม่มีสิทธิ์เข้าใช้งานในส่วนผู้ใช้"
-                );
+                throw new Error(t("auth.login.forbiddenRole"));
             }
 
-            /*
-             * ล้าง Token เก่าของ Role อื่นก่อน
-             */
             localStorage.removeItem("admin");
             localStorage.removeItem("staff");
-
-            localStorage.setItem(
-                "token",
-                data.token
-            );
-
+            localStorage.setItem("token", data.token);
             localStorage.setItem(
                 "user",
                 JSON.stringify({
@@ -110,8 +82,8 @@ export default function UserLoginForm({ links }) {
 
             await Swal.fire({
                 icon: "success",
-                title: "เข้าสู่ระบบสำเร็จ",
-                text: "กำลังนำคุณเข้าสู่ระบบ...",
+                title: t("auth.login.successTitle"),
+                text: t("auth.login.successText"),
                 timer: 1000,
                 showConfirmButton: false,
                 allowOutsideClick: false,
@@ -122,15 +94,15 @@ export default function UserLoginForm({ links }) {
             const message =
                 err instanceof Error
                     ? err.message
-                    : "เข้าสู่ระบบไม่สำเร็จ";
+                    : t("auth.login.failedTitle");
 
             setError(message);
 
             await Swal.fire({
                 icon: "error",
-                title: "เข้าสู่ระบบไม่สำเร็จ",
+                title: t("auth.login.failedTitle"),
                 text: message,
-                confirmButtonText: "ตกลง",
+                confirmButtonText: t("auth.login.confirm"),
             });
         } finally {
             setLoading(false);
@@ -139,10 +111,7 @@ export default function UserLoginForm({ links }) {
 
     return (
         <>
-            <form
-                onSubmit={handleSubmit}
-                className="space-y-5"
-            >
+            <form onSubmit={handleSubmit} className="space-y-5">
                 {error && (
                     <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
                         {error}
@@ -150,51 +119,42 @@ export default function UserLoginForm({ links }) {
                 )}
 
                 <LoginInput
-                    label="เบอร์โทรศัพท์ / อีเมล"
+                    label={t("auth.login.phoneOrEmail")}
                     icon="smartphone"
                     name="phoneOrEmail"
                     value={form.phoneOrEmail}
                     onChange={handleChange}
-                    placeholder="08X-XXX-XXXX หรือ example@email.com"
+                    placeholder={t("auth.login.phoneOrEmailPlaceholder")}
                     autoComplete="username"
                 />
 
                 <LoginInput
-                    label="รหัสผ่าน"
+                    label={t("auth.login.password")}
                     icon="lock"
                     name="password"
-                    type={
-                        showPassword
-                            ? "text"
-                            : "password"
-                    }
+                    type={showPassword ? "text" : "password"}
                     value={form.password}
                     onChange={handleChange}
                     placeholder="••••••••"
                     autoComplete="current-password"
                     showPasswordButton
                     showPassword={showPassword}
-                    onTogglePassword={() =>
-                        setShowPassword(
-                            (previous) => !previous
-                        )
-                    }
+                    onTogglePassword={() => setShowPassword((previous) => !previous)}
+                    showPasswordLabel={t("auth.login.showPassword")}
+                    hidePasswordLabel={t("auth.login.hidePassword")}
                 />
 
                 <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2 text-xs text-slate-500">
-                        <input
-                            type="checkbox"
-                            className="rounded border-slate-300"
-                        />
-                        จดจำฉันไว้
+                        <input type="checkbox" className="rounded border-slate-300" />
+                        {t("auth.login.rememberMe")}
                     </label>
 
                     <button
                         type="button"
                         className="text-xs font-bold text-sky-500 hover:underline"
                     >
-                        ลืมรหัสผ่าน?
+                        {t("auth.login.forgotPassword")}
                     </button>
                 </div>
 
@@ -202,35 +162,26 @@ export default function UserLoginForm({ links }) {
                     type="submit"
                     disabled={loading}
                     className={`${buttons.userLogin.login} ${
-                        loading
-                            ? "cursor-not-allowed opacity-60"
-                            : ""
+                        loading ? "cursor-not-allowed opacity-60" : ""
                     }`}
                 >
                     {loading
-                        ? "กำลังเข้าสู่ระบบ..."
-                        : "เข้าสู่ระบบ"}
+                        ? t("auth.login.loggingIn")
+                        : t("auth.login.login")}
                 </button>
             </form>
 
             <div className="relative flex items-center py-6">
                 <div className="flex-grow border-t border-slate-100" />
-
                 <span className="mx-4 text-[10px] text-slate-300">
-                    หากไม่มีบัญชีผู้ใช้
+                    {t("auth.login.noAccount")}
                 </span>
-
                 <div className="flex-grow border-t border-slate-100" />
             </div>
 
-            <Link
-                href={links.register}
-                className={buttons.userLogin.register}
-            >
-                <span className="material-symbols-outlined">
-                    volunteer_activism
-                </span>
-                ลงทะเบียน
+            <Link href={links.register} className={buttons.userLogin.register}>
+                <span className="material-symbols-outlined">volunteer_activism</span>
+                {t("auth.login.register")}
             </Link>
         </>
     );
@@ -248,6 +199,8 @@ function LoginInput({
     showPasswordButton = false,
     showPassword = false,
     onTogglePassword,
+    showPasswordLabel,
+    hidePasswordLabel,
 }) {
     return (
         <div>
@@ -272,9 +225,7 @@ function LoginInput({
                     placeholder={placeholder}
                     autoComplete={autoComplete}
                     className={`${cards.userLogin.input} ${
-                        showPasswordButton
-                            ? "pr-12"
-                            : ""
+                        showPasswordButton ? "pr-12" : ""
                     }`}
                     required
                 />
@@ -284,16 +235,10 @@ function LoginInput({
                         type="button"
                         onClick={onTogglePassword}
                         className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center justify-center text-slate-400 hover:text-sky-500"
-                        aria-label={
-                            showPassword
-                                ? "ซ่อนรหัสผ่าน"
-                                : "แสดงรหัสผ่าน"
-                        }
+                        aria-label={showPassword ? hidePasswordLabel : showPasswordLabel}
                     >
                         <span className="material-symbols-outlined text-[20px]">
-                            {showPassword
-                                ? "visibility_off"
-                                : "visibility"}
+                            {showPassword ? "visibility_off" : "visibility"}
                         </span>
                     </button>
                 )}

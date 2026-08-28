@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 
 import LocationPicker from "@/components/user/SosForm/LocationPicker";
 import FormSectionTitle from "@/components/user/SosForm/FormSectionTitle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 import {
     createEmergencySosRequest,
@@ -31,6 +32,7 @@ const initialForm = {
 
 export default function EmergencySosForm() {
     const router = useRouter();
+    const { language, dictionary, t } = useLanguage();
 
     const [location, setLocation] = useState(initialLocation);
 
@@ -75,8 +77,8 @@ export default function EmergencySosForm() {
 
                 await Swal.fire({
                     icon: "error",
-                    title: "โหลดประเภทเหตุไม่สำเร็จ",
-                    text: error?.message || "ไม่สามารถโหลดประเภทเหตุฉุกเฉินได้",
+                    title: t("sos.emergency.loadTypeErrorTitle"),
+                    text: error?.message || t("sos.emergency.loadTypeErrorText"),
                 });
             } finally {
                 if (active) {
@@ -118,8 +120,8 @@ export default function EmergencySosForm() {
         if (victimCount < 1) {
             await Swal.fire({
                 icon: "warning",
-                title: "กรุณาระบุผู้ประสบภัย",
-                text: "กรุณาระบุจำนวนเด็ก ผู้สูงอายุ ผู้พิการ หรือผู้ป่วยอย่างน้อย 1 คน",
+                title: t("sos.emergency.victimWarningTitle"),
+                text: t("sos.emergency.victimWarningText"),
             });
 
             return false;
@@ -128,8 +130,8 @@ export default function EmergencySosForm() {
         if (!form.emergencyDetail.trim()) {
             await Swal.fire({
                 icon: "warning",
-                title: "กรุณาระบุรายละเอียดเหตุฉุกเฉิน",
-                text: "ข้อมูลนี้ช่วยให้เจ้าหน้าที่เตรียมการช่วยเหลือได้เหมาะสม",
+                title: t("sos.emergency.detailWarningTitle"),
+                text: t("sos.emergency.detailWarningText"),
             });
 
             return false;
@@ -149,11 +151,11 @@ export default function EmergencySosForm() {
 
         const confirm = await Swal.fire({
             icon: "warning",
-            title: "ยืนยันการแจ้ง SOS",
-            text: "กรุณาตรวจสอบตำแหน่งและข้อมูลเหตุฉุกเฉินก่อนส่ง",
+            title: t("sos.emergency.confirmTitle"),
+            text: t("sos.emergency.confirmText"),
             showCancelButton: true,
-            confirmButtonText: "ส่ง SOS",
-            cancelButtonText: "ตรวจสอบอีกครั้ง",
+            confirmButtonText: t("sos.emergency.confirmButton"),
+            cancelButtonText: t("sos.emergency.reviewButton"),
             confirmButtonColor: "#ef4444",
         });
 
@@ -190,8 +192,8 @@ export default function EmergencySosForm() {
 
             await Swal.fire({
                 icon: "success",
-                title: "ส่ง SOS สำเร็จ",
-                text: `รหัสเคส: ${response?.sosRequestId ?? "-"}`,
+                title: t("sos.emergency.successTitle"),
+                text: t("sos.emergency.caseId", { id: response?.sosRequestId ?? "-" }),
                 timer: 1400,
                 showConfirmButton: false,
             });
@@ -202,8 +204,8 @@ export default function EmergencySosForm() {
         } catch (error) {
             await Swal.fire({
                 icon: "error",
-                title: "ส่ง SOS ไม่สำเร็จ",
-                text: error?.message || "เกิดข้อผิดพลาด",
+                title: t("sos.emergency.failedTitle"),
+                text: error?.message || t("sos.emergency.genericError"),
             });
         } finally {
             setSubmitting(false);
@@ -218,11 +220,10 @@ export default function EmergencySosForm() {
                     <span className="material-symbols-outlined text-5xl">sos</span>
                 </div>
 
-                <h1 className="text-3xl font-black text-slate-800">แจ้ง SOS ฉุกเฉิน</h1>
+                <h1 className="text-3xl font-black text-slate-800">{t("sos.emergency.title")}</h1>
 
                 <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
-                    ใช้สำหรับเหตุที่ต้องการให้เจ้าหน้าที่เข้าช่วยเหลือ ณ จุดเกิดเหตุโดยตรง
-                    กรุณาปักหมุดตำแหน่งและให้ข้อมูลตามสถานการณ์จริง
+                    {t("sos.emergency.subtitle")}
                 </p>
             </div>
 
@@ -234,8 +235,8 @@ export default function EmergencySosForm() {
                 <section className="space-y-5">
                     <FormSectionTitle
                         number="1"
-                        title="ประเภทเหตุฉุกเฉิน"
-                        description="เลือกเหตุการณ์ที่ตรงกับสถานการณ์มากที่สุด"
+                        title={t("sos.emergency.typeTitle")}
+                        description={t("sos.emergency.typeDescription")}
                     />
 
                     {loadingTypes ? (
@@ -246,22 +247,25 @@ export default function EmergencySosForm() {
                                 </span>
 
                                 <p className="mt-2 text-sm font-bold text-slate-500">
-                                    กำลังโหลดประเภทเหตุ...
+                                    {t("sos.emergency.loadingTypes")}
                                 </p>
                             </div>
                         </div>
                     ) : emergencyTypes.length === 0 ? (
                         <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-center">
-                            <p className="font-bold text-red-600">ไม่พบประเภทเหตุฉุกเฉิน</p>
+                            <p className="font-bold text-red-600">{t("sos.emergency.noTypes")}</p>
 
                             <p className="mt-1 text-sm text-red-400">
-                                กรุณาลองโหลดหน้าใหม่อีกครั้ง
+                                {t("sos.emergency.reload")}
                             </p>
                         </div>
                     ) : (
                         <div className="grid gap-3 md:grid-cols-2">
                             {emergencyTypes.map((item) => {
                                 const active = form.emergencyType === item.value;
+                                const translatedType = dictionary.sos.emergency.typeLabels?.[item.value];
+                                const displayLabel = language === "en" && translatedType?.label ? translatedType.label : item.label;
+                                const displayDescription = language === "en" && translatedType?.description ? translatedType.description : item.description;
 
                                 return (
                                     <button
@@ -291,10 +295,10 @@ export default function EmergencySosForm() {
                                         </div>
 
                                         <div>
-                                            <p className="font-black text-slate-800">{item.label}</p>
+                                            <p className="font-black text-slate-800">{displayLabel}</p>
 
                                             <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                                                {item.description}
+                                                {displayDescription}
                                             </p>
                                         </div>
                                     </button>
@@ -311,8 +315,8 @@ export default function EmergencySosForm() {
                 <section className="space-y-5">
                     <FormSectionTitle
                         number="2"
-                        title="ตำแหน่งเหตุฉุกเฉิน"
-                        description="ใช้ตำแหน่งปัจจุบันเพื่อให้เจ้าหน้าที่เดินทางไปยังจุดเกิดเหตุ"
+                        title={t("sos.emergency.locationTitle")}
+                        description={t("sos.emergency.locationDescription")}
                     />
 
                     <LocationPicker location={location} onLocationChange={setLocation} />
@@ -325,32 +329,36 @@ export default function EmergencySosForm() {
                 <section className="space-y-5">
                     <FormSectionTitle
                         number="3"
-                        title="ข้อมูลผู้ประสบภัย"
-                        description="ระบุจำนวนคนโดยประมาณ เพื่อช่วยให้เจ้าหน้าที่เตรียมกำลังได้เหมาะสม"
+                        title={t("sos.emergency.victimsTitle")}
+                        description={t("sos.emergency.victimsDescription")}
                     />
 
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
                         <NumberField
-                            label="เด็ก"
+                            label={t("sos.emergency.child")}
+                            unit={t("sos.emergency.personUnit")}
                             value={form.childCount}
                             onChange={(value) => setNumber("childCount", value)}
                         />
 
                         <NumberField
-                            label="ผู้สูงอายุ"
+                            label={t("sos.emergency.elderly")}
+                            unit={t("sos.emergency.personUnit")}
                             value={form.elderlyCount}
                             onChange={(value) => setNumber("elderlyCount", value)}
                         />
 
                         <NumberField
-                            label="ผู้พิการ"
+                            label={t("sos.emergency.disabled")}
+                            unit={t("sos.emergency.personUnit")}
                             value={form.disabledCount}
                             onChange={(value) => setNumber("disabledCount", value)}
                         />
 
                         <NumberField
-                            label="ผู้ป่วย"
+                            label={t("sos.emergency.patient")}
+                            unit={t("sos.emergency.personUnit")}
                             value={form.patientCount}
                             onChange={(value) => setNumber("patientCount", value)}
                         />
@@ -358,7 +366,7 @@ export default function EmergencySosForm() {
 
                     <div className="max-w-sm">
                         <label className="mb-2 block text-sm font-bold text-slate-700">
-                            ระดับน้ำโดยประมาณ (เมตร)
+                            {t("sos.emergency.waterLevel")}
                         </label>
 
                         <input
@@ -374,7 +382,7 @@ export default function EmergencySosForm() {
                                     waterLevel: event.target.value,
                                 }))
                             }
-                            placeholder="เช่น 1.2"
+                            placeholder={t("sos.emergency.waterPlaceholder")}
                             className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
                         />
                     </div>
@@ -387,8 +395,8 @@ export default function EmergencySosForm() {
                 <section className="space-y-5">
                     <FormSectionTitle
                         number="4"
-                        title="รายละเอียดเหตุฉุกเฉิน"
-                        description="บอกสภาพแวดล้อม จุดเสี่ยง อาการผู้บาดเจ็บ หรือข้อมูลที่เจ้าหน้าที่ควรรู้"
+                        title={t("sos.emergency.detailTitle")}
+                        description={t("sos.emergency.detailDescription")}
                     />
 
                     <textarea
@@ -401,7 +409,7 @@ export default function EmergencySosForm() {
                                 emergencyDetail: event.target.value,
                             }))
                         }
-                        placeholder="เช่น มีผู้ป่วยติดเตียง 1 คน น้ำสูงประมาณระดับเอว ทางเข้าเป็นซอยแคบ..."
+                        placeholder={t("sos.emergency.detailPlaceholder")}
                         className="w-full resize-none rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
                     />
                 </section>
@@ -413,9 +421,9 @@ export default function EmergencySosForm() {
                         <span className="material-symbols-outlined">info</span>
 
                         <p>
-                            การแจ้ง SOS ฉุกเฉินทุกเคสจะถูกส่งเป็นระดับ
-                            <strong className="mx-1">วิกฤต (Critical)</strong>
-                            เพื่อให้เจ้าหน้าที่เห็นและดำเนินการกับเคสฉุกเฉินโดยเร็ว
+                            {t("sos.emergency.criticalPrefix")}
+                            <strong className="mx-1">{t("sos.emergency.criticalLabel")}</strong>
+                            {t("sos.emergency.criticalSuffix")}
                         </p>
                     </div>
                 </div>
@@ -435,14 +443,14 @@ export default function EmergencySosForm() {
                         {submitting ? "progress_activity" : "sos"}
                     </span>
 
-                    {submitting ? "กำลังส่ง SOS..." : "ส่ง SOS ฉุกเฉิน"}
+                    {submitting ? t("sos.emergency.sending") : t("sos.emergency.submit")}
                 </button>
             </div>
         </div>
     );
 }
 
-function NumberField({ label, value, onChange, min = 0 }) {
+function NumberField({ label, value, onChange, min = 0, unit }) {
     return (
         <label className="block rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <span className="mb-2 block text-xs font-bold text-slate-500">
@@ -457,7 +465,7 @@ function NumberField({ label, value, onChange, min = 0 }) {
                 className="w-full bg-transparent text-2xl font-black text-slate-800 outline-none"
             />
 
-            <span className="text-xs text-slate-400">คน</span>
+            <span className="text-xs text-slate-400">{unit}</span>
         </label>
     );
 }

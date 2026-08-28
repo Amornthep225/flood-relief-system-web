@@ -1,15 +1,20 @@
+"use client";
+
 import PublicNavbar from "@/components/common/public-navbar";
 import UserRegisterForm from "@/components/form/User/UserRegisterForm";
 import { cards } from "@/constants/cards";
 import { colors } from "@/constants/colors";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const links = {
-        home: "/",
-        login: "/user/users-login",
-        registerSuccess: "/user/users-login",
-    }
+    home: "/",
+    login: "/user/users-login",
+    registerSuccess: "/user/users-login",
+};
 
 export default function RegisterPage() {
+    const { t } = useLanguage();
+
     return (
         <div className={`relative min-h-screen flex flex-col font-sans ${colors.login.page}`}>
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -31,7 +36,7 @@ export default function RegisterPage() {
 
                     <div className="text-center mb-8">
                         <h1 className="text-2xl font-bold text-slate-800 mb-1">
-                            ลงทะเบียน
+                            {t("auth.register.title")}
                         </h1>
                     </div>
 

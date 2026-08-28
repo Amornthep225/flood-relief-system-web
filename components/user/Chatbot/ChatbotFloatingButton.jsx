@@ -1,11 +1,15 @@
 "use client";
 
+import { useLanguage } from "@/contexts/LanguageContext";
+
 export default function ChatbotFloatingButton({ isOpen, onClick }) {
+  const { t } = useLanguage();
+
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={isOpen ? "ปิดแชทบอท" : "เปิดแชทบอท"}
+      aria-label={isOpen ? t("common.closeChatbot") : t("common.openChatbot")}
       aria-expanded={isOpen}
       className="
         fixed bottom-5 right-5 z-[70]

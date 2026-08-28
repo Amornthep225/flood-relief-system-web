@@ -1,10 +1,12 @@
 "use client";
 
+import { useLanguage } from "@/contexts/LanguageContext";
+
 export default function SosHistoryFilter({ filters, onSearch, onReset }) {
-    // Helper ฟังก์ชันแปลงวันที่ปัจจุบันเป็น YYYY-MM-DD
+    const { t } = useLanguage();
+
     const getTodayString = () => new Date().toISOString().substring(0, 10);
 
-    // อัปเดต Filter ตัวใดตัวหนึ่ง แล้วส่งค่าไปค้นหาทันที
     const updateFilter = (key, value) => {
         onSearch({
             ...filters,
@@ -12,7 +14,6 @@ export default function SosHistoryFilter({ filters, onSearch, onReset }) {
         });
     };
 
-    // Quick Select Handlers
     const handleSelectToday = () => {
         const todayStr = getTodayString();
         onSearch({
@@ -47,22 +48,22 @@ export default function SosHistoryFilter({ filters, onSearch, onReset }) {
 
     return (
         <div className="mb-6 rounded-3xl bg-white p-6 shadow-sm border border-slate-100">
-            {/* Header */}
             <div className="mb-5 flex items-center gap-2">
-                <span className="material-symbols-outlined text-sky-500">search</span>
+                <span className="material-symbols-outlined text-sky-500">
+                    search
+                </span>
                 <h2 className="text-lg font-bold text-slate-800">
-                    ค้นหาคำขอความช่วยเหลือ
+                    {t("sos.history.filter.title")}
                 </h2>
             </div>
 
-            {/* Quick Select Buttons */}
             <div className="mb-5 flex flex-wrap gap-3">
                 <button
                     type="button"
                     onClick={handleSelectToday}
                     className="rounded-xl bg-sky-50 px-4 py-2 text-sm font-bold text-sky-600 hover:bg-sky-100 transition-colors"
                 >
-                    วันนี้
+                    {t("sos.history.filter.today")}
                 </button>
 
                 <button
@@ -70,7 +71,7 @@ export default function SosHistoryFilter({ filters, onSearch, onReset }) {
                     onClick={handleSelectLast7Days}
                     className="rounded-xl bg-slate-50 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors"
                 >
-                    7 วันล่าสุด
+                    {t("sos.history.filter.last7Days")}
                 </button>
 
                 <button
@@ -78,65 +79,82 @@ export default function SosHistoryFilter({ filters, onSearch, onReset }) {
                     onClick={handleSelectThisMonth}
                     className="rounded-xl bg-slate-50 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors"
                 >
-                    เดือนนี้
+                    {t("sos.history.filter.thisMonth")}
                 </button>
             </div>
 
-            {/* Inputs Form Grid */}
             <div className="grid gap-4 md:grid-cols-3">
-                {/* Start Date */}
                 <div>
                     <label className="text-sm font-semibold text-slate-600">
-                        วันที่เริ่มต้น
+                        {t("sos.history.filter.startDate")}
                     </label>
                     <input
                         type="date"
                         value={filters?.startDate || ""}
-                        onChange={(e) => updateFilter("startDate", e.target.value)}
+                        onChange={(e) =>
+                            updateFilter("startDate", e.target.value)
+                        }
                         className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-sky-400 text-sm transition-colors"
                     />
                 </div>
 
-                {/* End Date */}
                 <div>
                     <label className="text-sm font-semibold text-slate-600">
-                        วันที่สิ้นสุด
+                        {t("sos.history.filter.endDate")}
                     </label>
                     <input
                         type="date"
                         value={filters?.endDate || ""}
-                        onChange={(e) => updateFilter("endDate", e.target.value)}
+                        onChange={(e) =>
+                            updateFilter("endDate", e.target.value)
+                        }
                         className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-sky-400 text-sm transition-colors"
                     />
                 </div>
 
-                {/* Status */}
                 <div>
-                    <label className="text-sm font-semibold text-slate-600">สถานะ</label>
+                    <label className="text-sm font-semibold text-slate-600">
+                        {t("sos.history.filter.status")}
+                    </label>
                     <select
                         value={filters?.status || ""}
-                        onChange={(e) => updateFilter("status", e.target.value)}
+                        onChange={(e) =>
+                            updateFilter("status", e.target.value)
+                        }
                         className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-sky-400 text-sm bg-white transition-colors"
                     >
-                        <option value="">ทั้งหมด</option>
-                        <option value="Pending">กำลังตรวจสอบ</option>
-                        <option value="Accepted">รับเรื่องแล้ว</option>
-                        <option value="Preparing">กำลังจัดเตรียม</option>
-                        <option value="Delivering">กำลังนำส่ง</option>
-                        <option value="Completed">เสร็จสิ้น</option>
-                        <option value="Cancelled">ยกเลิก</option>
+                        <option value="">
+                            {t("sos.history.filter.all")}
+                        </option>
+                        <option value="Pending">
+                            {t("sos.history.filter.pending")}
+                        </option>
+                        <option value="Accepted">
+                            {t("sos.history.filter.accepted")}
+                        </option>
+                        <option value="Preparing">
+                            {t("sos.history.filter.preparing")}
+                        </option>
+                        <option value="Delivering">
+                            {t("sos.history.filter.delivering")}
+                        </option>
+                        <option value="Completed">
+                            {t("sos.history.filter.completed")}
+                        </option>
+                        <option value="Cancelled">
+                            {t("sos.history.filter.cancelled")}
+                        </option>
                     </select>
                 </div>
             </div>
 
-            {/* Reset Action */}
             <div className="mt-5 flex justify-end">
                 <button
                     type="button"
                     onClick={onReset}
                     className="rounded-xl border border-slate-200 px-5 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
                 >
-                    รีเซ็ต
+                    {t("sos.history.filter.reset")}
                 </button>
             </div>
         </div>

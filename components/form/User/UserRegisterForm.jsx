@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
+
 import { buttons } from "@/constants/buttons";
 import { cards } from "@/constants/cards";
 import { userRegister } from "@/services/auth/UserRegister";
-import Swal from "sweetalert2";
+import { useLanguage } from "@/contexts/LanguageContext";
+
 const initialForm = {
     fullName: "",
     phoneNumber: "",
@@ -17,115 +20,94 @@ const initialForm = {
 
 export default function UserRegisterForm({ links }) {
     const router = useRouter();
-
+    const { t } = useLanguage();
     const [form, setForm] = useState(initialForm);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const cleanInput = (value) => {
-        return value.replace(/<[^>]*>?/gm, "").replace(/[<>]/g, "");
-    };
+    const cleanInput = (value) =>
+        value.replace(/<[^>]*>?/gm, "").replace(/[<>]/g, "");
 
     const handleChange = (e) => {
         const { name, value } = e.target;
 
         if (name === "phoneNumber") {
             const phoneOnlyNumber = value.replace(/[^0-9]/g, "").slice(0, 10);
-
-            setForm((prev) => ({
-                ...prev,
-                phoneNumber: phoneOnlyNumber,
-            }));
-
+            setForm((prev) => ({ ...prev, phoneNumber: phoneOnlyNumber }));
             return;
         }
 
-        setForm((prev) => ({
-            ...prev,
-            [name]: cleanInput(value),
-        }));
+        setForm((prev) => ({ ...prev, [name]: cleanInput(value) }));
     };
 
     const handlePhoneKeyDown = (e) => {
         const allowKeys = [
-            "Backspace",
-            "Delete",
-            "ArrowLeft",
-            "ArrowRight",
-            "Tab",
-            "Home",
-            "End",
+            "Backspace", "Delete", "ArrowLeft", "ArrowRight",
+            "Tab", "Home", "End",
         ];
 
         if (allowKeys.includes(e.key)) return;
-
-        if (!/[0-9]/.test(e.key)) {
-            e.preventDefault();
-        }
+        if (!/[0-9]/.test(e.key)) e.preventDefault();
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+        e.preventDefault();
+        setError("");
 
-    if (form.phoneNumber.length !== 10) {
-        const message = "กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก";
-        setError(message);
+        if (form.phoneNumber.length !== 10) {
+            const message = t("auth.register.phoneInvalid");
+            setError(message);
+            await Swal.fire({
+                icon: "warning",
+                title: t("auth.register.incompleteTitle"),
+                text: message,
+            });
+            return;
+        }
 
-        Swal.fire({
-            icon: "warning",
-            title: "ข้อมูลไม่ครบ",
-            text: message,
-        });
+        if (form.password !== form.confirmPassword) {
+            const message = t("auth.register.passwordMismatch");
+            setError(message);
+            await Swal.fire({
+                icon: "warning",
+                title: t("auth.register.passwordCheckTitle"),
+                text: message,
+            });
+            return;
+        }
 
-        return;
-    }
+        setLoading(true);
 
-    if (form.password !== form.confirmPassword) {
-        const message = "รหัสผ่านไม่ตรงกัน";
-        setError(message);
+        try {
+            await userRegister({
+                fullName: form.fullName,
+                phoneNumber: form.phoneNumber,
+                email: form.email,
+                password: form.password,
+            });
 
-        Swal.fire({
-            icon: "warning",
-            title: "ตรวจสอบรหัสผ่าน",
-            text: message,
-        });
+            await Swal.fire({
+                icon: "success",
+                title: t("auth.register.successTitle"),
+                text: t("auth.register.successText"),
+                timer: 1000,
+                showConfirmButton: false,
+            });
 
-        return;
-    }
+            router.push(links.login);
+        } catch (err) {
+            const message = err?.message || t("auth.register.failedTitle");
+            setError(message);
 
-    setLoading(true);
-
-    try {
-        await userRegister({
-            fullName: form.fullName,
-            phoneNumber: form.phoneNumber,
-            email: form.email,
-            password: form.password,
-        });
-
-        await Swal.fire({
-            icon: "success",
-            title: "ลงทะเบียนสำเร็จ",
-            text: "กำลังนำคุณไปยังหน้าเข้าสู่ระบบ...",
-            timer: 1000,
-            showConfirmButton: false,
-        });
-
-        router.push(links.login);
-    } catch (err) {
-        const message = err.message || "สมัครสมาชิกไม่สำเร็จ";
-        setError(message);
-
-        Swal.fire({
-            icon: "error",
-            title: "สมัครสมาชิกไม่สำเร็จ",
-            text: message,
-        });
-    } finally {
-        setLoading(false);
-    }
-};
+            await Swal.fire({
+                icon: "error",
+                title: t("auth.register.failedTitle"),
+                text: message,
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <>
@@ -137,16 +119,16 @@ export default function UserRegisterForm({ links }) {
                 )}
 
                 <RegisterInput
-                    label="ชื่อ-นามสกุล"
+                    label={t("auth.register.fullName")}
                     icon="person"
                     name="fullName"
                     value={form.fullName}
                     onChange={handleChange}
-                    placeholder="ชื่อ-นามสกุล"
+                    placeholder={t("auth.register.fullName")}
                 />
 
                 <RegisterInput
-                    label="เบอร์โทรศัพท์"
+                    label={t("auth.register.phone")}
                     icon="smartphone"
                     name="phoneNumber"
                     value={form.phoneNumber}
@@ -158,7 +140,7 @@ export default function UserRegisterForm({ links }) {
                 />
 
                 <RegisterInput
-                    label="อีเมล"
+                    label={t("auth.register.email")}
                     icon="mail"
                     name="email"
                     type="email"
@@ -168,7 +150,7 @@ export default function UserRegisterForm({ links }) {
                 />
 
                 <RegisterInput
-                    label="รหัสผ่าน"
+                    label={t("auth.register.password")}
                     icon="lock"
                     name="password"
                     type="password"
@@ -178,7 +160,7 @@ export default function UserRegisterForm({ links }) {
                 />
 
                 <RegisterInput
-                    label="ยืนยันรหัสผ่าน"
+                    label={t("auth.register.confirmPassword")}
                     icon="lock_reset"
                     name="confirmPassword"
                     type="password"
@@ -192,24 +174,27 @@ export default function UserRegisterForm({ links }) {
                     disabled={loading}
                     className={buttons.userRegister.register}
                 >
-                    {loading ? "กำลังลงทะเบียน..." : "ลงทะเบียน"}
+                    {loading
+                        ? t("auth.register.registering")
+                        : t("auth.register.register")}
                 </button>
             </form>
 
             <div className="relative flex py-6 items-center">
                 <div className="flex-grow border-t border-slate-100" />
-                <span className="mx-4 text-slate-300 text-[10px]">หรือ</span>
+                <span className="mx-4 text-slate-300 text-[10px]">
+                    {t("auth.register.or")}
+                </span>
                 <div className="flex-grow border-t border-slate-100" />
             </div>
 
             <div className="space-y-3">
-
                 <Link
                     href={links.login}
                     className={buttons.userRegister.loginRedirect}
                 >
                     <span className="material-symbols-outlined">login</span>
-                    เข้าสู่ระบบ
+                    {t("auth.register.login")}
                 </Link>
             </div>
         </>
@@ -233,12 +218,10 @@ function RegisterInput({
             <label className="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">
                 {label}
             </label>
-
             <div className="relative">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                     {icon}
                 </span>
-
                 <input
                     name={name}
                     type={type}

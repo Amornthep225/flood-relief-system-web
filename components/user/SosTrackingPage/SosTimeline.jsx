@@ -1,5 +1,8 @@
 "use client";
 
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translateMasterDataText } from "@/locales/uiPhrases";
+
 const RELIEF_STATUS_ORDER = {
     Pending: 0,
     Accepted: 1,
@@ -11,20 +14,19 @@ const RELIEF_STATUS_ORDER = {
 const EMERGENCY_STATUS_ORDER = {
     Pending: 0,
     Accepted: 1,
-    // Emergency SOS ไม่มีขั้นเตรียมสิ่งของในหน้าติดตาม
-    // หาก Backend อยู่สถานะ Preparing ให้ถือว่ายังอยู่ช่วงรับเรื่อง
     Preparing: 1,
     Delivering: 2,
     Completed: 3,
 };
 
 export default function SosTimeline({ request }) {
+    const { t, language } = useLanguage();
+
     const status = request?.status;
     const isCancelled = status?.toLowerCase() === "cancelled";
     const isEmergency =
-        String(request?.requestType || "Relief")
-            .trim()
-            .toLowerCase() === "emergency";
+        String(request?.requestType || "Relief").trim().toLowerCase() ===
+        "emergency";
 
     const statusOrder = isEmergency
         ? EMERGENCY_STATUS_ORDER
@@ -35,17 +37,17 @@ export default function SosTimeline({ request }) {
     const steps = [
         {
             key: "Pending",
-            title: "ส่งคำขอแล้ว",
-            detail: "ระบบได้รับคำขอความช่วยเหลือแล้ว",
+            title: t("sos.tracking.timeline.submittedTitle"),
+            detail: t("sos.tracking.timeline.submittedDetail"),
             time: request?.createdAt,
             icon: "check_circle",
         },
         {
             key: "Accepted",
-            title: "เจ้าหน้าที่รับเรื่องแล้ว",
+            title: t("sos.tracking.timeline.acceptedTitle"),
             detail: isEmergency
-                ? "เจ้าหน้าที่รับแจ้งและกำลังดำเนินการช่วยเหลือ"
-                : "เจ้าหน้าที่รับคำขอและกำลังตรวจสอบ",
+                ? t("sos.tracking.timeline.acceptedEmergencyDetail")
+                : t("sos.tracking.timeline.acceptedReliefDetail"),
             time: request?.acceptedAt,
             icon: "support_agent",
         },
@@ -53,8 +55,8 @@ export default function SosTimeline({ request }) {
             ? [
                   {
                       key: "Preparing",
-                      title: "กำลังจัดเตรียม",
-                      detail: "เจ้าหน้าที่กำลังจัดเตรียมสิ่งของ",
+                      title: t("sos.tracking.timeline.preparingTitle"),
+                      detail: t("sos.tracking.timeline.preparingDetail"),
                       time: request?.preparingAt,
                       icon: "inventory_2",
                   },
@@ -62,17 +64,17 @@ export default function SosTimeline({ request }) {
             : []),
         {
             key: "Delivering",
-            title: "กำลังเดินทาง",
+            title: t("sos.tracking.timeline.deliveringTitle"),
             detail: isEmergency
-                ? "เจ้าหน้าที่กำลังเดินทางไปยังจุดเกิดเหตุ"
-                : "เจ้าหน้าที่กำลังนำความช่วยเหลือไปส่ง",
+                ? t("sos.tracking.timeline.deliveringEmergencyDetail")
+                : t("sos.tracking.timeline.deliveringReliefDetail"),
             time: request?.deliveringAt,
             icon: "local_shipping",
         },
         {
             key: "Completed",
-            title: "ช่วยเหลือสำเร็จ",
-            detail: "ดำเนินการช่วยเหลือเรียบร้อยแล้ว",
+            title: t("sos.tracking.timeline.completedTitle"),
+            detail: t("sos.tracking.timeline.completedDetail"),
             time: request?.completedAt,
             icon: "flag",
         },
@@ -82,27 +84,32 @@ export default function SosTimeline({ request }) {
         return (
             <div className="space-y-6 w-full">
                 <TimelineStep
-                    title="ส่งคำขอแล้ว"
-                    detail="ระบบได้รับคำขอความช่วยเหลือแล้ว"
+                    title={t("sos.tracking.timeline.submittedTitle")}
+                    detail={t("sos.tracking.timeline.submittedDetail")}
                     time={request?.createdAt}
                     icon="check_circle"
                     state="completed"
+                    language={language}
+                    waitingText={t("sos.tracking.timeline.waiting")}
                 />
                 <TimelineStep
-                    title="คำขอถูกยกเลิก"
-                    detail={request?.staffRemark || "คำขอนี้ถูกยกเลิกแล้ว"}
+                    title={t("sos.tracking.timeline.cancelledTitle")}
+                    detail={
+                        request?.staffRemark ||
+                        t("sos.tracking.timeline.cancelledDetail")
+                    }
                     time={request?.cancelledAt}
                     icon="cancel"
                     state="cancelled"
+                    language={language}
+                    waitingText={t("sos.tracking.timeline.waiting")}
                 />
             </div>
         );
     }
 
     return (
-        // ปรับลด Padding ด้านข้างลง (px-3 sm:px-6) เพื่อให้เนื้อหาขยายกว้างชิดขอบนอกได้มากขึ้น
         <div className="relative w-full rounded-3xl bg-sky-50 px-3 py-6 sm:px-6 md:px-8">
-            {/* เส้น Timeline: ตั้งค่าผ่ากลางไอคอนวงกลมขนาด w-16 (64px) อย่างแม่นยำ */}
             <div className="absolute left-[20px] sm:left-[32px] md:left-[40px] top-12 bottom-12 w-1 -translate-x-1/2 rounded-full bg-sky-100" />
 
             <div className="relative space-y-7 w-full">
@@ -124,11 +131,17 @@ export default function SosTimeline({ request }) {
                             time={step.time}
                             icon={step.icon}
                             state={state}
+                            language={language}
+                            waitingText={t("sos.tracking.timeline.waiting")}
                         >
                             {step.key === "Delivering" &&
                                 state === "active" &&
                                 request?.assignedStaffName && (
-                                    <CurrentStaffInfo request={request} />
+                                    <CurrentStaffInfo
+                                        request={request}
+                                        t={t}
+                                        language={language}
+                                    />
                                 )}
                         </TimelineStep>
                     );
@@ -138,7 +151,16 @@ export default function SosTimeline({ request }) {
     );
 }
 
-function TimelineStep({ title, detail, time, icon, state, children }) {
+function TimelineStep({
+    title,
+    detail,
+    time,
+    icon,
+    state,
+    children,
+    language,
+    waitingText,
+}) {
     const styles = {
         completed: {
             circle: "bg-green-500 border-green-500 text-white shadow-lg shadow-green-200",
@@ -166,7 +188,6 @@ function TimelineStep({ title, detail, time, icon, state, children }) {
 
     return (
         <div className="relative flex items-start gap-3 sm:gap-5 w-full">
-            {/* Icon */}
             <div className="relative z-10 shrink-0">
                 {state === "active" && (
                     <span className="absolute inset-0 animate-ping rounded-full bg-sky-400 opacity-30" />
@@ -181,7 +202,6 @@ function TimelineStep({ title, detail, time, icon, state, children }) {
                 </div>
             </div>
 
-            {/* Card (ขยายกว้างเต็มพื้นที่ด้วย min-w-0 และ flex-1) */}
             <div
                 className={`flex-1 min-w-0 w-full rounded-3xl border p-5 sm:p-6 md:p-7 shadow-sm hover:shadow-md transition mb-4 ${style.card}`}
             >
@@ -190,7 +210,7 @@ function TimelineStep({ title, detail, time, icon, state, children }) {
                 </h3>
 
                 <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-slate-400">
-                    {time ? formatThaiDateTime(time) : "รอดำเนินการ"}
+                    {time ? formatDateTime(time, language) : waitingText}
                 </p>
 
                 <p className="mt-2 sm:mt-3 text-sm sm:text-base leading-relaxed text-slate-600">
@@ -203,7 +223,11 @@ function TimelineStep({ title, detail, time, icon, state, children }) {
     );
 }
 
-function CurrentStaffInfo({ request }) {
+function CurrentStaffInfo({ request, t, language }) {
+    const centerName = request?.centerName
+        ? translateMasterDataText(request.centerName, language)
+        : t("sos.tracking.assignedStaff");
+
     return (
         <div className="mt-5 flex items-center gap-3 sm:gap-4 rounded-2xl bg-slate-50 border border-slate-200 p-3 sm:p-4">
             <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-full bg-white text-sky-500">
@@ -217,14 +241,14 @@ function CurrentStaffInfo({ request }) {
                     {request?.assignedStaffName}
                 </p>
                 <p className="truncate text-xs sm:text-sm text-slate-400">
-                    {request?.centerName || "เจ้าหน้าที่ช่วยเหลือ"}
+                    {centerName}
                 </p>
             </div>
 
             {request?.assignedStaffPhoneNumber && (
                 <a
                     href={`tel:${request.assignedStaffPhoneNumber}`}
-                    aria-label="โทรหาเจ้าหน้าที่"
+                    aria-label={t("sos.tracking.callStaffGeneric")}
                     className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-full bg-green-500 text-white shadow hover:bg-green-600 transition-colors"
                 >
                     <span className="material-symbols-outlined text-lg sm:text-xl">
@@ -236,12 +260,13 @@ function CurrentStaffInfo({ request }) {
     );
 }
 
-function formatThaiDateTime(value) {
+function formatDateTime(value, language) {
     if (!value) return "-";
+
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return "-";
 
-    return date.toLocaleString("th-TH", {
+    return date.toLocaleString(language === "en" ? "en-US" : "th-TH", {
         day: "numeric",
         month: "short",
         year: "numeric",

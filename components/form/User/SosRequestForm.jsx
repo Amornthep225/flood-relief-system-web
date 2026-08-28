@@ -16,6 +16,7 @@ import SosItemSelector from "@/components/user/SosForm/SosItemSelector";
 import LocationPicker from "@/components/user/SosForm/LocationPicker";
 import ConfirmSosModal from "@/components/user/SosForm/ConfirmSosModal";
 import UserRemark from "@/components/user/SosForm/UserRemark";
+import { useLanguage } from "@/contexts/LanguageContext";
 const initialLocation = {
     latitude: null,
     longitude: null,
@@ -24,6 +25,7 @@ const initialLocation = {
 
 export default function SosRequestForm() {
     const router = useRouter();
+    const { t } = useLanguage();
 
     const [categories, setCategories] = useState([]);
     const [items, setItems] = useState([]);
@@ -93,10 +95,10 @@ export default function SosRequestForm() {
             } catch (error) {
                 await Swal.fire({
                     icon: "error",
-                    title: "โหลดข้อมูลไม่สำเร็จ",
+                    title: t("sos.relief.loadErrorTitle"),
                     text:
                         error.message ||
-                        "ไม่สามารถโหลดรายการสิ่งของได้",
+                        t("sos.relief.loadErrorText"),
                 });
             } finally {
                 setLoadingData(false);
@@ -219,8 +221,8 @@ export default function SosRequestForm() {
         if (selectedItemIds.length === 0) {
             await Swal.fire({
                 icon: "warning",
-                title: "กรุณาเลือกรายการสิ่งของ",
-                text: "ต้องเลือกสิ่งของอย่างน้อย 1 รายการ",
+                title: t("sos.relief.chooseItemTitle"),
+                text: t("sos.relief.chooseItemText"),
             });
 
             return false;
@@ -232,8 +234,8 @@ export default function SosRequestForm() {
         ) {
             await Swal.fire({
                 icon: "warning",
-                title: "กรุณาปักหมุดตำแหน่ง",
-                text: "เจ้าหน้าที่ต้องใช้พิกัดในการค้นหาตำแหน่งของคุณ",
+                title: t("sos.relief.pinLocationTitle"),
+                text: t("sos.relief.pinLocationText"),
             });
 
             return false;
@@ -242,8 +244,8 @@ export default function SosRequestForm() {
         if (!location.addressDetail.trim()) {
             await Swal.fire({
                 icon: "warning",
-                title: "กรุณาระบุรายละเอียดสถานที่",
-                text: "เช่น บ้านเลขที่ หมู่บ้าน หรือจุดสังเกต",
+                title: t("sos.relief.addressTitle"),
+                text: t("sos.relief.addressText"),
             });
 
             return false;
@@ -312,10 +314,10 @@ export default function SosRequestForm() {
 
                 icon: "success",
 
-                title: "ส่งคำขอสำเร็จ",
+                title: t("sos.relief.successTitle"),
 
                 text:
-                    `รหัสคำขอ: ${response.sosRequestId}`,
+                    t("sos.relief.requestId", { id: response.sosRequestId }),
 
                 timer: 1500,
 
@@ -349,7 +351,7 @@ export default function SosRequestForm() {
 
                     icon: "warning",
 
-                    title: "เซสชันหมดอายุ",
+                    title: t("sos.relief.sessionExpired"),
 
                     text: error.message
 
@@ -371,11 +373,11 @@ export default function SosRequestForm() {
 
                 icon: "error",
 
-                title: "ส่งคำขอไม่สำเร็จ",
+                title: t("sos.relief.submitFailed"),
 
                 text:
                     error.message ||
-                    "เกิดข้อผิดพลาด"
+                    t("sos.relief.genericError")
 
             });
 
@@ -397,7 +399,7 @@ export default function SosRequestForm() {
                 </span>
 
                 <p className="font-medium">
-                    กำลังโหลดข้อมูลสิ่งของ...
+                    {t("sos.relief.loadingItems")}
                 </p>
             </div>
         );
@@ -414,11 +416,11 @@ export default function SosRequestForm() {
                     </div>
 
                     <h1 className="text-3xl font-black text-slate-800">
-                        ขอรับของบริจาค
+                        {t("sos.relief.title")}
                     </h1>
 
                     <p className="mt-2 text-sm text-slate-500">
-                        เลือกสิ่งของที่ต้องการรับ ระบุจำนวน และตำแหน่งสำหรับจัดส่งความช่วยเหลือ
+                        {t("sos.relief.subtitle")}
                     </p>
                 </div>
 
@@ -431,8 +433,8 @@ export default function SosRequestForm() {
                     <section className="space-y-5">
                         <FormSectionTitle
                             number="1"
-                            title="เลือกหมวดหมู่สิ่งของ"
-                            description="เลือกได้มากกว่า 1 หมวดหมู่"
+                            title={t("sos.relief.categoryTitle")}
+                            description={t("sos.relief.categoryDescription")}
                         />
 
                         <SosCategorySelector
@@ -449,8 +451,8 @@ export default function SosRequestForm() {
                             <section className="space-y-5">
                                 <FormSectionTitle
                                     number="2"
-                                    title="เลือกรายการและจำนวน"
-                                    description="ระบุจำนวนสิ่งของที่ต้องการ"
+                                    title={t("sos.relief.itemTitle")}
+                                    description={t("sos.relief.itemDescription")}
                                 />
 
                                 <SosItemSelector
@@ -485,8 +487,8 @@ export default function SosRequestForm() {
                     <section className="space-y-5">
                         <FormSectionTitle
                             number="3"
-                            title="ตำแหน่งรับความช่วยเหลือ"
-                            description="ใช้พิกัดปัจจุบันและระบุรายละเอียดสถานที่"
+                            title={t("sos.relief.locationTitle")}
+                            description={t("sos.relief.locationDescription")}
                         />
 
                         <LocationPicker
@@ -501,8 +503,8 @@ export default function SosRequestForm() {
                     <section className="space-y-5">
                         <FormSectionTitle
                             number="4"
-                            title="หมายเหตุเพิ่มเติม"
-                            description="ระบุรายละเอียดเพิ่มเติม เช่นมีผู้สูงอายุ เด็กเล็ก ผู้ป่วยติดเตียง เป็นต้น"
+                            title={t("sos.relief.remarkTitle")}
+                            description={t("sos.relief.remarkDescription")}
                         />
 
                         <UserRemark
@@ -520,7 +522,7 @@ export default function SosRequestForm() {
                             emergency
                         </span>
 
-                        ส่งข้อมูลแจ้งขอความช่วยเหลือ
+                        {t("sos.relief.submit")}
                     </button>
                 </form>
             </div>

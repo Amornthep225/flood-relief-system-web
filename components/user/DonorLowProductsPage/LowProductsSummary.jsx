@@ -1,28 +1,36 @@
+"use client";
+
+import { useLanguage } from "@/contexts/LanguageContext";
+
 const summaryCards = [
     {
         key: "totalItems",
-        label: "รายการขาดแคลน",
         icon: "inventory_2",
         valueClassName: "text-sky-600",
-        iconClassName: "bg-sky-50 text-sky-600",
+        iconClassName:
+            "bg-sky-50 text-sky-600",
     },
     {
         key: "totalMissing",
-        label: "จำนวนที่ขาดรวม",
         icon: "trending_down",
         valueClassName: "text-orange-600",
-        iconClassName: "bg-orange-50 text-orange-600",
+        iconClassName:
+            "bg-orange-50 text-orange-600",
     },
     {
         key: "outOfStockCount",
-        label: "หมดสต็อก",
         icon: "warning",
         valueClassName: "text-red-600",
-        iconClassName: "bg-red-50 text-red-600",
+        iconClassName:
+            "bg-red-50 text-red-600",
     },
 ];
 
-export default function LowProductsSummary({ summary }) {
+export default function LowProductsSummary({
+    summary,
+}) {
+    const { t } = useLanguage();
+
     return (
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {summaryCards.map((card) => (
@@ -40,7 +48,9 @@ export default function LowProductsSummary({ summary }) {
 
                     <div>
                         <p className="text-sm text-slate-500">
-                            {card.label}
+                            {t(
+                                `donation.lowStock.summary.${card.key}`
+                            )}
                         </p>
                         <p
                             className={`text-3xl font-bold ${card.valueClassName}`}

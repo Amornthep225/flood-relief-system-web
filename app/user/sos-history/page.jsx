@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import {
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    useCallback,
+} from "react";
 import Swal from "sweetalert2";
 
 import UserLayout from "@/components/layout/UserLayout";
@@ -12,12 +18,10 @@ import SosHistoryFilter from "@/components/user/SosHistory/SosHistoryFilter";
 
 import { getMySosRequests } from "@/services/user/sos";
 import { colors } from "@/constants/colors";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-// --- Helper Functions (ย้ายขึ้นมาไว้ด้านบนสุด) ---
 function normalizeStatus(status) {
-    return String(status || "")
-        .trim()
-        .toLowerCase();
+    return String(status || "").trim().toLowerCase();
 }
 
 function isActiveStatus(status) {
@@ -28,15 +32,11 @@ function isActiveStatus(status) {
 }
 
 export default function SosHistoryPage() {
+    const { t } = useLanguage();
     const hasLoaded = useRef(false);
 
-    // Tab Filter State ('all', 'active', 'completed', 'cancelled')
     const [selectedFilter, setSelectedFilter] = useState("all");
-
-    // Data State
     const [requests, setRequests] = useState([]);
-
-    // Date/Status Filter State
     const [filters, setFilters] = useState({
         startDate: "",
         endDate: "",
@@ -46,7 +46,6 @@ export default function SosHistoryPage() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
-    // ฟังก์ชันโหลดข้อมูลหลัก
     const loadRequests = useCallback(
         async ({ showLoading = true, filterParams = filters } = {}) => {
             try {
@@ -59,20 +58,22 @@ export default function SosHistoryPage() {
                 const data = await getMySosRequests(filterParams);
                 const requestList = Array.isArray(data) ? data : [];
 
-                // เรียงลำดับจากสร้างล่าสุดขึ้นก่อน
                 const sortedRequests = [...requestList].sort(
-                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    (a, b) =>
+                        new Date(b.createdAt) - new Date(a.createdAt)
                 );
 
                 setRequests(sortedRequests);
             } catch (error) {
-                console.error("โหลดประวัติไม่สำเร็จ:", error);
+                console.error("Failed to load SOS history:", error);
 
                 await Swal.fire({
                     icon: "error",
-                    title: "โหลดข้อมูลไม่สำเร็จ",
-                    text: error.message || "ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง",
-                    confirmButtonText: "ตกลง",
+                    title: t("sos.history.loadFailedTitle"),
+                    text:
+                        error.message ||
+                        t("sos.history.loadFailedText"),
+                    confirmButtonText: t("sos.history.ok"),
                     confirmButtonColor: "#3085d6",
                 });
             } finally {
@@ -80,18 +81,15 @@ export default function SosHistoryPage() {
                 setRefreshing(false);
             }
         },
-        [filters]
+        [filters, t]
     );
 
-    // Initial Data Fetch
     useEffect(() => {
         if (hasLoaded.current) return;
         hasLoaded.current = true;
-
         loadRequests();
     }, [loadRequests]);
 
-    // คัดกรองข้อมูลตาม Tab ที่เลือก
     const filteredRequests = useMemo(() => {
         if (selectedFilter === "active") {
             return requests.filter((req) => isActiveStatus(req.status));
@@ -112,7 +110,6 @@ export default function SosHistoryPage() {
         return requests;
     }, [requests, selectedFilter]);
 
-    // คำนวณยอดสรุป (Summary Card) จากข้อมูลทั้งหมดที่ดึงมาจาก API
     const summary = useMemo(() => {
         const completed = requests.filter(
             (req) => normalizeStatus(req.status) === "completed"
@@ -134,7 +131,6 @@ export default function SosHistoryPage() {
         };
     }, [requests]);
 
-    // Reset Filters
     const resetFilters = () => {
         const resetState = {
             startDate: "",
@@ -151,42 +147,45 @@ export default function SosHistoryPage() {
             homeHref="/user/sos-home"
             backHref="/user/sos-home"
             logoutHref="/user/users-login"
-            showHome =  {false}
+            showHome={false}
         >
             <section className={`w-full p-4 md:p-6 ${colors.history.page}`}>
-                {/* Header Section */}
                 <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-slate-800">
-                            ประวัติการขอความช่วยเหลือ
+                            {t("sos.history.title")}
                         </h1>
                         <p className="mt-1 text-sm text-slate-400">
-                            ตรวจสอบคำขอความช่วยเหลือทั้งหมดของคุณ
+                            {t("sos.history.subtitle")}
                         </p>
                     </div>
 
                     <button
                         type="button"
-                        onClick={() => loadRequests({ showLoading: false })}
+                        onClick={() =>
+                            loadRequests({ showLoading: false })
+                        }
                         disabled={refreshing || loading}
                         className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 disabled:opacity-50 transition-colors"
                     >
                         <span
-                            className={`material-symbols-outlined text-xl ${refreshing ? "animate-spin" : ""
-                                }`}
+                            className={`material-symbols-outlined text-xl ${
+                                refreshing ? "animate-spin" : ""
+                            }`}
                         >
                             refresh
                         </span>
-                        {refreshing ? "กำลังอัปเดต..." : "อัปเดตข้อมูล"}
+                        {refreshing
+                            ? t("sos.history.updating")
+                            : t("sos.history.update")}
                     </button>
                 </div>
 
-                {/* Content Section */}
                 {loading ? (
                     <SosHistoryState
                         icon="progress_activity"
-                        title="กำลังโหลดประวัติ..."
-                        description="กรุณารอสักครู่ ระบบกำลังดึงข้อมูลของคุณ"
+                        title={t("sos.history.loadingTitle")}
+                        description={t("sos.history.loadingText")}
                         spinning
                     />
                 ) : (

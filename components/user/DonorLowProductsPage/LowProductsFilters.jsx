@@ -1,3 +1,8 @@
+"use client";
+
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translateMasterDataText } from "@/locales/uiPhrases";
+
 export default function LowProductsFilters({
     centers,
     selectedCenter,
@@ -5,10 +10,21 @@ export default function LowProductsFilters({
     onCenterChange,
     onStatusChange,
 }) {
+    const { language, t } = useLanguage();
+
     const statusFilters = [
-        { value: "all", label: "ทั้งหมด" },
-        { value: "OutOfStock", label: "หมดสต็อก" },
-        { value: "LowStock", label: "ใกล้หมด" },
+        {
+            value: "all",
+            key: "all",
+        },
+        {
+            value: "OutOfStock",
+            key: "outOfStock",
+        },
+        {
+            value: "LowStock",
+            key: "lowStock",
+        },
     ];
 
     return (
@@ -18,7 +34,7 @@ export default function LowProductsFilters({
                     htmlFor="center-filter"
                     className="mb-2 block text-sm font-semibold text-slate-700"
                 >
-                    ศูนย์รับบริจาค
+                    {t("donation.lowStock.centerLabel")}
                 </label>
 
                 <div className="relative">
@@ -26,15 +42,27 @@ export default function LowProductsFilters({
                         id="center-filter"
                         value={selectedCenter}
                         onChange={(event) =>
-                            onCenterChange(event.target.value)
+                            onCenterChange(
+                                event.target.value
+                            )
                         }
                         className="w-full appearance-none rounded-xl border border-slate-300 bg-white px-4 py-3 pr-10 font-medium text-slate-700 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
                     >
-                        <option value="all">ทั้งหมด (ทุกศูนย์)</option>
+                        <option value="all">
+                            {t(
+                                "donation.lowStock.allCenters"
+                            )}
+                        </option>
 
                         {centers.map((center) => (
-                            <option key={center.id} value={center.id}>
-                                {center.centerName}
+                            <option
+                                key={center.id}
+                                value={center.id}
+                            >
+                                {translateMasterDataText(
+                                    center.centerName || "",
+                                    language
+                                )}
                             </option>
                         ))}
                     </select>
@@ -47,14 +75,17 @@ export default function LowProductsFilters({
 
             <div className="flex flex-wrap gap-2">
                 {statusFilters.map((filter) => {
-                    const active = selectedStatus === filter.value;
+                    const active =
+                        selectedStatus === filter.value;
 
                     return (
                         <button
                             key={filter.value}
                             type="button"
                             onClick={() =>
-                                onStatusChange(filter.value)
+                                onStatusChange(
+                                    filter.value
+                                )
                             }
                             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                                 active
@@ -62,7 +93,9 @@ export default function LowProductsFilters({
                                     : "border border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
                             }`}
                         >
-                            {filter.label}
+                            {t(
+                                `donation.lowStock.filters.${filter.key}`
+                            )}
                         </button>
                     );
                 })}

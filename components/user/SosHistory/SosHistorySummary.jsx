@@ -1,26 +1,24 @@
-import { cards } from "@/constants/cards";
+"use client";
 
-export default function SosHistorySummary({
-    summary,
-}) {
+import { cards } from "@/constants/cards";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+export default function SosHistorySummary({ summary }) {
+    const { t } = useLanguage();
+
     return (
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div
-                className={
-                    cards.userSosHistory
-                        .summaryPrimary
-                }
-            >
+            <div className={cards.userSosHistory.summaryPrimary}>
                 <div className="flex items-start justify-between gap-4">
                     <div>
                         <p className="mb-1 text-sm text-orange-100">
-                            ขอความช่วยเหลือรวม
+                            {t("sos.history.summary.total")}
                         </p>
 
                         <h2 className="text-3xl font-bold">
                             {summary.total}
                             <span className="ml-2 text-sm font-normal">
-                                ครั้ง
+                                {t("sos.history.summary.times")}
                             </span>
                         </h2>
                     </div>
@@ -33,22 +31,17 @@ export default function SosHistorySummary({
                 </div>
             </div>
 
-            <div
-                className={
-                    cards.userSosHistory.summary
-                }
-            >
+            <div className={cards.userSosHistory.summary}>
                 <div className="flex items-start justify-between gap-4">
                     <div>
                         <p className="mb-1 text-sm text-white">
-                            ได้รับความช่วยเหลือแล้ว
+                            {t("sos.history.summary.completed")}
                         </p>
 
                         <h2 className="text-3xl font-bold text-white">
                             {summary.completed}
-
                             <span className="ml-2 text-sm font-normal text-white">
-                                ครั้ง
+                                {t("sos.history.summary.times")}
                             </span>
                         </h2>
                     </div>

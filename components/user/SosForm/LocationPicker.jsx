@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Swal from "sweetalert2";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LocationPicker({
     location,
     onLocationChange,
 }) {
+    const { t } = useLanguage();
     const [findingLocation, setFindingLocation] =
         useState(false);
 
@@ -18,8 +20,8 @@ export default function LocationPicker({
         if (!navigator.geolocation) {
             Swal.fire({
                 icon: "error",
-                title: "ไม่รองรับตำแหน่ง",
-                text: "เบราว์เซอร์นี้ไม่รองรับระบบ Geolocation",
+                title: t("sos.location.unsupportedTitle"),
+                text: t("sos.location.unsupportedText"),
             });
 
             return;
@@ -39,8 +41,8 @@ export default function LocationPicker({
 
                 Swal.fire({
                     icon: "success",
-                    title: "ปักหมุดสำเร็จ",
-                    text: "บันทึกตำแหน่งปัจจุบันเรียบร้อยแล้ว",
+                    title: t("sos.location.successTitle"),
+                    text: t("sos.location.successText"),
                     timer: 1000,
                     showConfirmButton: false,
                 });
@@ -49,14 +51,14 @@ export default function LocationPicker({
                 setFindingLocation(false);
 
                 let message =
-                    "ไม่สามารถค้นหาตำแหน่งปัจจุบันได้";
+                    t("sos.location.failDefault");
 
                 if (
                     error.code ===
                     error.PERMISSION_DENIED
                 ) {
                     message =
-                        "กรุณาอนุญาตให้เว็บไซต์เข้าถึงตำแหน่งของคุณ";
+                        t("sos.location.permissionDenied");
                 }
 
                 if (
@@ -64,17 +66,17 @@ export default function LocationPicker({
                     error.POSITION_UNAVAILABLE
                 ) {
                     message =
-                        "ไม่พบข้อมูลตำแหน่งจากอุปกรณ์";
+                        t("sos.location.unavailable");
                 }
 
                 if (error.code === error.TIMEOUT) {
                     message =
-                        "ใช้เวลาในการค้นหาตำแหน่งนานเกินไป";
+                        t("sos.location.timeout");
                 }
 
                 Swal.fire({
                     icon: "error",
-                    title: "ปักหมุดไม่สำเร็จ",
+                    title: t("sos.location.failTitle"),
                     text: message,
                 });
             },
@@ -114,7 +116,7 @@ export default function LocationPicker({
                         </div>
                     ) : (
                         <p className="text-sm text-slate-500 mb-5">
-                            กรุณาปักหมุดตำแหน่งที่ต้องการรับความช่วยเหลือ
+                            {t("sos.location.prompt")}
                         </p>
                     )}
 
@@ -129,10 +131,10 @@ export default function LocationPicker({
                         </span>
 
                         {findingLocation
-                            ? "กำลังค้นหาตำแหน่ง..."
+                            ? t("sos.location.finding")
                             : hasLocation
-                              ? "ปักหมุดตำแหน่งใหม่"
-                              : "ใช้ตำแหน่งปัจจุบัน"}
+                              ? t("sos.location.repin")
+                              : t("sos.location.useCurrent")}
                     </button>
                 </div>
             </div>
@@ -142,7 +144,7 @@ export default function LocationPicker({
                     htmlFor="addressDetail"
                     className="block text-sm font-bold text-slate-700 mb-2"
                 >
-                    รายละเอียดสถานที่
+                    {t("sos.location.addressLabel")}
                 </label>
 
                 <textarea
@@ -156,7 +158,7 @@ export default function LocationPicker({
                                 event.target.value,
                         }))
                     }
-                    placeholder="เช่น บ้านเลขที่ 123 หมู่ 4 ซอย 5 ใกล้วัด หรือระบุจุดสังเกต"
+                    placeholder={t("sos.location.addressPlaceholder")}
                     className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
                 />
             </div>

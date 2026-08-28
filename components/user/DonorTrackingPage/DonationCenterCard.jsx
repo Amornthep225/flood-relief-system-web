@@ -1,6 +1,11 @@
 "use client";
 
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translateMasterDataText } from "@/locales/uiPhrases";
+
 export default function DonationCenterCard({ donation }) {
+    const { language, t } = useLanguage();
+
     if (!donation || !donation.center) return null;
 
     const { center } = donation;
@@ -9,7 +14,7 @@ export default function DonationCenterCard({ donation }) {
         <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 mb-6">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-slate-800">
-                    จุดรับบริจาคปลายทาง
+                    {t("donation.tracking.centerTitle")}
                 </h2>
                 <span className="material-symbols-outlined text-sky-500">
                     location_on
@@ -18,7 +23,10 @@ export default function DonationCenterCard({ donation }) {
 
             <div className="space-y-2">
                 <h3 className="font-bold text-slate-800 text-base">
-                    {center.centerName}
+                    {translateMasterDataText(
+                        center.centerName || "",
+                        language
+                    )}
                 </h3>
 
                 <p className="text-sm text-slate-500 leading-relaxed">
@@ -30,7 +38,9 @@ export default function DonationCenterCard({ donation }) {
                         <span className="material-symbols-outlined text-sm text-slate-400">
                             call
                         </span>
-                        โทร {center.phoneNumber}
+                        {t("donation.tracking.phone", {
+                            phone: center.phoneNumber,
+                        })}
                     </p>
                 )}
             </div>
@@ -45,7 +55,7 @@ export default function DonationCenterCard({ donation }) {
                     <span className="material-symbols-outlined text-base">
                         map
                     </span>
-                    เปิดแผนที่นำทางไปยังศูนย์
+                    {t("donation.tracking.openMap")}
                 </a>
             )}
         </div>

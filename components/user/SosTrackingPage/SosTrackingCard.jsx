@@ -1,33 +1,36 @@
+"use client";
+
 import SosTimeline from "./SosTimeline";
 import AssignedStaffCard from "./AssignedStaffCard";
 import TrackingMapSection from "./TrackingMapSection";
 import TrackingActions from "./TrackingActions";
 import SosRequestItems from "./SosRequestItems";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SosTrackingCard({ request }) {
+    const { t } = useLanguage();
+
     return (
         <div className="min-h-screen w-full py-8 px-4 sm:px-6 bg-sosTrickingPage">
             <div className="w-full max-w-5xl mx-auto rounded-3xl shadow-xl borde overflow-hidden bg-sky-200">
-                <TrackingHeader requestId={request.id} />
+                <TrackingHeader requestId={request.id} t={t} />
 
                 <div className="p-6 md:p-8 space-y-8">
-                    {String(request.requestType || "Relief").toLowerCase() === "emergency" ? (
-                        <EmergencySummary request={request} />
+                    {String(request.requestType || "Relief").toLowerCase() ===
+                    "emergency" ? (
+                        <EmergencySummary request={request} t={t} />
                     ) : (
                         <SosRequestItems items={request.items} />
                     )}
 
-                    {/* Timeline */}
                     <SosTimeline request={request} />
 
-                    {/* เจ้าหน้าที่ */}
                     <AssignedStaffCard
                         staffName={request.assignedStaffName}
                         phoneNumber={request.assignedStaffPhoneNumber}
                         centerName={request.centerName}
                     />
 
-                    {/* แผนที่ */}
                     <TrackingMapSection
                         latitude={request.latitude}
                         longitude={request.longitude}
@@ -41,16 +44,16 @@ export default function SosTrackingCard({ request }) {
     );
 }
 
-function TrackingHeader({ requestId }) {
+function TrackingHeader({ requestId, t }) {
     return (
         <div className="p-7 md:p-8 text-center border-b border-blue-500 bg-sky-200">
             <h1 className="text-2xl font-bold text-slate-800">
-                สถานะความช่วยเหลือ
+                {t("sos.tracking.headerTitle")}
             </h1>
 
             <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full border border-slate-200 shadow-sm mt-3">
                 <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">
-                    CASE ID:
+                    {t("sos.tracking.caseId")}
                 </span>
                 <span className="text-sm font-mono font-bold text-sky-600">
                     #{requestId}
@@ -60,16 +63,14 @@ function TrackingHeader({ requestId }) {
     );
 }
 
-function EmergencySummary({ request }) {
-    const labels = {
-        Evacuation: "ต้องการอพยพ",
-        Trapped: "ติดอยู่ในพื้นที่น้ำท่วม",
-        Injured: "มีผู้บาดเจ็บ",
-        Medical: "ผู้ป่วยฉุกเฉิน",
-        RoofTrapped: "ติดอยู่บนอาคาร/หลังคา",
-        RapidFlood: "น้ำเพิ่มระดับอย่างรวดเร็ว",
-        Other: "เหตุฉุกเฉินอื่น ๆ",
-    };
+function EmergencySummary({ request, t }) {
+    const typeKey = request.emergencyType || "Other";
+    const emergencyKey = `sos.success.emergencyTypes.${typeKey}`;
+    const translatedType = t(emergencyKey);
+    const typeLabel =
+        translatedType === emergencyKey
+            ? t("sos.tracking.emergencyDefault")
+            : translatedType;
 
     return (
         <section className="rounded-2xl border border-red-100 bg-white p-5 shadow-sm">
@@ -78,28 +79,54 @@ function EmergencySummary({ request }) {
                     <span className="material-symbols-outlined">sos</span>
                 </div>
                 <div>
-                    <p className="text-xs font-bold text-red-500">SOS ฉุกเฉิน</p>
-                    <h2 className="font-black text-slate-800">
-                        {labels[request.emergencyType] || "เหตุฉุกเฉิน"}
-                    </h2>
+                    <p className="text-xs font-bold text-red-500">
+                        {t("sos.tracking.emergencyLabel")}
+                    </p>
+                    <h2 className="font-black text-slate-800">{typeLabel}</h2>
                 </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <EmergencyStat label="ผู้ประสบภัย" value={`${request.victimCount || 1} คน`} />
-                <EmergencyStat label="เด็ก" value={`${request.childCount || 0} คน`} />
-                <EmergencyStat label="ผู้สูงอายุ" value={`${request.elderlyCount || 0} คน`} />
-                <EmergencyStat label="ผู้ป่วย/ผู้พิการ" value={`${(request.patientCount || 0) + (request.disabledCount || 0)} คน`} />
+                <EmergencyStat
+                    label={t("sos.tracking.affectedPeople")}
+                    value={`${request.victimCount || 1} ${t(
+                        "sos.tracking.personUnit"
+                    )}`}
+                />
+                <EmergencyStat
+                    label={t("sos.tracking.children")}
+                    value={`${request.childCount || 0} ${t(
+                        "sos.tracking.personUnit"
+                    )}`}
+                />
+                <EmergencyStat
+                    label={t("sos.tracking.elderly")}
+                    value={`${request.elderlyCount || 0} ${t(
+                        "sos.tracking.personUnit"
+                    )}`}
+                />
+                <EmergencyStat
+                    label={t("sos.tracking.patientDisabled")}
+                    value={`${(request.patientCount || 0) +
+                        (request.disabledCount || 0)} ${t(
+                        "sos.tracking.personUnit"
+                    )}`}
+                />
             </div>
 
             {request.waterLevel != null && (
                 <p className="mt-4 text-sm font-bold text-slate-600">
-                    ระดับน้ำโดยประมาณ: {request.waterLevel} เมตร
+                    {t("sos.tracking.waterLevel", {
+                        level: request.waterLevel,
+                    })}
                 </p>
             )}
 
             {request.emergencyDetail && (
-                <div className="mt-4 rounded-xl bg-red-50 p-4 text-sm leading-relaxed text-slate-700">
+                <div
+                    data-i18n-ignore="true"
+                    className="mt-4 rounded-xl bg-red-50 p-4 text-sm leading-relaxed text-slate-700"
+                >
                     {request.emergencyDetail}
                 </div>
             )}

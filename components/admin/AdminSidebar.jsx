@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 
 import { cards } from "@/constants/cards";
 import { getAllSosRequests } from "@/services/admin/sos";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 
 const menuGroups = [
     {
@@ -315,6 +316,10 @@ export default function AdminSidebar() {
             </nav>
 
             <div className="border-t border-slate-100 p-4">
+                <div className="mb-3 flex justify-center">
+                    <LanguageSwitcher />
+                </div>
+
                 <button
                     type="button"
                     onClick={

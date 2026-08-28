@@ -1,24 +1,25 @@
+"use client";
+
 import SosMap from "@/components/map/SosMap";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function TrackingMapSection({
     latitude,
     longitude,
     addressDetail,
 }) {
+    const { t } = useLanguage();
+
     return (
         <section className="mt-8">
             <h2 className="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
                 <span className="material-symbols-outlined text-sky-500 text-xl">
                     map
                 </span>
-
-                ตำแหน่งและผู้กู้ภัย (Live Map)
+                {t("sos.tracking.mapTitle")}
             </h2>
 
-            <SosMap
-                latitude={latitude}
-                longitude={longitude}
-            />
+            <SosMap latitude={latitude} longitude={longitude} />
 
             {addressDetail && (
                 <div className="mt-3 flex items-start gap-2 rounded-xl bg-slate-50 border border-slate-100 p-3">
@@ -28,10 +29,13 @@ export default function TrackingMapSection({
 
                     <div>
                         <p className="text-xs text-slate-400">
-                            ตำแหน่งรับความช่วยเหลือ
+                            {t("sos.tracking.assistanceLocation")}
                         </p>
 
-                        <p className="text-sm font-medium text-slate-700 mt-0.5">
+                        <p
+                            data-i18n-ignore="true"
+                            className="text-sm font-medium text-slate-700 mt-0.5"
+                        >
                             {addressDetail}
                         </p>
                     </div>

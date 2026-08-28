@@ -6,6 +6,8 @@ import DonationTabs from "./DonationTabs";
 import DonationHistoryList from "./DonationHistoryList";
 import DonationHistorySkeleton from "./DonationHistorySkeleton";
 import { getMyDonations } from "@/services/user/donation";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translateUiText } from "@/locales/uiPhrases";
 
 const completedStatuses = ["completed", "received", "success"];
 
@@ -19,12 +21,14 @@ function isCompleted(donation) {
 
 function normalizeDonations(response) {
     if (Array.isArray(response)) return response;
-    if (Array.isArray(response?.donations)) return response.donations;
+    if (Array.isArray(response?.donations))
+        return response.donations;
     if (Array.isArray(response?.data)) return response.data;
     return [];
 }
 
 export default function DonationHistory() {
+    const { language, t } = useLanguage();
     const [donations, setDonations] = useState([]);
     const [activeTab, setActiveTab] = useState("all");
     const [filters, setFilters] = useState({
@@ -40,18 +44,22 @@ export default function DonationHistory() {
             if (showLoading) setIsLoading(true);
             else setRefreshing(true);
 
+            setErrorMessage("");
+
             const response = await getMyDonations();
             const data = normalizeDonations(response)
                 .filter((item) => item?.id)
                 .sort(
                     (a, b) =>
-                        new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+                        new Date(b.createdAt || 0) -
+                        new Date(a.createdAt || 0)
                 );
 
             setDonations(data);
         } catch (error) {
             setErrorMessage(
-                error?.message || "ไม่สามารถโหลดประวัติการบริจาคได้"
+                translateUiText(error?.message || "", language) ||
+                t("donation.history.loadError")
             );
         } finally {
             setIsLoading(false);
@@ -70,7 +78,8 @@ export default function DonationHistory() {
             const start = new Date(filters.startDate);
             start.setHours(0, 0, 0, 0);
             result = result.filter(
-                (item) => new Date(item.createdAt) >= start
+                (item) =>
+                    new Date(item.createdAt) >= start
             );
         }
 
@@ -78,7 +87,8 @@ export default function DonationHistory() {
             const end = new Date(filters.endDate);
             end.setHours(23, 59, 59, 999);
             result = result.filter(
-                (item) => new Date(item.createdAt) <= end
+                (item) =>
+                    new Date(item.createdAt) <= end
             );
         }
 
@@ -87,18 +97,22 @@ export default function DonationHistory() {
         }
 
         if (activeTab === "processing") {
-            result = result.filter((item) => !isCompleted(item));
+            result = result.filter(
+                (item) => !isCompleted(item)
+            );
         }
 
         return result;
     }, [donations, filters, activeTab]);
 
     const counts = useMemo(() => {
-        const completed = filteredDonations.filter(isCompleted).length;
+        const completed =
+            filteredDonations.filter(isCompleted).length;
 
         return {
             all: filteredDonations.length,
-            processing: filteredDonations.length - completed,
+            processing:
+                filteredDonations.length - completed,
             completed,
         };
     }, [filteredDonations]);
@@ -107,14 +121,18 @@ export default function DonationHistory() {
         (total, item) =>
             total +
             (item.items || []).reduce(
-                (sum, i) => sum + Number(i.quantity || 0),
+                (sum, donationItem) =>
+                    sum +
+                    Number(donationItem.quantity || 0),
                 0
             ),
         0
     );
 
     const setToday = () => {
-        const today = new Date().toISOString().split("T")[0];
+        const today =
+            new Date().toISOString().split("T")[0];
+
         setFilters({
             startDate: today,
             endDate: today,
@@ -127,17 +145,23 @@ export default function DonationHistory() {
         start.setDate(end.getDate() - 7);
 
         setFilters({
-            startDate: start.toISOString().split("T")[0],
+            startDate:
+                start.toISOString().split("T")[0],
             endDate: end.toISOString().split("T")[0],
         });
     };
 
     const setThisMonth = () => {
         const now = new Date();
-        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        const start = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            1
+        );
 
         setFilters({
-            startDate: start.toISOString().split("T")[0],
+            startDate:
+                start.toISOString().split("T")[0],
             endDate: now.toISOString().split("T")[0],
         });
     };
@@ -149,52 +173,62 @@ export default function DonationHistory() {
     return (
         <section className="min-h-screen w-full bg-[#eef8ff] rounded-3xl p-6">
             <div className="mx-auto max-w-7xl">
-                {/* Header */}
                 <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-slate-800">
-                            ประวัติการบริจาค
+                            {t("donation.history.title")}
                         </h1>
                         <p className="mt-1 text-sm text-slate-400">
-                            ตรวจสอบรายการบริจาคทั้งหมดของคุณ
+                            {t("donation.history.subtitle")}
                         </p>
                     </div>
 
                     <button
+                        type="button"
                         onClick={() => loadDonations(false)}
                         disabled={refreshing}
                         className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-600 shadow-sm hover:text-sky-600 disabled:opacity-50"
                     >
-                        {refreshing ? "กำลังอัปเดต..." : "↻ อัปเดตข้อมูล"}
+                        {refreshing
+                            ? t("donation.history.refreshing")
+                            : t("donation.history.refresh")}
                     </button>
                 </div>
 
-                {/* Filter */}
+                {errorMessage && (
+                    <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                        {errorMessage}
+                    </div>
+                )}
+
                 <div className="mb-6 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
                     <h2 className="mb-5 text-lg font-bold text-slate-800">
-                        🔍 ค้นหาประวัติการบริจาค
+                        {t("donation.history.searchTitle")}
                     </h2>
 
                     <div className="mb-5 flex gap-3 flex-wrap">
                         <button
+                            type="button"
                             onClick={setToday}
                             className="rounded-xl bg-sky-50 px-4 py-2 text-sm font-bold text-sky-600"
                         >
-                            วันนี้
+                            {t("donation.history.today")}
                         </button>
 
                         <button
+                            type="button"
                             onClick={setLast7Days}
                             className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold"
                         >
-                            7 วันล่าสุด
+                            {t("donation.history.last7Days")}
                         </button>
 
                         <button
+                            type="button"
                             onClick={setThisMonth}
                             className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold"
                         >
-                            เดือนนี้
+                            {t("donation.history.thisMonth")}
                         </button>
                     </div>
 
@@ -202,10 +236,11 @@ export default function DonationHistory() {
                         <input
                             type="date"
                             value={filters.startDate}
-                            onChange={(e) =>
+                            onChange={(event) =>
                                 setFilters({
                                     ...filters,
-                                    startDate: e.target.value,
+                                    startDate:
+                                        event.target.value,
                                 })
                             }
                             className="rounded-xl border px-4 py-3"
@@ -214,10 +249,11 @@ export default function DonationHistory() {
                         <input
                             type="date"
                             value={filters.endDate}
-                            onChange={(e) =>
+                            onChange={(event) =>
                                 setFilters({
                                     ...filters,
-                                    endDate: e.target.value,
+                                    endDate:
+                                        event.target.value,
                                 })
                             }
                             className="rounded-xl border px-4 py-3"
@@ -225,6 +261,7 @@ export default function DonationHistory() {
                     </div>
 
                     <button
+                        type="button"
                         onClick={() =>
                             setFilters({
                                 startDate: "",
@@ -233,7 +270,7 @@ export default function DonationHistory() {
                         }
                         className="mt-4 rounded-xl bg-slate-100 px-5 py-2 text-sm font-bold"
                     >
-                        รีเซ็ต
+                        {t("donation.history.reset")}
                     </button>
                 </div>
 
@@ -251,7 +288,9 @@ export default function DonationHistory() {
                 </div>
 
                 <div className="mt-6 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
-                    <DonationHistoryList donations={filteredDonations} />
+                    <DonationHistoryList
+                        donations={filteredDonations}
+                    />
                 </div>
             </div>
         </section>

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { buttons } from "@/constants/buttons";
 import StaffNotificationDropdown from "./StaffNotificationDropdown";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 import {
     getMyNotifications,
     markAllNotificationsAsRead,
@@ -234,6 +235,8 @@ export default function StaffNavbar({
                             Logout
                         </button>
                     )}
+
+                    <LanguageSwitcher />
 
                     {(back || home || logout) && (
                         <div className="hidden h-6 w-px bg-slate-200 md:block" />

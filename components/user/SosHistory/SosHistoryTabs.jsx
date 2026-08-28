@@ -1,24 +1,12 @@
+"use client";
+
+import { useLanguage } from "@/contexts/LanguageContext";
+
 const FILTERS = [
-    {
-        key: "all",
-        label: "ทั้งหมด",
-        countKey: "total",
-    },
-    {
-        key: "active",
-        label: "กำลังดำเนินการ",
-        countKey: "active",
-    },
-    {
-        key: "completed",
-        label: "เสร็จสิ้น",
-        countKey: "completed",
-    },
-    {
-        key: "cancelled",
-        label: "ยกเลิก",
-        countKey: "cancelled",
-    },
+    { key: "all", labelKey: "all", countKey: "total" },
+    { key: "active", labelKey: "active", countKey: "active" },
+    { key: "completed", labelKey: "completed", countKey: "completed" },
+    { key: "cancelled", labelKey: "cancelled", countKey: "cancelled" },
 ];
 
 export default function SosHistoryTabs({
@@ -26,30 +14,26 @@ export default function SosHistoryTabs({
     onFilterChange,
     summary,
 }) {
+    const { t } = useLanguage();
+
     return (
         <div className="mb-6 overflow-x-auto border-b border-slate-200">
             <div className="flex min-w-max gap-1">
                 {FILTERS.map((filter) => {
-                    const isSelected =
-                        selectedFilter ===
-                        filter.key;
+                    const isSelected = selectedFilter === filter.key;
 
                     return (
                         <button
                             key={filter.key}
                             type="button"
-                            onClick={() =>
-                                onFilterChange(
-                                    filter.key
-                                )
-                            }
+                            onClick={() => onFilterChange(filter.key)}
                             className={`relative px-4 py-3 text-sm font-bold transition-colors ${
                                 isSelected
                                     ? "text-sky-600"
                                     : "text-slate-400 hover:text-slate-600"
                             }`}
                         >
-                            {filter.label}
+                            {t(`sos.history.tabs.${filter.labelKey}`)}
 
                             <span
                                 className={`ml-1.5 rounded-full px-2 py-0.5 text-[10px] ${
@@ -58,12 +42,7 @@ export default function SosHistoryTabs({
                                         : "bg-slate-100 text-slate-500"
                                 }`}
                             >
-                                {
-                                    summary[
-                                        filter
-                                            .countKey
-                                    ]
-                                }
+                                {summary[filter.countKey]}
                             </span>
 
                             {isSelected && (

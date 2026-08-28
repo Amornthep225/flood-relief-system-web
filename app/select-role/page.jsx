@@ -2,42 +2,31 @@
 
 import { useRouter } from "next/navigation";
 import UserLayout from "@/components/layout/UserLayout";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const menu = [
     {
-        title: "ขอรับของบริจาค",
-        description:
-            "สำหรับผู้ประสบภัยที่ต้องการอาหาร น้ำ ยา เสื้อผ้า หรือสิ่งของช่วยเหลือจากศูนย์",
+        key: "relief",
         icon: "inventory_2",
         buttonIcon: "shopping_bag",
-        buttonText: "ขอรับสิ่งของ",
         href: "/user/sos-home",
         type: "relief",
-        note: "เลือกสิ่งของที่ต้องการและติดตามสถานะได้",
         noteIcon: "info",
     },
     {
-        title: "SOS ฉุกเฉิน",
-        description:
-            "สำหรับเหตุฉุกเฉินที่ต้องการให้เจ้าหน้าที่เข้าช่วยเหลือทันที เช่น ติดอยู่ในพื้นที่น้ำท่วม ผู้บาดเจ็บ หรือขออพยพ",
+        key: "emergency",
         icon: "SOS",
         buttonIcon: "emergency",
-        buttonText: "แจ้ง SOS",
         href: "/user/emergency-sos-form",
         type: "emergency",
-        note: "ปักหมุดตำแหน่งเพื่อส่งเคสไปยังเจ้าหน้าที่",
         noteIcon: "warning",
     },
     {
-        title: "ต้องการร่วมบริจาค?",
-        description:
-            "สำหรับผู้ที่ประสงค์จะบริจาคสิ่งของ เงินทุน หรือสนับสนุนเครื่องมือช่วยเหลือต่าง ๆ",
+        key: "donation",
         icon: "volunteer_activism",
         buttonIcon: "favorite",
-        buttonText: "เริ่มการบริจาค",
         href: "/user/donor-home",
         type: "donation",
-        note: "ร่วมเป็นส่วนหนึ่งของการส่งต่อกำลังใจ",
         noteIcon: "groups",
     },
 ];
@@ -136,6 +125,7 @@ function CardIcon({ item, config }) {
 
 export default function SelectRolePage() {
     const router = useRouter();
+    const { t } = useLanguage();
 
     return (
         <UserLayout
@@ -158,10 +148,10 @@ export default function SelectRolePage() {
                         </div>
 
                         <h1 className="text-3xl font-black tracking-tight text-blue-800 sm:text-4xl md:text-5xl lg:text-[54px]">
-                            กรุณาเลือกประเภทการใช้งาน
+                            {t("selectRole.title")}
                         </h1>
                         <p className="mx-auto mt-4 max-w-3xl text-sm font-medium leading-7 text-slate-600 sm:text-base md:text-lg">
-                            เลือกบริการให้ตรงกับสถานการณ์ เพื่อให้ระบบประสานความช่วยเหลือได้รวดเร็วที่สุด
+                            {t("selectRole.subtitle")}
                         </p>
                     </header>
 
@@ -174,7 +164,7 @@ export default function SelectRolePage() {
                                     key={item.href}
                                     role="link"
                                     tabIndex={0}
-                                    aria-label={`${item.title} - ${item.buttonText}`}
+                                    aria-label={`${t(`selectRole.${item.key}.title`)} - ${t(`selectRole.${item.key}.button`)}`}
                                     onClick={() => router.push(item.href)}
                                     onKeyDown={(event) => {
                                         if (
@@ -198,7 +188,7 @@ export default function SelectRolePage() {
                                         <CardIcon item={item} config={config} />
 
                                         <h2 className="text-center text-2xl font-black leading-tight text-blue-800 md:text-[30px]">
-                                            {item.title}
+                                            {t(`selectRole.${item.key}.title`)}
                                         </h2>
 
                                         <div className="my-5 flex items-center justify-center gap-2">
@@ -220,7 +210,7 @@ export default function SelectRolePage() {
                                         </div>
 
                                         <p className="mx-auto min-h-[108px] max-w-sm text-center text-[15px] font-medium leading-7 text-slate-600 sm:text-base">
-                                            {item.description}
+                                            {t(`selectRole.${item.key}.description`)}
                                         </p>
 
                                         <div className="mt-auto pt-7">
@@ -231,7 +221,7 @@ export default function SelectRolePage() {
                                                 <span className="material-symbols-outlined text-[25px]">
                                                     {item.buttonIcon}
                                                 </span>
-                                                {item.buttonText}
+                                                {t(`selectRole.${item.key}.button`)}
                                             </div>
 
                                             <div
@@ -244,7 +234,7 @@ export default function SelectRolePage() {
                                                         {item.noteIcon}
                                                     </span>
                                                 </span>
-                                                <span>{item.note}</span>
+                                                <span>{t(`selectRole.${item.key}.note`)}</span>
                                             </div>
                                         </div>
                                     </div>

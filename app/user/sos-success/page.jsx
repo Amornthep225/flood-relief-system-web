@@ -8,8 +8,11 @@ import { getSosRequestById } from "@/services/user/sos";
 import { colors } from "@/constants/colors";
 import { cards } from "@/constants/cards";
 import { buttons } from "@/constants/buttons";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function RequestSuccessPage() {
+    const { dictionary, t } = useLanguage();
     const searchParams = useSearchParams();
     const id = searchParams.get("id");
 
@@ -38,7 +41,7 @@ export default function RequestSuccessPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center text-slate-500 font-semibold">
-                กำลังโหลดข้อมูล...
+                {t("sos.success.loading")}
             </div>
         );
     }
@@ -46,7 +49,7 @@ export default function RequestSuccessPage() {
     if (!request) {
         return (
             <div className="min-h-screen flex items-center justify-center text-slate-500 font-semibold">
-                ไม่พบข้อมูลคำขอ
+                {t("sos.success.notFound")}
             </div>
         );
     }
@@ -61,12 +64,15 @@ export default function RequestSuccessPage() {
                     </div>
                     <span className="text-lg font-bold text-slate-700">FLOOD RELIEF</span>
                 </div>
+                <div className="flex items-center gap-3">
+                <LanguageSwitcher />
                 <a
                     href="tel:1784"
                     className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-sm"
                 >
-                    ☎ สายด่วน 1784
+                    ☎ {t("sos.success.hotline")}
                 </a>
+                </div>
             </nav>
 
             {/* Main Content */}
@@ -75,13 +81,13 @@ export default function RequestSuccessPage() {
                     <div className={cards.userSosSuccess.card}>
                         <h1 className="text-2xl font-bold text-center text-slate-800 mb-2">
                             {String(request.requestType || "Relief").toLowerCase() === "emergency"
-                                ? "ส่ง SOS ฉุกเฉินสำเร็จ!"
-                                : "ส่งคำขอรับสิ่งของสำเร็จ!"}
+                                ? t("sos.success.emergencySuccess")
+                                : t("sos.success.reliefSuccess")}
                         </h1>
 
                         {/* Request Info Box */}
                         <div className={`${cards.userSosSuccess.info} text-center my-6`}>
-                            <p className="text-xs text-slate-400 uppercase tracking-wider">Request ID</p>
+                            <p className="text-xs text-slate-400 uppercase tracking-wider">{t("sos.success.requestId")}</p>
                             <h2 className="text-xl text-sky-600 font-bold mt-1">#{request.id}</h2>
                         </div>
 
@@ -90,31 +96,31 @@ export default function RequestSuccessPage() {
                             {String(request.requestType || "Relief").toLowerCase() === "emergency" ? (
                                 <SummaryItem
                                     icon="sos"
-                                    label="ประเภทเหตุ"
-                                    value={formatEmergencyType(request.emergencyType)}
+                                    label={t("sos.success.emergencyType")}
+                                    value={dictionary.sos.success.emergencyTypes[request.emergencyType] || dictionary.sos.success.emergencyTypes.default}
                                 />
                             ) : (
                                 <SummaryItem
                                     icon="inventory_2"
-                                    label="รายการสิ่งของ"
+                                    label={t("sos.success.items")}
                                     value={
                                         request.items?.length > 0
                                             ? request.items.map((x) => `${x.reliefItemName} ${x.quantity} ${x.unit}`).join(", ")
-                                            : "ไม่ได้ระบุรายการสิ่งของ"
+                                            : t("sos.success.noItems")
                                     }
                                 />
                             )}
 
                             <SummaryItem
                                 icon="location_on"
-                                label="ตำแหน่ง"
+                                label={t("sos.success.location")}
                                 value={request.addressDetail}
                             />
 
                             <SummaryItem
                                 icon="flag"
-                                label="สถานะ"
-                                value={request.status}
+                                label={t("sos.success.status")}
+                                value={dictionary.sos.success.statusLabels[request.status] || request.status}
                             />
                         </div>
 
@@ -124,7 +130,7 @@ export default function RequestSuccessPage() {
                                 href={`/user/sos-tracking?id=${request.id}`}
                                 className={buttons.userSosSuccess.tracking}
                             >
-                                ติดตามสถานะคำขอ
+                                {t("sos.success.tracking")}
                             </Link>
 
                             <Link
@@ -135,7 +141,7 @@ export default function RequestSuccessPage() {
                                 }
                                 className={buttons.userSosSuccess.home}
                             >
-                                กลับหน้าหลัก
+                                {t("sos.success.home")}
                             </Link>
                         </div>
                     </div>
@@ -160,15 +166,3 @@ function SummaryItem({ icon, label, value }) {
     );
 }
 
-function formatEmergencyType(type) {
-    const labels = {
-        Evacuation: "ต้องการอพยพ",
-        Trapped: "ติดอยู่ในพื้นที่น้ำท่วม",
-        Injured: "มีผู้บาดเจ็บ",
-        Medical: "ผู้ป่วยฉุกเฉิน",
-        RoofTrapped: "ติดอยู่บนอาคาร/หลังคา",
-        RapidFlood: "น้ำเพิ่มระดับอย่างรวดเร็ว",
-        Other: "เหตุฉุกเฉินอื่น ๆ",
-    };
-    return labels[type] || "เหตุฉุกเฉิน";
-}
