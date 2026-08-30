@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 const levelConfig = {
     critical: {
         label: "วิกฤต",
@@ -25,8 +29,8 @@ const levelConfig = {
     },
 };
 
-function formatNumber(value) {
-    return new Intl.NumberFormat("th-TH").format(
+function formatNumber(value, language) {
+    return new Intl.NumberFormat(language === "en" ? "en-US" : "th-TH").format(
         Number(value || 0)
     );
 }
@@ -35,6 +39,7 @@ export default function InventoryCard({
     item,
     level,
 }) {
+    const { ui, language } = useNativeUi();
     const config =
         levelConfig[level] ||
         levelConfig.sufficient;
@@ -55,11 +60,11 @@ export default function InventoryCard({
 
                     <div className="min-w-0">
                         <h2 className="truncate text-lg font-bold text-slate-800">
-                            {item.name}
+                            {ui(item.name)}
                         </h2>
 
                         <p className="text-xs text-slate-400">
-                            {item.category}
+                            {ui(item.category)}
                         </p>
 
                         <p className="mt-1 text-[11px] font-mono text-slate-400">
@@ -71,7 +76,7 @@ export default function InventoryCard({
                 <span
                     className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold ${config.badgeClass}`}
                 >
-                    {config.label}
+                    {ui(config.label)}
                 </span>
             </div>
 
@@ -79,21 +84,21 @@ export default function InventoryCard({
                 <span
                     className={`text-4xl font-black ${config.amountClass}`}
                 >
-                    {formatNumber(item.quantity)}
+                    {formatNumber(item.quantity, language)}
                 </span>
 
                 <span className="mb-1.5 text-sm font-bold text-slate-400">
-                    {item.unit}
+                    {ui(item.unit)}
                 </span>
             </div>
 
             <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
                 <span className="text-slate-400">
-                    จุดแจ้งเตือนขั้นต่ำ
+                    {ui("จุดแจ้งเตือนขั้นต่ำ")}
                 </span>
 
                 <span className="font-bold text-slate-600">
-                    {formatNumber(item.minimumQuantity)} {item.unit}
+                    {formatNumber(item.minimumQuantity, language)} {ui(item.unit)}
                 </span>
             </div>
         </article>

@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function InventoryFilter({
     tabs,
     activeTab,
@@ -5,12 +9,13 @@ export default function InventoryFilter({
     searchText,
     onSearchChange,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:flex-row md:items-center">
             <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0">
                 {tabs.map((tab) => (
                     <button
-                        key={tab}
+                        key={ui(tab)}
                         type="button"
                         onClick={() => onTabChange(tab)}
                         className={`whitespace-nowrap rounded-xl px-4 py-2 text-sm font-bold transition ${
@@ -19,7 +24,7 @@ export default function InventoryFilter({
                                 : "bg-slate-50 text-slate-500 hover:bg-slate-100"
                         }`}
                     >
-                        {tab}
+                        {ui(tab)}
                     </button>
                 ))}
             </div>
@@ -31,7 +36,7 @@ export default function InventoryFilter({
 
                 <input
                     type="text"
-                    placeholder="ค้นหาชื่อ หมวดหมู่ หรือรหัสสิ่งของ..."
+                    placeholder={ui("ค้นหาชื่อ หมวดหมู่ หรือรหัสสิ่งของ...")}
                     value={searchText}
                     onChange={(event) =>
                         onSearchChange(event.target.value)

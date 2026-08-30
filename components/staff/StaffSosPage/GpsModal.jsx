@@ -1,7 +1,12 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function GpsModal({
     request,
     onClose,
 }) {
+    const { ui, language } = useNativeUi();
     const latitude = Number(request.latitude);
     const longitude = Number(request.longitude);
 
@@ -51,7 +56,7 @@ export default function GpsModal({
 
                         <p className="mt-4 font-bold text-slate-800">
                             {request.addressDetail ||
-                                "ไม่ระบุรายละเอียดสถานที่"}
+                                ui("ไม่ระบุรายละเอียดสถานที่")}
                         </p>
 
                         {hasCoordinates && (

@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useState,useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
@@ -13,6 +15,7 @@ const initialForm = {
 };
 
 export default function StaffLoginForm({ links }) {
+    const { ui, language } = useNativeUi();
     const router = useRouter();
 
     const [form, setForm] = useState(initialForm);
@@ -53,19 +56,19 @@ export default function StaffLoginForm({ links }) {
 
             await Swal.fire({
                 icon: "success",
-                title: "เข้าสู่ระบบสำเร็จ",
+                title: ui("เข้าสู่ระบบสำเร็จ"),
                 timer: 1000,
                 showConfirmButton: false,
             });
 
             router.push(links.staffHome);
         } catch (err) {
-            const message = err.message || "เข้าสู่ระบบไม่สำเร็จ";
+            const message = ui(err.message || "เข้าสู่ระบบไม่สำเร็จ");
             setError(message);
 
             Swal.fire({
                 icon: "error",
-                title: "เข้าสู่ระบบไม่สำเร็จ",
+                title: ui("เข้าสู่ระบบไม่สำเร็จ"),
                 text: message,
             });
         } finally {
@@ -87,11 +90,11 @@ export default function StaffLoginForm({ links }) {
                 name="usernameOrEmail"
                 value={form.usernameOrEmail}
                 onChange={handleChange}
-                placeholder="ระบุ Username หรือ Email"
+                placeholder={ui("ระบุ Username หรือ Email")}
             />
 
             <InputField
-                label="รหัสผ่าน"
+                label={ui("รหัสผ่าน")}
                 icon="lock"
                 name="password"
                 type="password"
@@ -106,14 +109,14 @@ export default function StaffLoginForm({ links }) {
                         type="checkbox"
                         className="w-4 h-4 rounded border-slate-300 text-slate-600 focus:ring-slate-500"
                     />
-                    <span>จดจำฉันไว้</span>
+                    <span>{ui("จดจำฉันไว้")}</span>
                 </label>
 
                 <button
                     type="button"
                     className="text-slate-500 font-semibold hover:text-slate-700 hover:underline"
                 >
-                    ลืมรหัสผ่าน?
+                    {ui("ลืมรหัสผ่าน?")}
                 </button>
             </div>
 
@@ -122,7 +125,7 @@ export default function StaffLoginForm({ links }) {
                 disabled={loading}
                 className="bg-success hover:bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-slate-800/20 transition-all active:scale-[0.98] w-full mt-2"
             >
-                {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
+                {loading ? ui("กำลังเข้าสู่ระบบ...") : ui("เข้าสู่ระบบ")}
             </button>
         </form>
     );

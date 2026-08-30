@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import {
     useCallback,
     useEffect,
@@ -108,6 +110,7 @@ function sortSosRequests(requests) {
 }
 
 export default function StaffSos() {
+    const { ui, language } = useNativeUi();
     const router = useRouter();
     const searchParams = useSearchParams();
     const linkedRequestId = searchParams.get("id");
@@ -156,11 +159,11 @@ export default function StaffSos() {
 
                 await Swal.fire({
                     icon: "error",
-                    title: "โหลดข้อมูลไม่สำเร็จ",
+                    title: ui("โหลดข้อมูลไม่สำเร็จ"),
                     text:
                         error.message ||
-                        "ไม่สามารถโหลดรายการ SOS ได้",
-                    confirmButtonText: "ตกลง",
+                        ui("ไม่สามารถโหลดรายการ SOS ได้"),
+                    confirmButtonText: ui("ตกลง"),
                 });
             } finally {
                 setLoading(false);
@@ -220,11 +223,11 @@ export default function StaffSos() {
 
                 await Swal.fire({
                     icon: "error",
-                    title: "เปิดเคสไม่สำเร็จ",
+                    title: ui("เปิดเคสไม่สำเร็จ"),
                     text:
                         error.message ||
-                        "ไม่สามารถโหลดเคสจากการแจ้งเตือนได้",
-                    confirmButtonText: "ตกลง",
+                        ui("ไม่สามารถโหลดเคสจากการแจ้งเตือนได้"),
+                    confirmButtonText: ui("ตกลง"),
                 });
 
                 router.replace("/staff/staff-sos");
@@ -328,7 +331,7 @@ export default function StaffSos() {
 
             if (!rawStaff) {
                 throw new Error(
-                    "ไม่พบข้อมูลเจ้าหน้าที่ กรุณาเข้าสู่ระบบใหม่"
+                    ui("ไม่พบข้อมูลเจ้าหน้าที่ กรุณาเข้าสู่ระบบใหม่")
                 );
             }
 
@@ -340,7 +343,7 @@ export default function StaffSos() {
 
             if (!centerId) {
                 throw new Error(
-                    "ไม่พบรหัสศูนย์ของเจ้าหน้าที่"
+                    ui("ไม่พบรหัสศูนย์ของเจ้าหน้าที่")
                 );
             }
 
@@ -407,12 +410,12 @@ export default function StaffSos() {
                             requested.reliefItem?.name ??
                             inventory?.reliefItemName ??
                             inventory?.name ??
-                            "ไม่ระบุรายการ",
+                            ui("ไม่ระบุรายการ"),
                         unit:
                             requested.unit ??
                             inventory?.unit ??
                             requested.reliefItem?.unit ??
-                            "ชิ้น",
+                            ui("ชิ้น"),
                         requestedQuantity,
                         availableQuantity,
                         remainingQuantity:
@@ -445,11 +448,11 @@ export default function StaffSos() {
 
             await Swal.fire({
                 icon: "error",
-                title: "ตรวจสอบคลังไม่สำเร็จ",
+                title: ui("ตรวจสอบคลังไม่สำเร็จ"),
                 text:
                     error?.message ||
-                    "ไม่สามารถตรวจสอบสิ่งของในคลังได้",
-                confirmButtonText: "ตกลง",
+                    ui("ไม่สามารถตรวจสอบสิ่งของในคลังได้"),
+                confirmButtonText: ui("ตกลง"),
             });
         } finally {
             setCheckingStock(false);
@@ -483,18 +486,18 @@ export default function StaffSos() {
 
             await Swal.fire({
                 icon: "success",
-                title: "รับงานเรียบร้อย",
-                text: `คุณได้รับผิดชอบเคส #${acceptedId} แล้ว`,
-                confirmButtonText: "ตกลง",
+                title: ui("รับงานเรียบร้อย"),
+                text: ui(`คุณได้รับผิดชอบเคส #${acceptedId} แล้ว`),
+                confirmButtonText: ui("ตกลง"),
             });
         } catch (error) {
             await Swal.fire({
                 icon: "error",
-                title: "รับงานไม่สำเร็จ",
+                title: ui("รับงานไม่สำเร็จ"),
                 text:
                     error.message ||
-                    "ไม่สามารถรับงานนี้ได้",
-                confirmButtonText: "ตกลง",
+                    ui("ไม่สามารถรับงานนี้ได้"),
+                confirmButtonText: ui("ตกลง"),
             });
         } finally {
             setAccepting(false);
@@ -520,11 +523,11 @@ export default function StaffSos() {
 
             await Swal.fire({
                 icon: "error",
-                title: "โหลดรายละเอียดไม่สำเร็จ",
+                title: ui("โหลดรายละเอียดไม่สำเร็จ"),
                 text:
                     error.message ||
-                    "ไม่สามารถโหลดรายละเอียดเคสได้",
-                confirmButtonText: "ตกลง",
+                    ui("ไม่สามารถโหลดรายละเอียดเคสได้"),
+                confirmButtonText: ui("ตกลง"),
             });
         } finally {
             setDetailLoading(false);

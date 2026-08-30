@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useState } from "react";
 import Link from "next/link";
 import { colors } from "@/constants/colors";
@@ -24,6 +26,7 @@ const mockData = {
 };
 
 export default function StaffVerifyDataPage() {
+    const { ui, language } = useNativeUi();
     const [items, setItems] = useState([
         {
             id: 1,
@@ -153,7 +156,7 @@ export default function StaffVerifyDataPage() {
                         </div>
 
                         <div className="flex-grow">
-                            <p className="text-xs text-slate-400">ผู้บริจาค</p>
+                            <p className="text-xs text-slate-400">{ui("ผู้บริจาค")}</p>
                             <h3 className="text-white font-bold text-lg">
                                 {mockData.donor.name}
                             </h3>
@@ -223,11 +226,11 @@ export default function StaffVerifyDataPage() {
                                                     className={`text-slate-200 text-sm font-medium ${item.checked ? "line-through opacity-70" : ""
                                                         }`}
                                                 >
-                                                    {item.name}
+                                                    {ui(item.name)}
                                                 </span>
 
                                                 <span className="text-sky-500 font-bold text-sm ml-2">
-                                                    {item.qty} {item.unit}
+                                                    {item.qty} {ui(item.unit)}
                                                 </span>
                                             </div>
 
@@ -254,7 +257,7 @@ export default function StaffVerifyDataPage() {
 
                                         {item.note && (
                                             <p className="text-xs text-slate-500 mt-0.5">
-                                                {item.note}
+                                                {ui(item.note)}
                                             </p>
                                         )}
                                     </div>
@@ -277,7 +280,7 @@ export default function StaffVerifyDataPage() {
                                 </span>
                             </div>
 
-                            <span className="text-xs">แตะเพื่อถ่ายรูปของกองรวมกัน</span>
+                            <span className="text-xs">{ui("แตะเพื่อถ่ายรูปของกองรวมกัน")}</span>
                         </button>
                     </div>
 
@@ -315,7 +318,7 @@ export default function StaffVerifyDataPage() {
 
                         <textarea
                             rows={2}
-                            placeholder="เช่น กล่องบุบเล็กน้อย..."
+                            placeholder={ui("เช่น กล่องบุบเล็กน้อย...")}
                             className="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-sky-500 placeholder:text-slate-600"
                         />
                     </div>
@@ -342,7 +345,7 @@ export default function StaffVerifyDataPage() {
                     <div className="bg-slate-800 w-full max-w-sm rounded-2xl border border-slate-700 shadow-2xl p-5">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-white font-bold text-lg">
-                                {editItem ? "แก้ไขรายการ" : "เพิ่มรายการสิ่งของ"}
+                                {editItem ? ui("แก้ไขรายการ") : ui("เพิ่มรายการสิ่งของ")}
                             </h3>
 
                             <button
@@ -357,15 +360,15 @@ export default function StaffVerifyDataPage() {
 
                         <div className="space-y-4">
                             <Input
-                                label="ชื่อสิ่งของ"
-                                placeholder="เช่น บะหมี่กึ่งสำเร็จรูป"
+                                label={ui("ชื่อสิ่งของ")}
+                                placeholder={ui("เช่น บะหมี่กึ่งสำเร็จรูป")}
                                 value={form.name}
                                 onChange={(value) => setForm({ ...form, name: value })}
                             />
 
                             <div className="grid grid-cols-2 gap-3">
                                 <Input
-                                    label="จำนวน"
+                                    label={ui("จำนวน")}
                                     placeholder="0"
                                     value={form.qty}
                                     onChange={(value) => setForm({ ...form, qty: value })}
@@ -373,16 +376,16 @@ export default function StaffVerifyDataPage() {
                                 />
 
                                 <Input
-                                    label="หน่วยนับ"
-                                    placeholder="เช่น ลัง, แพ็ค"
+                                    label={ui("หน่วยนับ")}
+                                    placeholder={ui("เช่น ลัง, แพ็ค")}
                                     value={form.unit}
                                     onChange={(value) => setForm({ ...form, unit: value })}
                                 />
                             </div>
 
                             <Input
-                                label="รายละเอียดเพิ่มเติม"
-                                placeholder="เช่น รสหมูสับ, ยี่ห้อ..."
+                                label={ui("รายละเอียดเพิ่มเติม")}
+                                placeholder={ui("เช่น รสหมูสับ, ยี่ห้อ...")}
                                 value={form.note}
                                 onChange={(value) => setForm({ ...form, note: value })}
                             />

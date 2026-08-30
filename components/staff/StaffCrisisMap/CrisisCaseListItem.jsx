@@ -1,4 +1,9 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function CrisisCaseListItem({ caseItem, onClick }) {
+    const { ui } = useNativeUi();
     const isEmergency =
         String(caseItem?.requestType || "").toLowerCase() === "emergency";
 
@@ -14,7 +19,7 @@ export default function CrisisCaseListItem({ caseItem, onClick }) {
             <div className="flex justify-between gap-3">
                 <div>
                     <p className="font-bold">
-                        {isEmergency ? "SOS" : "คำขอ"} #{caseItem.id}
+                        {isEmergency ? "SOS" : ui("คำขอ")} #{caseItem.id}
                     </p>
                     <p className="mt-1 line-clamp-2 text-xs text-slate-500">
                         {caseItem.address}
@@ -22,11 +27,11 @@ export default function CrisisCaseListItem({ caseItem, onClick }) {
                 </div>
                 {isEmergency ? (
                     <span className="h-fit shrink-0 rounded-full bg-red-100 px-2 py-1 text-[10px] font-bold text-red-700">
-                        วิกฤต
+                        {ui("วิกฤต")}
                     </span>
                 ) : (
                     <span className="h-fit shrink-0 rounded-full bg-sky-100 px-2 py-1 text-[10px] font-bold text-sky-700">
-                        ขอรับของ
+                        {ui("ขอรับของ")}
                     </span>
                 )}
             </div>
@@ -40,7 +45,7 @@ export default function CrisisCaseListItem({ caseItem, onClick }) {
                             : "font-bold text-orange-500"
                     }
                 >
-                    {caseItem.assignedStaffId ? "รับงานแล้ว" : "รอรับงาน"}
+                    {caseItem.assignedStaffId ? ui("รับงานแล้ว") : ui("รอรับงาน")}
                 </span>
             </div>
 
@@ -49,7 +54,7 @@ export default function CrisisCaseListItem({ caseItem, onClick }) {
                     isEmergency ? "text-red-600" : "text-sky-600"
                 }`}
             >
-                ดูรายละเอียด
+                {ui("ดูรายละเอียด")}
                 <span className="material-symbols-outlined text-base">
                     chevron_right
                 </span>

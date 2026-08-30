@@ -1,13 +1,16 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import StaffLayout from "@/components/layout/StaffLayout";
 
 export default function StaffVerifySuccessPage() {
+    const { ui, language } = useNativeUi();
     const searchParams = useSearchParams();
     const donationId = searchParams.get("id") || "-";
-    const donorName = searchParams.get("donor") || "ไม่ระบุ";
+    const donorName = searchParams.get("donor") || ui("ไม่ระบุ");
     const itemCount = searchParams.get("count") || "0";
 
     return (
@@ -29,9 +32,9 @@ export default function StaffVerifySuccessPage() {
 
                     <div className="my-7 space-y-3 rounded-2xl bg-slate-50 p-5 text-left">
                         <InfoRow label="Tracking ID" value={donationId} mono />
-                        <InfoRow label="ผู้บริจาค" value={donorName} />
-                        <InfoRow label="จำนวนรายการ" value={`${itemCount} รายการ`} />
-                        <InfoRow label="สถานะ" value="รับเข้าคลังแล้ว" success />
+                        <InfoRow label={ui("ผู้บริจาค")} value={donorName} />
+                        <InfoRow label={ui("จำนวนรายการ")} value={ui(`${itemCount} รายการ`)} />
+                        <InfoRow label={ui("สถานะ")} value={ui("รับเข้าคลังแล้ว")} success />
                     </div>
 
                     <div className="space-y-3">

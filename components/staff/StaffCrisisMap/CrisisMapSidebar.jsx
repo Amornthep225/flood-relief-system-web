@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import CrisisCaseListItem from "./CrisisCaseListItem";
 
 const filters = [
@@ -19,6 +21,7 @@ export default function CrisisMapSidebar({
     onRefresh,
     refreshing,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <aside className="absolute bottom-20 left-4 top-20 z-[600] flex w-[360px] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-2xl border bg-white/95 shadow-xl backdrop-blur">
             <div className="border-b p-4">
@@ -33,7 +36,7 @@ export default function CrisisMapSidebar({
                         onClick={onRefresh}
                         disabled={refreshing}
                         className="h-10 w-10 rounded-full bg-slate-100"
-                        aria-label="รีเฟรชรายการเคส"
+                        aria-label={ui("รีเฟรชรายการเคส")}
                     >
                         <span
                             className={`material-symbols-outlined ${
@@ -47,22 +50,22 @@ export default function CrisisMapSidebar({
 
                 <div className="mt-4 grid grid-cols-2 gap-2">
                     <Summary
-                        label="SOS วิกฤต"
+                        label={ui("SOS วิกฤต")}
                         value={summary.emergencyCritical}
                         cls="bg-red-50 text-red-600"
                     />
                     <Summary
-                        label="ขอรับของ"
+                        label={ui("ขอรับของ")}
                         value={summary.relief}
                         cls="bg-sky-50 text-sky-600"
                     />
                     <Summary
-                        label="รอรับงาน"
+                        label={ui("รอรับงาน")}
                         value={summary.pending}
                         cls="bg-amber-50 text-amber-600"
                     />
                     <Summary
-                        label="รับแล้ว"
+                        label={ui("รับแล้ว")}
                         value={summary.assigned}
                         cls="bg-blue-50 text-blue-600"
                     />
@@ -80,7 +83,7 @@ export default function CrisisMapSidebar({
                                 : "bg-slate-100 text-slate-500"
                         }`}
                     >
-                        {filter.label}
+                        {ui(filter.label)}
                     </button>
                 ))}
             </div>

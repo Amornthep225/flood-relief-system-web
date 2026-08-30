@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { buttons } from "@/constants/buttons";
@@ -13,6 +15,7 @@ import {
 const PENDING_CASE_REFRESH_MS = 30000;
 
 export default function StaffHomeHero() {
+    const { ui, language } = useNativeUi();
     const [pendingCaseCount, setPendingCaseCount] =
         useState(0);
 
@@ -68,10 +71,10 @@ export default function StaffHomeHero() {
             <div className="relative flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
                     <h1 className="text-3xl md:text-5xl font-bold text-white">
-                        สวัสดีครับ เจ้าหน้าที่
+                        {ui("สวัสดีครับ เจ้าหน้าที่")}
                     </h1>
                     <p className="text-blue-100 text-lg mt-2">
-                        เจ้าหน้าที่ประจำศูนย์ประสานงานกลาง
+                        {ui("เจ้าหน้าที่ประจำศูนย์ประสานงานกลาง")}
                     </p>
                 </div>
 
@@ -82,13 +85,13 @@ export default function StaffHomeHero() {
                     <span className="material-symbols-outlined">
                         emergency
                     </span>
-                    ดูรายการ SOS
+                    {ui("ดูรายการ SOS")}
 
                     {pendingCaseCount > 0 && (
                         <span
                             className="absolute -right-3 -top-3 flex h-8 min-w-8 items-center justify-center rounded-full bg-red-500 px-2 text-xs font-black leading-none text-white shadow-lg ring-4 ring-white"
-                            aria-label={`มีเคสใหม่ ${pendingCaseCount} เคส`}
-                            title={`มีเคสใหม่ที่รอเจ้าหน้าที่รับงาน ${pendingCaseCount} เคส`}
+                            aria-label={ui(`มีเคสใหม่ ${pendingCaseCount} เคส`)}
+                            title={ui(`มีเคสใหม่ที่รอเจ้าหน้าที่รับงาน ${pendingCaseCount} เคส`)}
                         >
                             {formatPendingCaseBadge(
                                 pendingCaseCount

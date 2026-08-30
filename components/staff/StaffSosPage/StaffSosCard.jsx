@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import Link from "next/link";
 
 export default function StaffSosCard({
@@ -6,6 +10,7 @@ export default function StaffSosCard({
     onOpenGps,
     onOpenDetail,
 }) {
+    const { ui, language } = useNativeUi();
     const status = normalizeStatus(request.status);
     const isWaiting = status === "pending";
     const isCompleted = status === "completed";
@@ -49,13 +54,13 @@ export default function StaffSosCard({
                 <div className="min-w-0 flex-1">
                     <div className="mb-3 flex flex-wrap items-center gap-3">
                         <h3 className="text-lg font-bold text-slate-800">
-                            {getRequestTitle(request)}
+                            {ui(getRequestTitle(request))}
                         </h3>
 
                         <span
                             className={`rounded-full px-3 py-1 text-xs font-bold ${style.badge}`}
                         >
-                            {getStatusLabel(status)}
+                            {ui(getStatusLabel(status))}
                         </span>
 
                         {isEmergency && (
@@ -70,7 +75,7 @@ export default function StaffSosCard({
                             icon="person"
                             text={
                                 request.userFullName ||
-                                "ไม่ระบุชื่อผู้แจ้ง"
+                                ui("ไม่ระบุชื่อผู้แจ้ง")
                             }
                         />
 
@@ -78,7 +83,7 @@ export default function StaffSosCard({
                             icon="call"
                             text={
                                 request.userPhoneNumber ||
-                                "ไม่ระบุเบอร์โทร"
+                                ui("ไม่ระบุเบอร์โทร")
                             }
                         />
 
@@ -86,37 +91,35 @@ export default function StaffSosCard({
                             icon="location_on"
                             text={
                                 request.addressDetail ||
-                                "ไม่ระบุสถานที่"
+                                ui("ไม่ระบุสถานที่")
                             }
                             full
                         />
 
                         <Information
                             icon="schedule"
-                            text={formatThaiDateTime(
-                                request.createdAt
-                            )}
+                            text={formatDateTime(request.createdAt, language)}
                         />
                     </div>
 
                     {String(request.requestType || "Relief").toLowerCase() === "emergency" && (
                         <div className="mt-4 flex flex-wrap gap-2">
                             <span className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">
-                                ผู้ประสบภัย {request.victimCount || 1} คน
+                                {ui(`ผู้ประสบภัย ${request.victimCount || 1} คน`)}
                             </span>
                             {(request.patientCount || 0) > 0 && (
                                 <span className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">
-                                    ผู้ป่วย {request.patientCount} คน
+                                    {ui(`ผู้ป่วย ${request.patientCount} คน`)}
                                 </span>
                             )}
                             {(request.elderlyCount || 0) > 0 && (
                                 <span className="rounded-lg bg-orange-50 px-3 py-1.5 text-xs font-bold text-orange-700">
-                                    ผู้สูงอายุ {request.elderlyCount} คน
+                                    {ui(`ผู้สูงอายุ ${request.elderlyCount} คน`)}
                                 </span>
                             )}
                             {request.waterLevel != null && (
                                 <span className="rounded-lg bg-sky-50 px-3 py-1.5 text-xs font-bold text-sky-700">
-                                    น้ำ {request.waterLevel} ม.
+                                    {ui(`น้ำ ${request.waterLevel} ม.`)}
                                 </span>
                             )}
                         </div>
@@ -131,7 +134,7 @@ export default function StaffSosCard({
                     {items.length > 0 && (
                         <div className="mt-4">
                             <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                                รายการที่ร้องขอ
+                                {ui("รายการที่ร้องขอ")}
                             </p>
 
                             <div className="flex flex-wrap gap-2">
@@ -143,11 +146,9 @@ export default function StaffSosCard({
                                         }
                                         className="rounded-lg border border-sky-100 bg-sky-50 px-3 py-1.5 text-xs font-bold text-sky-700"
                                     >
-                                        {item.reliefItemName ||
-                                            item.name ||
-                                            "ไม่ระบุรายการ"}{" "}
+                                        {ui(item.reliefItemName || item.name || "ไม่ระบุรายการ")}{" "}
                                         {item.quantity || 0}{" "}
-                                        {item.unit || ""}
+                                        {ui(item.unit || "")}
                                     </span>
                                 ))}
                             </div>
@@ -167,7 +168,7 @@ export default function StaffSosCard({
                             <span className="material-symbols-outlined text-lg">
                                 assignment_turned_in
                             </span>
-                            รับงาน
+                            {ui("รับงาน")}
                         </button>
                     )}
 
@@ -179,7 +180,7 @@ export default function StaffSosCard({
                             <span className="material-symbols-outlined text-lg">
                                 play_arrow
                             </span>
-                            ดำเนินการต่อ
+                            {ui("ดำเนินการต่อ")}
                         </Link>
                     )}
 
@@ -193,7 +194,7 @@ export default function StaffSosCard({
                         <span className="material-symbols-outlined text-lg">
                             map
                         </span>
-                        ดูพิกัด
+                        {ui("ดูพิกัด")}
                     </button>
 
                     <button
@@ -206,7 +207,7 @@ export default function StaffSosCard({
                         <span className="material-symbols-outlined text-lg">
                             description
                         </span>
-                        รายละเอียด
+                        {ui("รายละเอียด")}
                     </button>
                 </div>
             </div>
@@ -231,6 +232,7 @@ function Information({ icon, text, full = false }) {
 }
 
 function PriorityBadge({ priority }) {
+    const { ui } = useNativeUi();
     const value = String(priority || "")
         .trim()
         .toLowerCase();
@@ -261,7 +263,7 @@ function PriorityBadge({ priority }) {
         <span
             className={`rounded-full px-3 py-1 text-xs font-bold ${config.className}`}
         >
-            {config.label}
+            {ui(config.label)}
         </span>
     );
 }
@@ -376,7 +378,7 @@ function getRequestTitle(request) {
     return `ขอความช่วยเหลือ ${items.length} รายการ`;
 }
 
-function formatThaiDateTime(value) {
+function formatDateTime(value, language) {
     if (!value) {
         return "ไม่ระบุเวลา";
     }
@@ -387,7 +389,7 @@ function formatThaiDateTime(value) {
         return "ไม่ระบุเวลา";
     }
 
-    return date.toLocaleString("th-TH", {
+    return date.toLocaleString(language === "en" ? "en-US" : "th-TH", {
         day: "numeric",
         month: "short",
         year: "numeric",

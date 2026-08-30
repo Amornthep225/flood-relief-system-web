@@ -1,6 +1,9 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, accepting, onClose, onConfirm }) {
+    const { ui, language } = useNativeUi();
     if (!caseItem) return null;
 
     return (
@@ -12,7 +15,7 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                             <span className="material-symbols-outlined">inventory_2</span>
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-slate-800">ตรวจสอบคลังก่อนรับเคส</h2>
+                            <h2 className="text-xl font-black text-slate-800">{ui("ตรวจสอบคลังก่อนรับเคส")}</h2>
                             <p className="text-sm text-slate-500">SOS #{caseItem.id}</p>
                         </div>
                     </div>
@@ -24,7 +27,7 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                 {loading ? (
                     <div className="flex min-h-[320px] flex-col items-center justify-center">
                         <span className="material-symbols-outlined animate-spin text-5xl text-sky-500">progress_activity</span>
-                        <p className="mt-4 font-bold text-slate-600">กำลังตรวจสอบสิ่งของในคลัง...</p>
+                        <p className="mt-4 font-bold text-slate-600">{ui("กำลังตรวจสอบสิ่งของในคลัง...")}</p>
                     </div>
                 ) : (
                     <>
@@ -36,9 +39,9 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                                     </span>
                                     <div>
                                         <p className={`font-black ${stockCheck?.isAllEnough ? "text-emerald-700" : "text-red-700"}`}>
-                                            {stockCheck?.isAllEnough ? "สิ่งของเพียงพอทุกรายการ" : "สิ่งของในคลังไม่เพียงพอ"}
+                                            {stockCheck?.isAllEnough ? ui("สิ่งของเพียงพอทุกรายการ") : ui("สิ่งของในคลังไม่เพียงพอ")}
                                         </p>
-                                        <p className="text-sm text-slate-500">ศูนย์ {stockCheck?.centerId || "-"} • ต้องตรวจผ่านก่อนจึงจะรับเคสได้</p>
+                                        <p className="text-sm text-slate-500">{ui(`ศูนย์ ${stockCheck?.centerId || "-"}`)} • {ui("ต้องตรวจผ่านก่อนจึงจะรับเคสได้")}</p>
                                     </div>
                                 </div>
                             </div>
@@ -52,11 +55,11 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                                     <table className="w-full text-sm">
                                         <thead className="bg-slate-50 text-xs font-black text-slate-500">
                                             <tr>
-                                                <th className="px-4 py-3 text-left">รายการ</th>
-                                                <th className="px-4 py-3 text-center">ต้องการ</th>
-                                                <th className="px-4 py-3 text-center">คงเหลือ</th>
-                                                <th className="px-4 py-3 text-center">หลังจ่าย</th>
-                                                <th className="px-4 py-3 text-center">ผลตรวจ</th>
+                                                <th className="px-4 py-3 text-left">{ui("รายการ")}</th>
+                                                <th className="px-4 py-3 text-center">{ui("ต้องการ")}</th>
+                                                <th className="px-4 py-3 text-center">{ui("คงเหลือ")}</th>
+                                                <th className="px-4 py-3 text-center">{ui("หลังจ่าย")}</th>
+                                                <th className="px-4 py-3 text-center">{ui("ผลตรวจ")}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
@@ -68,9 +71,9 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                                                     <td className="px-4 py-4 text-center font-bold text-slate-600">{item.remainingQuantity} {item.unit}</td>
                                                     <td className="px-4 py-4 text-center">
                                                         {item.isEnough ? (
-                                                            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">เพียงพอ</span>
+                                                            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">{ui("เพียงพอ")}</span>
                                                         ) : (
-                                                            <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-black text-red-700">ขาด {item.shortageQuantity} {item.unit}</span>
+                                                            <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-black text-red-700">{ui(`ขาด ${item.shortageQuantity} ${item.unit}`)}</span>
                                                         )}
                                                     </td>
                                                 </tr>
@@ -82,10 +85,10 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                         </div>
 
                         <div className="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-                            <button type="button" onClick={onClose} disabled={accepting} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-600 hover:bg-slate-100 disabled:opacity-50">ยกเลิก</button>
+                            <button type="button" onClick={onClose} disabled={accepting} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-600 hover:bg-slate-100 disabled:opacity-50">{ui("ยกเลิก")}</button>
                             <button type="button" onClick={onConfirm} disabled={accepting || !stockCheck?.isAllEnough} className="flex items-center gap-2 rounded-xl bg-sky-600 px-5 py-3 font-bold text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300">
                                 <span className={`material-symbols-outlined text-lg ${accepting ? "animate-spin" : ""}`}>{accepting ? "progress_activity" : "assignment_turned_in"}</span>
-                                {accepting ? "กำลังรับเคส..." : "ยืนยันรับเคส"}
+                                {accepting ? ui("กำลังรับเคส...") : ui("ยืนยันรับเคส")}
                             </button>
                         </div>
                     </>

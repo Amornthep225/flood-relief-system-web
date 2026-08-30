@@ -1,11 +1,14 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { buttons } from "@/constants/buttons";
 import StaffNotificationDropdown from "./StaffNotificationDropdown";
 import LanguageSwitcher from "@/components/common/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
     getMyNotifications,
     markAllNotificationsAsRead,
@@ -24,6 +27,8 @@ export default function StaffNavbar({
     showLogout = true,
     options = {},
 }) {
+    const { ui } = useNativeUi();
+    const { language } = useLanguage();
     const router = useRouter();
     const [staff, setStaff] = useState(null);
     const [notifications, setNotifications] = useState([]);
@@ -213,7 +218,7 @@ export default function StaffNavbar({
                             <span className="material-symbols-outlined text-[18px]">
                                 arrow_back
                             </span>
-                            กลับ
+                            {ui("กลับ")}
                         </Link>
                     )}
 
@@ -222,7 +227,7 @@ export default function StaffNavbar({
                             href={homeHref}
                             className={`${theme.primaryText} text-sm font-bold hover:text-[#2a93d5]`}
                         >
-                            หน้าแรก
+                            {ui("หน้าแรก")}
                         </Link>
                     )}
 
@@ -246,7 +251,7 @@ export default function StaffNavbar({
                         <div className="relative">
                             <button
                                 type="button"
-                                aria-label="การแจ้งเตือนเจ้าหน้าที่"
+                                aria-label={ui("การแจ้งเตือนเจ้าหน้าที่")}
                                 aria-expanded={notificationOpen}
                                 onClick={() =>
                                     setNotificationOpen((open) => !open)
@@ -293,7 +298,7 @@ export default function StaffNavbar({
                                     {staff.fullName}
                                 </p>
                                 <p className="text-xs text-slate-400">
-                                    เจ้าหน้าที่
+                                    {language === "en" ? "Staff" : "เจ้าหน้าที่"}
                                 </p>
                             </div>
                         </div>
@@ -302,7 +307,7 @@ export default function StaffNavbar({
                     {hotlineButton && (
                         <div className="flex flex-col items-center">
                             <span className={`${theme.emergencyText} text-[10px] font-bold`}>
-                                สายด่วนฉุกเฉิน
+                                {ui("สายด่วนฉุกเฉิน")}
                             </span>
 
                             <a

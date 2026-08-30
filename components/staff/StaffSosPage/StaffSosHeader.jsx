@@ -1,7 +1,12 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function StaffSosHeader({
     refreshing,
     onRefresh,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <div className="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
             <div>
@@ -10,11 +15,11 @@ export default function StaffSosHeader({
                         cell_tower
                     </span>
 
-                    รายการแจ้งขอความช่วยเหลือ (SOS)
+                    {ui("รายการแจ้งขอความช่วยเหลือ (SOS)")}
                 </h1>
 
                 <p className="mt-2 text-sm text-slate-500">
-                    จัดการภารกิจและติดตามสถานะการช่วยเหลือ
+                    {ui("จัดการภารกิจและติดตามสถานะการช่วยเหลือ")}
                 </p>
             </div>
 
@@ -33,8 +38,8 @@ export default function StaffSosHeader({
                 </span>
 
                 {refreshing
-                    ? "กำลังอัปเดต..."
-                    : "อัปเดตข้อมูล"}
+                    ? ui("กำลังอัปเดต...")
+                    : ui("อัปเดตข้อมูล")}
             </button>
         </div>
     );

@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 const content = {
     waiting: {
         icon: "pending_actions",
@@ -20,6 +24,7 @@ const content = {
 };
 
 export default function EmptyState({ activeTab }) {
+    const { ui, language } = useNativeUi();
     const current =
         content[activeTab] || content.waiting;
 

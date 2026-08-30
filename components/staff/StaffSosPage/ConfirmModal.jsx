@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function ConfirmModal({
     request,
     stockCheck,
@@ -6,6 +10,7 @@ export default function ConfirmModal({
     onClose,
     onConfirm,
 }) {
+    const { ui, language } = useNativeUi();
     const items = stockCheck?.items ?? [];
     const canConfirm =
         !checkingStock &&
@@ -77,7 +82,7 @@ export default function ConfirmModal({
                                         }`}
                                     >
                                         {stockCheck?.isEmergency
-                                            ? "SOS ฉุกเฉิน พร้อมรับเคสได้ทันที"
+                                            ? ui("SOS ฉุกเฉิน พร้อมรับเคสได้ทันที")
                                             : stockCheck?.isAllEnough
                                               ? "สิ่งของในคลังเพียงพอสำหรับเคสนี้"
                                               : "สิ่งของในคลังไม่เพียงพอ"}
@@ -128,26 +133,26 @@ export default function ConfirmModal({
                                                 </span>
                                             ) : (
                                                 <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-black text-red-700">
-                                                    ขาด {item.shortageQuantity} {item.unit}
+                                                    {ui(`ขาด ${item.shortageQuantity} ${item.unit}`)}
                                                 </span>
                                             )}
                                         </div>
 
                                         <div className="mt-4 grid grid-cols-3 gap-2">
                                             <StockBox
-                                                title="ต้องการ"
+                                                title={ui("ต้องการ")}
                                                 value={item.requestedQuantity}
                                                 unit={item.unit}
                                             />
 
                                             <StockBox
-                                                title="คงเหลือ"
+                                                title={ui("คงเหลือ")}
                                                 value={item.availableQuantity}
                                                 unit={item.unit}
                                             />
 
                                             <StockBox
-                                                title="หลังจ่าย"
+                                                title={ui("หลังจ่าย")}
                                                 value={item.remainingQuantity}
                                                 unit={item.unit}
                                             />
@@ -172,7 +177,7 @@ export default function ConfirmModal({
                         disabled={loading}
                         className="rounded-xl bg-white py-3 font-bold text-slate-600 ring-1 ring-slate-200 transition hover:bg-slate-100 disabled:opacity-60"
                     >
-                        {canConfirm ? "ยกเลิก" : "ปิด"}
+                        {canConfirm ? ui("ยกเลิก") : ui("ปิด")}
                     </button>
 
                     <button

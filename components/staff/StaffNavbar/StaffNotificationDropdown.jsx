@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 function getNotificationStyle(type) {
     const styles = {
         StaffNewSos: {
@@ -28,7 +30,7 @@ function getNotificationStyle(type) {
     );
 }
 
-function formatNotificationTime(value) {
+function formatNotificationTime(value, language) {
     if (!value) {
         return "";
     }
@@ -39,7 +41,7 @@ function formatNotificationTime(value) {
         return "";
     }
 
-    return date.toLocaleString("th-TH", {
+    return date.toLocaleString(language === "en" ? "en-US" : "th-TH", {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -55,15 +57,16 @@ export default function StaffNotificationDropdown({
     onSelect,
     onReadAll,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <div className="absolute right-0 top-12 z-[80] w-[min(92vw,400px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15">
             <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                 <div>
                     <p className="font-black text-slate-800">
-                        การแจ้งเตือนเจ้าหน้าที่
+                        {ui("การแจ้งเตือนเจ้าหน้าที่")}
                     </p>
                     <p className="text-xs text-slate-400">
-                        ยังไม่ได้อ่าน {unreadCount} รายการ
+                        {ui(`ยังไม่ได้อ่าน ${unreadCount} รายการ`)}
                     </p>
                 </div>
 
@@ -73,7 +76,7 @@ export default function StaffNotificationDropdown({
                         onClick={onReadAll}
                         className="text-xs font-bold text-sky-600 transition hover:text-sky-700"
                     >
-                        อ่านทั้งหมด
+                        {ui("อ่านทั้งหมด")}
                     </button>
                 )}
             </div>
@@ -84,7 +87,7 @@ export default function StaffNotificationDropdown({
                         <span className="material-symbols-outlined animate-spin text-lg">
                             progress_activity
                         </span>
-                        กำลังโหลดการแจ้งเตือน...
+                        {ui("กำลังโหลดการแจ้งเตือน...")}
                     </div>
                 ) : notifications.length === 0 ? (
                     <div className="px-5 py-10 text-center">
@@ -94,7 +97,7 @@ export default function StaffNotificationDropdown({
                             </span>
                         </div>
                         <p className="mt-3 text-sm font-bold text-slate-500">
-                            ยังไม่มีการแจ้งเตือน
+                            {ui("ยังไม่มีการแจ้งเตือน")}
                         </p>
                     </div>
                 ) : (
@@ -128,14 +131,15 @@ export default function StaffNotificationDropdown({
 
                                 <div className="min-w-0 flex-1 pr-4">
                                     <p className="text-sm font-black text-slate-800">
-                                        {notification.title}
+                                        {ui(notification.title)}
                                     </p>
                                     <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                                        {notification.message}
+                                        {ui(notification.message)}
                                     </p>
                                     <p className="mt-2 text-[11px] font-medium text-slate-400">
                                         {formatNotificationTime(
-                                            notification.createdAt
+                                            notification.createdAt,
+                                            language
                                         )}
                                     </p>
                                 </div>

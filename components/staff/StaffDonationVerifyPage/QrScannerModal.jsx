@@ -1,8 +1,11 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useEffect, useRef, useState } from "react";
 
 export default function QrScannerModal({ onClose, onDetected }) {
+    const { ui, language } = useNativeUi();
     const videoRef = useRef(null);
     const streamRef = useRef(null);
     const timerRef = useRef(null);
@@ -24,12 +27,12 @@ export default function QrScannerModal({ onClose, onDetected }) {
         const startScanner = async () => {
             try {
                 if (!navigator.mediaDevices?.getUserMedia) {
-                    throw new Error("เบราว์เซอร์นี้ไม่รองรับการเปิดกล้อง");
+                    throw new Error(ui("เบราว์เซอร์นี้ไม่รองรับการเปิดกล้อง"));
                 }
 
                 if (!("BarcodeDetector" in window)) {
                     throw new Error(
-                        "เบราว์เซอร์นี้ยังไม่รองรับการอ่าน QR อัตโนมัติ กรุณาใช้ Chrome หรือกรอกรหัสด้วยตนเอง"
+                        ui("เบราว์เซอร์นี้ยังไม่รองรับการอ่าน QR อัตโนมัติ กรุณาใช้ Chrome หรือกรอกรหัสด้วยตนเอง")
                     );
                 }
 
@@ -73,7 +76,7 @@ export default function QrScannerModal({ onClose, onDetected }) {
             } catch (scannerError) {
                 setError(
                     scannerError?.message ||
-                        "ไม่สามารถเปิดกล้องเพื่อสแกน QR Code ได้"
+                        ui("ไม่สามารถเปิดกล้องเพื่อสแกน QR Code ได้")
                 );
             }
         };

@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 
@@ -48,12 +50,12 @@ function normalizeTransactions(response, inventory) {
             transaction.itemName ??
             transaction.name ??
             inventory.name ??
-            "ไม่ระบุชื่อสิ่งของ",
+            ui("ไม่ระบุชื่อสิ่งของ"),
 
         unit:
             transaction.unit ??
             inventory.unit ??
-            "ชิ้น",
+            ui("ชิ้น"),
 
         type: String(
             transaction.transactionType ??
@@ -246,6 +248,7 @@ export default function InventoryHistoryModal({
     inventories,
     centerName,
 }) {
+    const { ui, language } = useNativeUi();
     const [transactions, setTransactions] =
         useState([]);
 
@@ -344,7 +347,7 @@ export default function InventoryHistoryModal({
                     mergedTransactions.length === 0
                 ) {
                     throw new Error(
-                        "ไม่สามารถโหลดประวัติคลังสินค้าได้"
+                        ui("ไม่สามารถโหลดประวัติคลังสินค้าได้")
                     );
                 }
             } catch (error) {
@@ -363,12 +366,12 @@ export default function InventoryHistoryModal({
                 await Swal.fire({
                     icon: "error",
                     title:
-                        "โหลดประวัติไม่สำเร็จ",
+                        ui("โหลดประวัติไม่สำเร็จ"),
                     text:
                         error?.message ||
-                        "ไม่สามารถโหลดประวัติของเข้า–ออกคลังได้",
+                        ui("ไม่สามารถโหลดประวัติของเข้า–ออกคลังได้"),
                     confirmButtonText:
-                        "ตกลง",
+                        ui("ตกลง"),
                 });
             } finally {
                 if (
@@ -709,7 +712,7 @@ export default function InventoryHistoryModal({
 
                                 <input
                                     type="text"
-                                    placeholder="ชื่อสินค้า / รหัสอ้างอิง"
+                                    placeholder={ui("ชื่อสินค้า / รหัสอ้างอิง")}
                                     value={
                                         filters.search
                                     }
@@ -869,7 +872,7 @@ export default function InventoryHistoryModal({
 
                                                             {transaction.referenceId && (
                                                                 <p className="mt-1 text-xs text-slate-400">
-                                                                    อ้างอิง:{" "}
+                                                                    {ui("อ้างอิง")}:{" "}
                                                                     {
                                                                         transaction.referenceId
                                                                     }
@@ -883,8 +886,10 @@ export default function InventoryHistoryModal({
                                                                     transaction
                                                                 )}`}
                                                             >
-                                                                {getTypeLabel(
-                                                                    transaction
+                                                                {ui(
+                                                                    getTypeLabel(
+                                                                        transaction
+                                                                    )
                                                                 )}
                                                             </span>
                                                         </td>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 
@@ -39,7 +41,7 @@ function normalizeResponse(response) {
         centerName:
             item.centerName ??
             item.center?.centerName ??
-            "ไม่ระบุศูนย์",
+            ui("ไม่ระบุศูนย์"),
         reliefItemId:
             item.reliefItemId ??
             item.itemId ??
@@ -50,13 +52,13 @@ function normalizeResponse(response) {
             item.itemName ??
             item.name ??
             item.reliefItem?.name ??
-            "ไม่ระบุชื่อสิ่งของ",
+            ui("ไม่ระบุชื่อสิ่งของ"),
         category:
             item.categoryName ??
             item.reliefCategoryName ??
             item.category ??
             item.reliefItem?.category?.name ??
-            "อื่น ๆ",
+            ui("อื่น ๆ"),
         quantity: Number(item.quantity ?? 0),
         minimumQuantity: Number(
             item.minimumQuantity ??
@@ -66,7 +68,7 @@ function normalizeResponse(response) {
         unit:
             item.unit ??
             item.reliefItem?.unit ??
-            "ชิ้น",
+            ui("ชิ้น"),
         updatedAt:
             item.updatedAt ??
             item.createdAt ??
@@ -94,6 +96,7 @@ function getStockLevel(item) {
 }
 
 export default function StaffInventory() {
+    const { ui, language } = useNativeUi();
     const [items, setItems] = useState([]);
     const [activeTab, setActiveTab] = useState(TAB_ALL);
     const [searchText, setSearchText] = useState("");
@@ -114,7 +117,7 @@ export default function StaffInventory() {
 
             if (!staffStorage) {
                 throw new Error(
-                    "ไม่พบข้อมูลเจ้าหน้าที่ กรุณาเข้าสู่ระบบใหม่"
+                    ui("ไม่พบข้อมูลเจ้าหน้าที่ กรุณาเข้าสู่ระบบใหม่")
                 );
             }
 
@@ -126,7 +129,7 @@ export default function StaffInventory() {
 
             if (!centerId) {
                 throw new Error(
-                    "ไม่พบรหัสศูนย์ของเจ้าหน้าที่"
+                    ui("ไม่พบรหัสศูนย์ของเจ้าหน้าที่")
                 );
             }
 
@@ -145,11 +148,11 @@ export default function StaffInventory() {
 
             await Swal.fire({
                 icon: "error",
-                title: "โหลดข้อมูลไม่สำเร็จ",
+                title: ui("โหลดข้อมูลไม่สำเร็จ"),
                 text:
                     error?.message ||
-                    "ไม่สามารถโหลดข้อมูลคลังสินค้าได้",
-                confirmButtonText: "ตกลง",
+                    ui("ไม่สามารถโหลดข้อมูลคลังสินค้าได้"),
+                confirmButtonText: ui("ตกลง"),
             });
         } finally {
             if (!signal?.aborted) {
@@ -217,7 +220,7 @@ export default function StaffInventory() {
 
     const centerName =
         items.find((item) => item.centerName)?.centerName ||
-        "คลังสินค้าของศูนย์";
+        ui("คลังสินค้าของศูนย์");
 
     const handleRefresh = async () => {
         const controller = new AbortController();

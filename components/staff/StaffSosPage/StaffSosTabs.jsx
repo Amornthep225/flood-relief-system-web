@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 const tabs = [
     {
         key: "waiting",
@@ -21,6 +25,7 @@ export default function StaffSosTabs({
     onChange,
     summary,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <div className="overflow-x-auto border-b border-slate-200">
             <div className="flex min-w-max gap-2">
@@ -40,7 +45,7 @@ export default function StaffSosTabs({
                                     : "border-transparent text-slate-400 hover:text-slate-600"
                             }`}
                         >
-                            {tab.title}
+                            {ui(tab.title)}
 
                             <span
                                 className={`ml-2 rounded-full px-2 py-0.5 text-xs ${

@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
@@ -14,6 +16,7 @@ import {
 } from "@/services/staff/donation";
 
 export default function StaffDonationVerify() {
+    const { ui, language } = useNativeUi();
     const router = useRouter();
     const [trackingId, setTrackingId] = useState("");
     const [donation, setDonation] = useState(null);
@@ -28,8 +31,8 @@ export default function StaffDonationVerify() {
             if (!donationId) {
                 await Swal.fire({
                     icon: "warning",
-                    title: "กรุณาระบุรหัสบริจาค",
-                    text: "กรอกรหัส Tracking ID หรือสแกน QR Code ก่อนค้นหา",
+                    title: ui("กรุณาระบุรหัสบริจาค"),
+                    text: ui("กรอกรหัส Tracking ID หรือสแกน QR Code ก่อนค้นหา"),
                 });
                 return;
             }
@@ -44,8 +47,8 @@ export default function StaffDonationVerify() {
             } catch (error) {
                 await Swal.fire({
                     icon: "error",
-                    title: "ไม่พบข้อมูลบริจาค",
-                    text: error.message || "ไม่สามารถค้นหาข้อมูลบริจาคได้",
+                    title: ui("ไม่พบข้อมูลบริจาค"),
+                    text: ui(error.message || "ไม่สามารถค้นหาข้อมูลบริจาคได้"),
                 });
             } finally {
                 setIsLoading(false);
@@ -71,11 +74,11 @@ export default function StaffDonationVerify() {
 
         const result = await Swal.fire({
             icon: "question",
-            title: "ยืนยันรับของเข้าคลัง?",
-            html: `ระบบจะเพิ่มสิ่งของจากรหัส <b>${donation.id}</b> เข้าคลังของศูนย์ และไม่สามารถรับซ้ำได้`,
+            title: ui("ยืนยันรับของเข้าคลัง?"),
+            html: language === "en" ? `Donation <b>${donation.id}</b> will be added to the center inventory and cannot be received twice.` : `ระบบจะเพิ่มสิ่งของจากรหัส <b>${donation.id}</b> เข้าคลังของศูนย์ และไม่สามารถรับซ้ำได้`,
             showCancelButton: true,
-            confirmButtonText: "ยืนยันรับเข้าคลัง",
-            cancelButtonText: "ยกเลิก",
+            confirmButtonText: ui("ยืนยันรับเข้าคลัง"),
+            cancelButtonText: ui("ยกเลิก"),
             confirmButtonColor: "#10b981",
         });
 
@@ -95,8 +98,8 @@ export default function StaffDonationVerify() {
 
             await Swal.fire({
                 icon: "success",
-                title: "รับของเข้าคลังสำเร็จ",
-                text: response.message || "อัปเดตคลังและสถานะบริจาคเรียบร้อยแล้ว",
+                title: ui("รับของเข้าคลังสำเร็จ"),
+                text: ui(response.message || "อัปเดตคลังและสถานะบริจาคเรียบร้อยแล้ว"),
                 timer: 1600,
                 showConfirmButton: false,
             });
@@ -111,8 +114,8 @@ export default function StaffDonationVerify() {
         } catch (error) {
             await Swal.fire({
                 icon: "error",
-                title: "รับของเข้าคลังไม่สำเร็จ",
-                text: error.message || "เกิดข้อผิดพลาด กรุณาลองใหม่",
+                title: ui("รับของเข้าคลังไม่สำเร็จ"),
+                text: ui(error.message || "เกิดข้อผิดพลาด กรุณาลองใหม่"),
             });
         } finally {
             setIsReceiving(false);
@@ -128,10 +131,10 @@ export default function StaffDonationVerify() {
                     </span>
                 </div>
                 <h1 className="text-3xl font-black text-slate-800">
-                    ตรวจรับของบริจาค
+                    {ui("ตรวจรับของบริจาค")}
                 </h1>
                 <p className="mt-2 text-sm text-slate-500">
-                    ค้นหาด้วยรหัสบริจาค หรือสแกน QR Code จากผู้บริจาค
+                    {ui("ค้นหาด้วยรหัสบริจาค หรือสแกน QR Code จากผู้บริจาค")}
                 </p>
             </header>
 

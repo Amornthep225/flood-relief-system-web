@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useState } from "react";
 
 export default function StaffSosFilter({
@@ -7,6 +9,7 @@ export default function StaffSosFilter({
     onSearch,
     onReset,
 }) {
+    const { ui, language } = useNativeUi();
     const [draft, setDraft] = useState(filters);
 
     const updateDraft = (key, value) => {
@@ -97,7 +100,7 @@ export default function StaffSosFilter({
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
-                <FilterField label="วันที่เริ่มต้น">
+                <FilterField label={ui("วันที่เริ่มต้น")}>
                     <input
                         type="date"
                         value={draft.startDate}
@@ -111,7 +114,7 @@ export default function StaffSosFilter({
                     />
                 </FilterField>
 
-                <FilterField label="วันที่สิ้นสุด">
+                <FilterField label={ui("วันที่สิ้นสุด")}>
                     <input
                         type="date"
                         value={draft.endDate}
@@ -126,7 +129,7 @@ export default function StaffSosFilter({
                     />
                 </FilterField>
 
-                <FilterField label="สถานะ">
+                <FilterField label={ui("สถานะ")}>
                     <select
                         value={draft.status}
                         onChange={(event) =>
@@ -137,7 +140,7 @@ export default function StaffSosFilter({
                         }
                         className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
                     >
-                        <option value="">ทั้งหมด</option>
+                        <option value="">{ui("ทั้งหมด")}</option>
                         <option value="Pending">
                             รอรับเรื่อง
                         </option>

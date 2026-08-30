@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useEffect, useMemo } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -62,6 +64,7 @@ function FitMapToCases({ cases }) {
 }
 
 export default function CrisisMapCanvas({ cases, onSelectCase }) {
+    const { ui, language } = useNativeUi();
     const validCases = useMemo(
         () =>
             cases.filter(
@@ -106,7 +109,7 @@ export default function CrisisMapCanvas({ cases, onSelectCase }) {
                                 <div className="min-w-[220px]">
                                     <div className="flex items-center justify-between gap-2">
                                         <p className="font-bold">
-                                            {visual.isEmergency ? "SOS" : "คำขอ"} #{item.id}
+                                            {visual.isEmergency ? "SOS" : ui("คำขอ")} #{item.id}
                                         </p>
                                         {visual.isEmergency ? (
                                             <span className="rounded-full bg-red-100 px-2 py-1 text-[10px] font-bold text-red-700">

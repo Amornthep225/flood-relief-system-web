@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import dynamic from "next/dynamic";
@@ -24,19 +26,27 @@ function normalizeList(response) {
     if (Array.isArray(response?.requests)) return response.requests;
     return [];
 }
-const CrisisMapCanvas = dynamic(() => import("./CrisisMapCanvas"), {
-    ssr: false,
-    loading: () => (
+function CrisisMapLoading() {
+    const { ui } = useNativeUi();
+
+    return (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
             <div className="text-center">
                 <span className="material-symbols-outlined animate-spin text-4xl text-sky-500">
                     progress_activity
                 </span>
 
-                <p className="mt-3 text-sm text-slate-500">กำลังโหลดแผนที่...</p>
+                <p className="mt-3 text-sm text-slate-500">
+                    {ui("กำลังโหลดแผนที่...")}
+                </p>
             </div>
         </div>
-    ),
+    );
+}
+
+const CrisisMapCanvas = dynamic(() => import("./CrisisMapCanvas"), {
+    ssr: false,
+    loading: CrisisMapLoading,
 });
 function normalizeCase(item) {
     return {
@@ -73,6 +83,7 @@ function deduplicateCases(cases) {
 }
 
 export default function StaffCrisisMap() {
+    const { ui, language } = useNativeUi();
     const [cases, setCases] = useState([]);
     const [selectedCase, setSelectedCase] = useState(null);
     const [detailLoading, setDetailLoading] = useState(false);
@@ -118,15 +129,15 @@ export default function StaffCrisisMap() {
                 throw (
                     pendingResult.reason ||
                     assignedResult.reason ||
-                    new Error("โหลดข้อมูลไม่สำเร็จ")
+                    new Error(ui("โหลดข้อมูลไม่สำเร็จ"))
                 );
             }
         } catch (error) {
             if (error?.name === "AbortError") return;
             await Swal.fire({
                 icon: "error",
-                title: "โหลดข้อมูลไม่สำเร็จ",
-                text: error?.message || "ไม่สามารถโหลดรายการ SOS ได้",
+                title: ui("โหลดข้อมูลไม่สำเร็จ"),
+                text: ui(error?.message || "ไม่สามารถโหลดรายการ SOS ได้"),
             });
         } finally {
             if (!signal?.aborted) {
@@ -164,10 +175,9 @@ export default function StaffCrisisMap() {
 
             await Swal.fire({
                 icon: "warning",
-                title: "โหลดรายละเอียดไม่สำเร็จ",
+                title: ui("โหลดรายละเอียดไม่สำเร็จ"),
                 text:
-                    error?.message ||
-                    "ยังสามารถดูข้อมูลเบื้องต้นของเคสได้ กรุณาลองใหม่อีกครั้ง",
+                    ui(error?.message || "ยังสามารถดูข้อมูลเบื้องต้นของเคสได้ กรุณาลองใหม่อีกครั้ง"),
             });
         } finally {
             if (detailRequestRef.current === requestSequence) {
@@ -203,11 +213,11 @@ export default function StaffCrisisMap() {
             }
 
             const rawStaff = localStorage.getItem("staff");
-            if (!rawStaff) throw new Error("ไม่พบข้อมูลเจ้าหน้าที่ กรุณาเข้าสู่ระบบใหม่");
+            if (!rawStaff) throw new Error(ui("ไม่พบข้อมูลเจ้าหน้าที่ กรุณาเข้าสู่ระบบใหม่"));
 
             const staff = JSON.parse(rawStaff);
             const centerId = staff?.centerId ?? staff?.CenterId ?? "";
-            if (!centerId) throw new Error("ไม่พบรหัสศูนย์ของเจ้าหน้าที่");
+            if (!centerId) throw new Error(ui("ไม่พบรหัสศูนย์ของเจ้าหน้าที่"));
 
             const [detailResponse, inventoryResponse] = await Promise.all([
                 getStaffSosRequestById(caseItem.id),
@@ -230,8 +240,8 @@ export default function StaffCrisisMap() {
 
                 return {
                     reliefItemId,
-                    reliefItemName: requested.reliefItemName ?? requested.name ?? requested.reliefItem?.name ?? inventory?.reliefItemName ?? inventory?.name ?? "ไม่ระบุรายการ",
-                    unit: requested.unit ?? inventory?.unit ?? requested.reliefItem?.unit ?? "ชิ้น",
+                    reliefItemName: requested.reliefItemName ?? requested.name ?? requested.reliefItem?.name ?? inventory?.reliefItemName ?? inventory?.name ?? ui("ไม่ระบุรายการ"),
+                    unit: requested.unit ?? inventory?.unit ?? requested.reliefItem?.unit ?? ui("ชิ้น"),
                     requestedQuantity,
                     availableQuantity,
                     remainingQuantity: Math.max(availableQuantity - requestedQuantity, 0),
@@ -251,8 +261,8 @@ export default function StaffCrisisMap() {
             setStockCheck(null);
             await Swal.fire({
                 icon: "error",
-                title: "ตรวจสอบคลังไม่สำเร็จ",
-                text: error?.message || "ไม่สามารถตรวจสอบสิ่งของในคลังได้",
+                title: ui("ตรวจสอบคลังไม่สำเร็จ"),
+                text: ui(error?.message || "ไม่สามารถตรวจสอบสิ่งของในคลังได้"),
             });
         } finally {
             setCheckingStock(false);
@@ -264,15 +274,15 @@ export default function StaffCrisisMap() {
 
         const confirmation = await Swal.fire({
             icon: "question",
-            title: "ยืนยันรับเคสนี้?",
+            title: ui("ยืนยันรับเคสนี้?"),
             text: stockCheck?.isEmergency
-                ? "เคส SOS ฉุกเฉินไม่ต้องตรวจคลังสินค้า"
-                : "ระบบตรวจสอบแล้วว่าสิ่งของในคลังเพียงพอ",
+                ? ui("เคส SOS ฉุกเฉินไม่ต้องตรวจคลังสินค้า")
+                : ui("ระบบตรวจสอบแล้วว่าสิ่งของในคลังเพียงพอ"),
             input: "textarea",
-            inputLabel: "หมายเหตุเจ้าหน้าที่ (ไม่บังคับ)",
+            inputLabel: ui("หมายเหตุเจ้าหน้าที่ (ไม่บังคับ)"),
             showCancelButton: true,
-            confirmButtonText: "ยืนยันรับงาน",
-            cancelButtonText: "ยกเลิก",
+            confirmButtonText: ui("ยืนยันรับงาน"),
+            cancelButtonText: ui("ยกเลิก"),
             confirmButtonColor: "#0284c7",
         });
 
@@ -303,14 +313,14 @@ export default function StaffCrisisMap() {
 
             await Swal.fire({
                 icon: "success",
-                title: "รับเคสสำเร็จ",
-                text: "ตรวจสอบคลังและมอบหมายเคสให้คุณแล้ว",
+                title: ui("รับเคสสำเร็จ"),
+                text: ui("ตรวจสอบคลังและมอบหมายเคสให้คุณแล้ว"),
             });
         } catch (error) {
             await Swal.fire({
                 icon: "error",
-                title: "รับเคสไม่สำเร็จ",
-                text: error?.message || "ไม่สามารถรับเคสนี้ได้",
+                title: ui("รับเคสไม่สำเร็จ"),
+                text: ui(error?.message || "ไม่สามารถรับเคสนี้ได้"),
             });
         } finally {
             setAcceptingId("");

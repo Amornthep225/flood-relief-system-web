@@ -1,8 +1,13 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function DetailsModal({
     request,
     loading,
     onClose,
 }) {
+    const { ui, language } = useNativeUi();
     const items = Array.isArray(request?.items)
         ? request.items
         : [];
@@ -47,53 +52,53 @@ export default function DetailsModal({
                         <div className="grid gap-4 sm:grid-cols-2">
                             <DetailBox
                                 icon="person"
-                                label="ผู้แจ้ง"
+                                label={ui("ผู้แจ้ง")}
                                 value={
                                     request?.userFullName ||
-                                    "ไม่ระบุ"
+                                    ui("ไม่ระบุ")
                                 }
                             />
 
                             <DetailBox
                                 icon="call"
-                                label="เบอร์โทร"
+                                label={ui("เบอร์โทร")}
                                 value={
                                     request?.userPhoneNumber ||
-                                    "ไม่ระบุ"
+                                    ui("ไม่ระบุ")
                                 }
                             />
 
                             {isEmergency && (
                                 <DetailBox
                                     icon="flag"
-                                    label="ระดับความเร่งด่วน"
+                                    label={ui("ระดับความเร่งด่วน")}
                                     value={formatPriorityLabel(request?.priority)}
                                 />
                             )}
 
                             <DetailBox
                                 icon="info"
-                                label="สถานะ"
+                                label={ui("สถานะ")}
                                 value={
                                     request?.status ||
-                                    "ไม่ระบุ"
+                                    ui("ไม่ระบุ")
                                 }
                             />
                         </div>
 
                         <DetailBox
                             icon="location_on"
-                            label="สถานที่"
+                            label={ui("สถานที่")}
                             value={
                                 request?.addressDetail ||
-                                "ไม่ระบุ"
+                                ui("ไม่ระบุ")
                             }
                         />
 
                         {request?.userRemark && (
                             <DetailBox
                                 icon="notes"
-                                label="หมายเหตุจากผู้แจ้ง"
+                                label={ui("หมายเหตุจากผู้แจ้ง")}
                                 value={request.userRemark}
                             />
                         )}
@@ -124,11 +129,11 @@ export default function DetailsModal({
                                                 <p className="font-bold text-slate-800">
                                                     {item.reliefItemName ||
                                                         item.name ||
-                                                        "ไม่ระบุรายการ"}
+                                                        ui("ไม่ระบุรายการ")}
                                                 </p>
 
                                                 <p className="mt-1 text-sm text-slate-500">
-                                                    จำนวน{" "}
+                                                    {ui("จำนวน")}{" "}
                                                     {item.quantity ||
                                                         0}{" "}
                                                     {item.unit || ""}

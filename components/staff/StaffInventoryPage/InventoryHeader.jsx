@@ -1,9 +1,14 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function InventoryHeader({
     centerName,
     onRefresh,
     refreshing,
     onOpenHistory,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
@@ -11,11 +16,11 @@ export default function InventoryHeader({
                     <span className="material-symbols-outlined text-sky-600">
                         warehouse
                     </span>
-                    ตรวจสอบคลังสินค้า
+                    {ui("ตรวจสอบคลังสินค้า")}
                 </h1>
 
                 <p className="mt-2 text-sm text-slate-500">
-                    {centerName}
+                    {ui(centerName)}
                 </p>
             </div>
 
@@ -28,7 +33,7 @@ export default function InventoryHeader({
                     <span className="material-symbols-outlined text-[20px]">
                         history
                     </span>
-                    ดูประวัติเข้า–ออกคลัง
+                    {ui("ดูประวัติเข้า–ออกคลัง")}
                 </button>
 
                 <button
@@ -44,9 +49,7 @@ export default function InventoryHeader({
                     >
                         refresh
                     </span>
-                    {refreshing
-                        ? "กำลังอัปเดต..."
-                        : "อัปเดตข้อมูล"}
+                    {refreshing ? ui("กำลังอัปเดต...") : ui("อัปเดตข้อมูล")}
                 </button>
             </div>
         </div>

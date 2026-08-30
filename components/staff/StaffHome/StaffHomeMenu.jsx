@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import Link from "next/link";
 import { cards } from "@/constants/cards";
 import { buttons } from "@/constants/buttons";
@@ -33,6 +37,7 @@ const menu = [
 ];
 
 export default function StaffHomeMenu() {
+    const { ui, language } = useNativeUi();
     return (
         <section className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {menu.map((item) => (
@@ -51,18 +56,18 @@ export default function StaffHomeMenu() {
                         </div>
 
                         <h3 className="mb-3 text-2xl font-bold text-slate-900">
-                            {item.title}
+                            {ui(item.title)}
                         </h3>
 
                         <p className="leading-relaxed text-slate-500">
-                            {item.description}
+                            {ui(item.description)}
                         </p>
                     </div>
 
                     <div
                         className={`mt-auto pt-8 ${buttons.staffHome.menuLink}`}
                     >
-                        {item.action}
+                        {ui(item.action)}
                         <span className="material-symbols-outlined text-lg">
                             arrow_forward
                         </span>

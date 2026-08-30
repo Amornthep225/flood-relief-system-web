@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import {
     formatCrisisCaseStatus,
     getCrisisCaseDetailPresentation,
@@ -12,6 +14,7 @@ export default function CrisisCaseModal({
     onAccept,
     accepting,
 }) {
+    const { ui, language } = useNativeUi();
     if (!caseItem) return null;
 
     const presentation = getCrisisCaseDetailPresentation(caseItem);
@@ -40,7 +43,7 @@ export default function CrisisCaseModal({
                                     : "text-sky-700"
                             }`}
                         >
-                            {presentation.typeLabel} #{caseItem.id}
+                            {ui(presentation.typeLabel)} #{caseItem.id}
                         </h2>
 
                         {presentation.isEmergency ? (
@@ -55,7 +58,7 @@ export default function CrisisCaseModal({
                     </div>
 
                     <p className="mt-1 text-xs font-semibold text-slate-500">
-                        {formatCrisisCaseStatus(caseItem.status)}
+                        {ui(formatCrisisCaseStatus(caseItem.status))}
                     </p>
                 </div>
 
@@ -63,7 +66,7 @@ export default function CrisisCaseModal({
                     type="button"
                     onClick={onClose}
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-slate-600 shadow-sm transition hover:bg-slate-100"
-                    aria-label="ปิดรายละเอียดเคส"
+                    aria-label={ui("ปิดรายละเอียดเคส")}
                 >
                     <span className="material-symbols-outlined">close</span>
                 </button>
@@ -87,38 +90,38 @@ export default function CrisisCaseModal({
                     </div>
                 ) : (
                     <div className="space-y-5">
-                        <Section title="ข้อมูลผู้ขอความช่วยเหลือ" icon="person">
+                        <Section title={ui("ข้อมูลผู้ขอความช่วยเหลือ")} icon="person">
                             <div className="grid gap-3 sm:grid-cols-2">
-                                <Info label="ชื่อ" value={caseItem.userName} />
-                                <Info label="เบอร์โทร" value={caseItem.phone} />
+                                <Info label={ui("ชื่อ")} value={caseItem.userName} />
+                                <Info label={ui("เบอร์โทร")} value={caseItem.phone} />
                             </div>
                         </Section>
 
                         {presentation.showEmergencyInfo && (
-                            <Section title="รายละเอียดเหตุฉุกเฉิน" icon="emergency">
+                            <Section title={ui("รายละเอียดเหตุฉุกเฉิน")} icon="emergency">
                                 <div className="space-y-3">
                                     <Info
-                                        label="ประเภทเหตุฉุกเฉิน"
-                                        value={caseItem.emergencyType || "ไม่ระบุ"}
+                                        label={ui("ประเภทเหตุฉุกเฉิน")}
+                                        value={ui(caseItem.emergencyType || "ไม่ระบุ")}
                                         accent="red"
                                     />
                                     <Info
-                                        label="รายละเอียด"
-                                        value={caseItem.emergencyDetail || "ไม่ระบุ"}
+                                        label={ui("รายละเอียด")}
+                                        value={caseItem.emergencyDetail || ui("ไม่ระบุ")}
                                         accent="red"
                                     />
 
                                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                                        <Stat label="ผู้ประสบภัย" value={caseItem.victimCount} />
-                                        <Stat label="เด็ก" value={caseItem.childCount} />
-                                        <Stat label="ผู้สูงอายุ" value={caseItem.elderlyCount} />
-                                        <Stat label="ผู้พิการ" value={caseItem.disabledCount} />
-                                        <Stat label="ผู้ป่วย" value={caseItem.patientCount} />
+                                        <Stat label={ui("ผู้ประสบภัย")} value={caseItem.victimCount} />
+                                        <Stat label={ui("เด็ก")} value={caseItem.childCount} />
+                                        <Stat label={ui("ผู้สูงอายุ")} value={caseItem.elderlyCount} />
+                                        <Stat label={ui("ผู้พิการ")} value={caseItem.disabledCount} />
+                                        <Stat label={ui("ผู้ป่วย")} value={caseItem.patientCount} />
                                         {caseItem.waterLevel !== null &&
                                             caseItem.waterLevel !== undefined && (
                                                 <Stat
-                                                    label="ระดับน้ำ"
-                                                    value={`${caseItem.waterLevel} ม.`}
+                                                    label={ui("ระดับน้ำ")}
+                                                    value={language === "en" ? `${caseItem.waterLevel} m` : `${caseItem.waterLevel} ม.`}
                                                 />
                                             )}
                                     </div>
@@ -127,7 +130,7 @@ export default function CrisisCaseModal({
                         )}
 
                         {presentation.showItems && (
-                            <Section title="รายการสิ่งของที่ขอ" icon="inventory_2">
+                            <Section title={ui("รายการสิ่งของที่ขอ")} icon="inventory_2">
                                 {items.length === 0 ? (
                                     <div className="rounded-xl bg-slate-50 p-4 text-center text-sm text-slate-400">
                                         ไม่พบรายการสิ่งของในคำขอนี้
@@ -146,10 +149,10 @@ export default function CrisisCaseModal({
                                                     <p className="font-bold text-slate-800">
                                                         {item.reliefItemName ||
                                                             item.name ||
-                                                            "ไม่ระบุรายการ"}
+                                                            ui("ไม่ระบุรายการ")}
                                                     </p>
                                                     <p className="mt-1 text-xs text-slate-500">
-                                                        รหัส {item.reliefItemId || "-"}
+                                                        {ui("รหัส")} {item.reliefItemId || "-"}
                                                     </p>
                                                 </div>
                                                 <div className="shrink-0 text-right">
@@ -157,7 +160,7 @@ export default function CrisisCaseModal({
                                                         {item.quantity ?? 0}
                                                     </p>
                                                     <p className="text-xs font-bold text-slate-500">
-                                                        {item.unit || "ชิ้น"}
+                                                        {ui(item.unit || "ชิ้น")}
                                                     </p>
                                                 </div>
                                             </div>
@@ -167,9 +170,9 @@ export default function CrisisCaseModal({
                             </Section>
                         )}
 
-                        <Section title="สถานที่และการติดต่อ" icon="location_on">
+                        <Section title={ui("สถานที่และการติดต่อ")} icon="location_on">
                             <div className="space-y-3">
-                                <Info label="สถานที่" value={caseItem.address} />
+                                <Info label={ui("สถานที่")} value={caseItem.address} />
                                 <div className="grid gap-3 sm:grid-cols-2">
                                     <Info
                                         label="Latitude"
@@ -184,17 +187,17 @@ export default function CrisisCaseModal({
                         </Section>
 
                         {(caseItem.remark || caseItem.staffRemark) && (
-                            <Section title="หมายเหตุ" icon="notes">
+                            <Section title={ui("หมายเหตุ")} icon="notes">
                                 <div className="space-y-3">
                                     {caseItem.remark && (
                                         <Info
-                                            label="จากผู้แจ้ง"
+                                            label={ui("จากผู้แจ้ง")}
                                             value={caseItem.remark}
                                         />
                                     )}
                                     {caseItem.staffRemark && (
                                         <Info
-                                            label="จากเจ้าหน้าที่"
+                                            label={ui("จากเจ้าหน้าที่")}
                                             value={caseItem.staffRemark}
                                         />
                                     )}
@@ -202,22 +205,22 @@ export default function CrisisCaseModal({
                             </Section>
                         )}
 
-                        <Section title="ข้อมูลการดำเนินงาน" icon="assignment_ind">
+                        <Section title={ui("ข้อมูลการดำเนินงาน")} icon="assignment_ind">
                             <div className="grid gap-3 sm:grid-cols-2">
                                 <Info
-                                    label="ศูนย์"
-                                    value={caseItem.centerName || "ยังไม่ระบุศูนย์"}
+                                    label={ui("ศูนย์")}
+                                    value={ui(caseItem.centerName || "ยังไม่ระบุศูนย์")}
                                 />
                                 <Info
-                                    label="เจ้าหน้าที่รับผิดชอบ"
-                                    value={caseItem.assignedStaffName || "ยังไม่มีผู้รับงาน"}
+                                    label={ui("เจ้าหน้าที่รับผิดชอบ")}
+                                    value={caseItem.assignedStaffName || ui("ยังไม่มีผู้รับงาน")}
                                 />
                                 <Info
-                                    label="สถานะ"
-                                    value={formatCrisisCaseStatus(caseItem.status)}
+                                    label={ui("สถานะ")}
+                                    value={ui(formatCrisisCaseStatus(caseItem.status))}
                                 />
                                 <Info
-                                    label="เวลาแจ้ง"
+                                    label={ui("เวลาแจ้ง")}
                                     value={formatDateTime(caseItem.createdAt)}
                                 />
                             </div>
@@ -261,14 +264,14 @@ export default function CrisisCaseModal({
                         }`}
                     >
                         {caseItem.assignedStaffId
-                            ? "รับงานแล้ว"
+                            ? ui("รับงานแล้ว")
                             : !canAccept
                               ? formatCrisisCaseStatus(caseItem.status)
                               : accepting
-                                ? "กำลังรับงาน..."
+                                ? ui("กำลังรับงาน...")
                                 : presentation.isEmergency
-                                  ? "รับเคสทันที"
-                                  : "รับคำขอนี้"}
+                                  ? ui("รับเคสทันที")
+                                  : ui("รับคำขอนี้")}
                     </button>
                 </div>
             )}

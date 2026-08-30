@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { colors } from "@/constants/colors";
 import { cards } from "@/constants/cards";
 import PublicNavbar from "@/components/common/public-navbar";
@@ -12,6 +16,7 @@ const mockData = {
 };
 
 export default function StaffLoginPage() {
+    const { ui, language } = useNativeUi();
     return (
         <div className={`relative min-h-screen flex flex-col font-sans ${colors.staffLogin.page}`}>
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">

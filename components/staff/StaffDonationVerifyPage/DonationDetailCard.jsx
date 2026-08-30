@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 function normalizeStatus(status) {
     return String(status || "").trim().toLowerCase();
 }
@@ -47,6 +51,7 @@ export default function DonationDetailCard({
     onReceive,
     isReceiving,
 }) {
+    const { ui, language } = useNativeUi();
     const { canReceive, isReceived, isCancelled } =
         getReceiveState(donation);
 
@@ -67,7 +72,7 @@ export default function DonationDetailCard({
                 </div>
 
                 <span className="w-fit rounded-full bg-white/20 px-3 py-1 text-xs font-bold">
-                    {statusLabel(donation.status)}
+                    {ui(statusLabel(donation.status))}
                 </span>
             </div>
 
@@ -75,20 +80,20 @@ export default function DonationDetailCard({
                 <div className="grid gap-4 md:grid-cols-2">
                     <InfoBox
                         icon="person"
-                        label="ผู้บริจาค"
-                        value={donation.userFullName || "ไม่ระบุ"}
+                        label={ui("ผู้บริจาค")}
+                        value={donation.userFullName || ui("ไม่ระบุ")}
                         detail={
                             donation.userPhoneNumber ||
-                            "ไม่มีเบอร์โทร"
+                            ui("ไม่มีเบอร์โทร")
                         }
                     />
                     <InfoBox
                         icon="home_work"
-                        label="ศูนย์รับบริจาค"
+                        label={ui("ศูนย์รับบริจาค")}
                         value={
                             donation.centerName ||
                             donation.centerId ||
-                            "ไม่ระบุ"
+                            ui("ไม่ระบุ")
                         }
                         detail={
                             donation.centerPhoneNumber || ""
@@ -102,7 +107,7 @@ export default function DonationDetailCard({
                             รายการสิ่งของบริจาค
                         </h3>
                         <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-700">
-                            {items.length} รายการ
+                            {ui(`${items.length} รายการ`)}
                         </span>
                     </div>
 
@@ -123,8 +128,7 @@ export default function DonationDetailCard({
                                     </div>
                                     <div className="min-w-0">
                                         <p className="truncate font-bold text-slate-800">
-                                            {item.reliefItemName ||
-                                                "ไม่ระบุรายการ"}
+                                            {ui(item.reliefItemName || "ไม่ระบุรายการ")}
                                         </p>
                                         <p className="font-mono text-xs text-slate-400">
                                             {item.reliefItemId}
@@ -133,7 +137,7 @@ export default function DonationDetailCard({
                                 </div>
 
                                 <p className="shrink-0 font-black text-sky-700">
-                                    {item.quantity} {item.unit}
+                                    {item.quantity} {ui(item.unit)}
                                 </p>
                             </div>
                         ))}
@@ -195,8 +199,8 @@ export default function DonationDetailCard({
                                 : "inventory"}
                         </span>
                         {isReceiving
-                            ? "กำลังรับเข้าคลัง..."
-                            : "ยืนยันรับของเข้าคลัง"}
+                            ? ui("กำลังรับเข้าคลัง...")
+                            : ui("ยืนยันรับของเข้าคลัง")}
                     </button>
                 ) : isReceived ? (
                     <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-100 px-6 py-4 font-black text-emerald-700">

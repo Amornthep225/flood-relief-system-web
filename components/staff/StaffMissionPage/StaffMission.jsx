@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
@@ -45,6 +47,7 @@ const STATUS_CONFIG = {
 };
 
 export default function StaffMission() {
+    const { ui, language } = useNativeUi();
     const router = useRouter();
     const searchParams = useSearchParams();
     const requestId = searchParams.get("id");
@@ -68,9 +71,9 @@ export default function StaffMission() {
             setRequest(null);
             await Swal.fire({
                 icon: "error",
-                title: "โหลดภารกิจไม่สำเร็จ",
-                text: error.message || "ไม่สามารถโหลดข้อมูลภารกิจได้",
-                confirmButtonText: "ตกลง",
+                title: ui("โหลดภารกิจไม่สำเร็จ"),
+                text: ui(error.message || "ไม่สามารถโหลดข้อมูลภารกิจได้"),
+                confirmButtonText: ui("ตกลง"),
             });
         } finally {
             setLoading(false);
@@ -90,13 +93,13 @@ export default function StaffMission() {
 
         const result = await Swal.fire({
             icon: "question",
-            title: `เปลี่ยนสถานะเป็น “${STATUS_CONFIG[statusConfig.nextStatus]?.label || statusConfig.nextStatus}”`,
+            title: ui(`เปลี่ยนสถานะเป็น “${STATUS_CONFIG[statusConfig.nextStatus]?.label || statusConfig.nextStatus}”`),
             input: "textarea",
-            inputLabel: "หมายเหตุเจ้าหน้าที่ (ไม่บังคับ)",
-            inputPlaceholder: "ระบุรายละเอียดเพิ่มเติม...",
+            inputLabel: ui("หมายเหตุเจ้าหน้าที่ (ไม่บังคับ)"),
+            inputPlaceholder: ui("ระบุรายละเอียดเพิ่มเติม..."),
             showCancelButton: true,
-            confirmButtonText: "ยืนยัน",
-            cancelButtonText: "ยกเลิก",
+            confirmButtonText: ui("ยืนยัน"),
+            cancelButtonText: ui("ยกเลิก"),
             reverseButtons: true,
         });
 
@@ -115,16 +118,16 @@ export default function StaffMission() {
 
             await Swal.fire({
                 icon: "success",
-                title: "อัปเดตสถานะสำเร็จ",
-                text: `สถานะถูกเปลี่ยนเป็น ${STATUS_CONFIG[statusConfig.nextStatus]?.label || statusConfig.nextStatus}`,
-                confirmButtonText: "ตกลง",
+                title: ui("อัปเดตสถานะสำเร็จ"),
+                text: ui(`สถานะถูกเปลี่ยนเป็น ${STATUS_CONFIG[statusConfig.nextStatus]?.label || statusConfig.nextStatus}`),
+                confirmButtonText: ui("ตกลง"),
             });
         } catch (error) {
             await Swal.fire({
                 icon: "error",
-                title: "อัปเดตสถานะไม่สำเร็จ",
-                text: error.message || "ไม่สามารถอัปเดตสถานะได้",
-                confirmButtonText: "ตกลง",
+                title: ui("อัปเดตสถานะไม่สำเร็จ"),
+                text: ui(error.message || "ไม่สามารถอัปเดตสถานะได้"),
+                confirmButtonText: ui("ตกลง"),
             });
         } finally {
             setUpdating(false);
@@ -132,15 +135,15 @@ export default function StaffMission() {
     };
 
     if (loading) {
-        return <MissionState icon="progress_activity" title="กำลังโหลดภารกิจ..." spinning />;
+        return <MissionState icon="progress_activity" title={ui("กำลังโหลดภารกิจ...")} spinning />;
     }
 
     if (!request) {
         return (
             <MissionState
                 icon="search_off"
-                title="ไม่พบภารกิจ"
-                description="กรุณาเลือกภารกิจจากหน้ารายการ SOS"
+                title={ui("ไม่พบภารกิจ")}
+                description={ui("กรุณาเลือกภารกิจจากหน้ารายการ SOS")}
             />
         );
     }
@@ -169,7 +172,7 @@ export default function StaffMission() {
                         </div>
 
                         <div>
-                            <p className="text-sm font-bold text-white/75">สถานะภารกิจ</p>
+                            <p className="text-sm font-bold text-white/75">{ui("สถานะภารกิจ")}</p>
                             <h1 className="mt-1 text-2xl font-black md:text-3xl">
                                 {statusConfig?.label || request.status}
                             </h1>
@@ -195,19 +198,19 @@ export default function StaffMission() {
                         </h2>
 
                         <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                            <InfoBox label="ชื่อผู้แจ้ง" value={request.userFullName || "ไม่ระบุ"} />
-                            <InfoBox label="เบอร์โทร" value={request.userPhoneNumber || "ไม่ระบุ"} />
+                            <InfoBox label={ui("ชื่อผู้แจ้ง")} value={request.userFullName || "ไม่ระบุ"} />
+                            <InfoBox label={ui("เบอร์โทร")} value={request.userPhoneNumber || "ไม่ระบุ"} />
                             {isEmergency && (
                                 <InfoBox
-                                    label="ระดับความเร่งด่วน"
+                                    label={ui("ระดับความเร่งด่วน")}
                                     value={formatPriorityLabel(request.priority)}
                                 />
                             )}
-                            <InfoBox label="ศูนย์รับผิดชอบ" value={request.centerName || "ไม่ระบุ"} />
+                            <InfoBox label={ui("ศูนย์รับผิดชอบ")} value={request.centerName || "ไม่ระบุ"} />
                         </div>
 
                         <div className="mt-4 rounded-2xl bg-slate-50 p-4">
-                            <p className="text-xs font-bold uppercase tracking-wide text-slate-400">สถานที่</p>
+                            <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{ui("สถานที่")}</p>
                             <p className="mt-1 font-bold text-slate-700">
                                 {request.addressDetail || "ไม่ระบุสถานที่"}
                             </p>
@@ -249,10 +252,10 @@ export default function StaffMission() {
                                     >
                                         <div>
                                             <p className="font-bold text-slate-800">
-                                                {item.reliefItemName || item.name || "ไม่ระบุรายการ"}
+                                                {item.reliefItemName || item.name || ui("ไม่ระบุรายการ")}
                                             </p>
                                             <p className="mt-1 text-sm text-slate-500">
-                                                จำนวน {item.quantity || 0} {item.unit || ""}
+                                                {ui(`จำนวน ${item.quantity || 0} ${item.unit || ""}`)}
                                             </p>
                                         </div>
                                         <span className="material-symbols-outlined text-orange-500">package_2</span>
@@ -294,7 +297,7 @@ export default function StaffMission() {
                     </div>
 
                     <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
-                        <h2 className="text-lg font-bold text-slate-800">ดำเนินการภารกิจ</h2>
+                        <h2 className="text-lg font-bold text-slate-800">{ui("ดำเนินการภารกิจ")}</h2>
                         <p className="mt-2 text-sm text-slate-500">
                             ระบบจะอนุญาตให้อัปเดตสถานะตามลำดับเท่านั้น
                         </p>
@@ -309,7 +312,7 @@ export default function StaffMission() {
                                 <span className={`material-symbols-outlined ${updating ? "animate-spin" : ""}`}>
                                     {updating ? "progress_activity" : "arrow_forward"}
                                 </span>
-                                {updating ? "กำลังอัปเดต..." : statusConfig.nextLabel}
+                                {updating ? ui("กำลังอัปเดต...") : ui(statusConfig.nextLabel)}
                             </button>
                         ) : (
                             <div className="mt-5 rounded-2xl bg-emerald-50 p-5 text-center font-bold text-emerald-600">
