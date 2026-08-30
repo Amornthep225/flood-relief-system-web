@@ -50,12 +50,12 @@ function normalizeTransactions(response, inventory) {
             transaction.itemName ??
             transaction.name ??
             inventory.name ??
-            ui("ไม่ระบุชื่อสิ่งของ"),
+            "ไม่ระบุชื่อสิ่งของ",
 
         unit:
             transaction.unit ??
             inventory.unit ??
-            ui("ชิ้น"),
+            "ชิ้น",
 
         type: String(
             transaction.transactionType ??
@@ -219,7 +219,7 @@ function getLocalDateValue(date) {
     return `${year}-${month}-${day}`;
 }
 
-function formatDate(date) {
+function formatDate(date, language) {
     if (!date) {
         return "-";
     }
@@ -230,15 +230,15 @@ function formatDate(date) {
         return "-";
     }
 
-    return new Intl.DateTimeFormat("th-TH", {
+    return new Intl.DateTimeFormat(language === "en" ? "en-US" : "th-TH", {
         dateStyle: "medium",
         timeStyle: "short",
     }).format(parsedDate);
 }
 
-function formatNumber(value) {
+function formatNumber(value, language) {
     return new Intl.NumberFormat(
-        "th-TH"
+        language === "en" ? "en-US" : "th-TH"
     ).format(Number(value || 0));
 }
 
@@ -368,8 +368,7 @@ export default function InventoryHistoryModal({
                     title:
                         ui("โหลดประวัติไม่สำเร็จ"),
                     text:
-                        error?.message ||
-                        ui("ไม่สามารถโหลดประวัติของเข้า–ออกคลังได้"),
+                        ui(error?.message || "ไม่สามารถโหลดประวัติของเข้า–ออกคลังได้"),
                     confirmButtonText:
                         ui("ตกลง"),
                 });
@@ -562,11 +561,11 @@ export default function InventoryHistoryModal({
                                 history
                             </span>
 
-                            ประวัติของเข้า–ออกคลัง
+                            {ui("ประวัติของเข้า–ออกคลัง")}
                         </h2>
 
                         <p className="mt-1 text-sm text-slate-400">
-                            {centerName}
+                            {ui(centerName)}
                         </p>
                     </div>
 
@@ -590,7 +589,7 @@ export default function InventoryHistoryModal({
                                 onClick={setToday}
                                 className="rounded-xl bg-sky-50 px-4 py-2 text-sm font-bold text-sky-600"
                             >
-                                วันนี้
+                                {ui("วันนี้")}
                             </button>
 
                             <button
@@ -600,7 +599,7 @@ export default function InventoryHistoryModal({
                                 }
                                 className="rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600"
                             >
-                                7 วันล่าสุด
+                                {ui("7 วันล่าสุด")}
                             </button>
 
                             <button
@@ -610,13 +609,13 @@ export default function InventoryHistoryModal({
                                 }
                                 className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-500"
                             >
-                                รีเซ็ต
+                                {ui("รีเซ็ต")}
                             </button>
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                             <label className="text-sm font-bold text-slate-600">
-                                วันที่เริ่มต้น
+                                {ui("วันที่เริ่มต้น")}
 
                                 <input
                                     type="date"
@@ -643,7 +642,7 @@ export default function InventoryHistoryModal({
                             </label>
 
                             <label className="text-sm font-bold text-slate-600">
-                                วันที่สิ้นสุด
+                                {ui("วันที่สิ้นสุด")}
 
                                 <input
                                     type="date"
@@ -670,7 +669,7 @@ export default function InventoryHistoryModal({
                             </label>
 
                             <label className="text-sm font-bold text-slate-600">
-                                ประเภทรายการ
+                                {ui("ประเภทรายการ")}
 
                                 <select
                                     value={
@@ -694,21 +693,21 @@ export default function InventoryHistoryModal({
                                     className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 font-normal outline-none focus:border-sky-400"
                                 >
                                     <option value="all">
-                                        ทั้งหมด
+                                        {ui("ทั้งหมด")}
                                     </option>
 
                                     <option value="in">
-                                        ของเข้า
+                                        {ui("ของเข้า")}
                                     </option>
 
                                     <option value="out">
-                                        ของออก
+                                        {ui("ของออก")}
                                     </option>
                                 </select>
                             </label>
 
                             <label className="text-sm font-bold text-slate-600">
-                                ค้นหารายการ
+                                {ui("ค้นหารายการ")}
 
                                 <input
                                     type="text"
@@ -741,32 +740,34 @@ export default function InventoryHistoryModal({
                     <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="rounded-2xl bg-emerald-500 p-5 text-white shadow-sm">
                             <p className="text-sm font-bold text-emerald-50">
-                                ของเข้ารวมตามตัวกรอง
+                                {ui("ของเข้ารวมตามตัวกรอง")}
                             </p>
 
                             <p className="mt-2 text-3xl font-black">
                                 {formatNumber(
-                                    summary.stockIn
+                                    summary.stockIn,
+                                    language
                                 )}
 
                                 <span className="ml-2 text-sm font-normal">
-                                    หน่วย
+                                    {ui("หน่วย")}
                                 </span>
                             </p>
                         </div>
 
                         <div className="rounded-2xl bg-red-500 p-5 text-white shadow-sm">
                             <p className="text-sm font-bold text-red-50">
-                                ของออกรวมตามตัวกรอง
+                                {ui("ของออกรวมตามตัวกรอง")}
                             </p>
 
                             <p className="mt-2 text-3xl font-black">
                                 {formatNumber(
-                                    summary.stockOut
+                                    summary.stockOut,
+                                    language
                                 )}
 
                                 <span className="ml-2 text-sm font-normal">
-                                    หน่วย
+                                    {ui("หน่วย")}
                                 </span>
                             </p>
                         </div>
@@ -780,7 +781,7 @@ export default function InventoryHistoryModal({
                             </span>
 
                             <p className="mt-3 text-sm text-slate-500">
-                                กำลังโหลดประวัติ...
+                                {ui("กำลังโหลดประวัติ...")}
                             </p>
                         </div>
                     ) : filteredTransactions.length ===
@@ -791,12 +792,11 @@ export default function InventoryHistoryModal({
                             </span>
 
                             <h3 className="mt-3 font-bold text-slate-700">
-                                ไม่พบประวัติรายการ
+                                {ui("ไม่พบประวัติรายการ")}
                             </h3>
 
                             <p className="mt-1 text-sm text-slate-400">
-                                ลองเปลี่ยนวันที่
-                                ประเภท หรือคำค้นหา
+                                {ui("ลองเปลี่ยนวันที่ ประเภท หรือคำค้นหา")}
                             </p>
                         </div>
                     ) : (
@@ -806,27 +806,27 @@ export default function InventoryHistoryModal({
                                     <thead className="bg-slate-50 text-xs uppercase text-slate-500">
                                         <tr>
                                             <th className="px-5 py-4">
-                                                วันเวลา
+                                                {ui("วันเวลา")}
                                             </th>
 
                                             <th className="px-5 py-4">
-                                                รายการ
+                                                {ui("รายการ")}
                                             </th>
 
                                             <th className="px-5 py-4">
-                                                ประเภท
+                                                {ui("ประเภท")}
                                             </th>
 
                                             <th className="px-5 py-4 text-right">
-                                                จำนวน
+                                                {ui("จำนวน")}
                                             </th>
 
                                             <th className="px-5 py-4">
-                                                ผู้ทำรายการ
+                                                {ui("ผู้ทำรายการ")}
                                             </th>
 
                                             <th className="px-5 py-4">
-                                                หมายเหตุ
+                                                {ui("หมายเหตุ")}
                                             </th>
                                         </tr>
                                     </thead>
@@ -852,14 +852,15 @@ export default function InventoryHistoryModal({
                                                     >
                                                         <td className="whitespace-nowrap px-5 py-4">
                                                             {formatDate(
-                                                                transaction.createdAt
+                                                                transaction.createdAt,
+                                                                language
                                                             )}
                                                         </td>
 
                                                         <td className="px-5 py-4">
                                                             <p className="font-bold text-slate-800">
                                                                 {
-                                                                    transaction.itemName
+                                                                    ui(transaction.itemName)
                                                                 }
                                                             </p>
 
@@ -909,13 +910,14 @@ export default function InventoryHistoryModal({
                                                                 {formatNumber(
                                                                     Math.abs(
                                                                         transaction.quantity
-                                                                    )
+                                                                    ),
+                                                                    language
                                                                 )}
                                                             </span>
 
                                                             <span className="ml-1 text-xs text-slate-400">
                                                                 {
-                                                                    transaction.unit
+                                                                    ui(transaction.unit)
                                                                 }
                                                             </span>
                                                         </td>

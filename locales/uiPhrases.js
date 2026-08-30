@@ -606,6 +606,7 @@ export const UI_PHRASES = {
   "ไม่สามารถโหลดข้อมูลคลังสินค้าได้": "Unable to load inventory data",
   "ไม่สามารถโหลดประวัติของเข้า–ออกคลังได้": "Unable to load inventory movement history",
   "ไม่สามารถโหลดประวัติคลังสินค้าได้": "Unable to load inventory history",
+  "ประเภท": "Type",
 
 };
 
@@ -760,6 +761,20 @@ export const UI_PATTERNS = [
     en: (m) => `Donation #${m[1]}`,
     enRegex: /^Donation\s+#([A-Za-z0-9_-]+)$/i,
     thValue: (m) => `รายการบริจาค #${m[1]}`,
+  },
+
+  // Inventory History dynamic remarks
+  {
+    th: /^จ่ายสิ่งของสำหรับ SOS เลขที่\s*(.+)$/i,
+    en: (m) => `Issued supplies for SOS #${m[1]}`,
+    enRegex: /^Issued supplies for SOS #(.+)$/i,
+    thValue: (m) => `จ่ายสิ่งของสำหรับ SOS เลขที่ ${m[1]}`,
+  },
+  {
+    th: /^รับของบริจาคเลขที่\s*(.+)$/i,
+    en: (m) => `Received donation #${m[1]}`,
+    enRegex: /^Received donation #(.+)$/i,
+    thValue: (m) => `รับของบริจาคเลขที่ ${m[1]}`,
   },
 
   // Native Staff Core dynamic patterns
