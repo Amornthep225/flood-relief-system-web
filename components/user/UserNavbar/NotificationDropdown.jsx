@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNativeUi } from "@/hooks/useNativeUi";
 
 function getNotificationStyle(type) {
     const styles = {
@@ -90,6 +91,46 @@ function formatNotificationTime(value, language) {
     });
 }
 
+
+function formatDonationReceivedMessage(notification, language, ui) {
+    const message = notification?.message || "";
+
+    if (notification?.type !== "DonationReceived") {
+        return ui(message);
+    }
+
+    if (language !== "en") {
+        return message;
+    }
+
+    const match = message.match(/^บริจาค #([^:]+):\s*(.*)$/);
+
+    if (!match) {
+        return ui(message);
+    }
+
+    const donationId = match[1];
+    const translatedItems = match[2]
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .map((part) => {
+            const itemMatch = part.match(
+                /^(.*?)\s+(\d+(?:\.\d+)?)\s+(.+)$/
+            );
+
+            if (!itemMatch) {
+                return ui(part);
+            }
+
+            const [, name, quantity, unit] = itemMatch;
+            return `${ui(name)} ${quantity} ${ui(unit)}`;
+        })
+        .join(", ");
+
+    return `Donation #${donationId}: ${translatedItems}`;
+}
+
 export default function NotificationDropdown({
     notifications,
     unreadCount,
@@ -98,6 +139,7 @@ export default function NotificationDropdown({
     onReadAll,
 }) {
     const { language, t } = useLanguage();
+    const { ui } = useNativeUi();
 
     return (
         <div className="absolute right-0 top-12 z-[80] w-[min(92vw,390px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15">
@@ -172,10 +214,18 @@ export default function NotificationDropdown({
 
                                 <div className="min-w-0 flex-1 pr-4">
                                     <p className="text-sm font-black text-slate-800">
-                                        {notification.title}
+                                        {notification.type === "DonationReceived"
+    ? language === "en"
+        ? "Your donation was received by the center"
+        : notification.title
+    : ui(notification.title)}
                                     </p>
                                     <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                                        {notification.message}
+                                        {formatDonationReceivedMessage(
+    notification,
+    language,
+    ui
+)}
                                     </p>
                                     <p className="mt-2 text-[11px] font-medium text-slate-400">
                                         {formatNotificationTime(
