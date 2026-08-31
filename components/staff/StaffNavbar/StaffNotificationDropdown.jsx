@@ -20,6 +20,10 @@ function getNotificationStyle(type) {
             icon: "cancel",
             iconClass: "bg-rose-100 text-rose-600",
         },
+        StaffDonationReceived: {
+            icon: "inventory_2",
+            iconClass: "bg-emerald-100 text-emerald-600",
+        },
     };
 
     return (
@@ -48,6 +52,55 @@ function formatNotificationTime(value, language) {
         hour: "2-digit",
         minute: "2-digit",
     });
+}
+
+
+function formatDonationNotificationMessage(
+    notification,
+    language,
+    ui
+) {
+    const message = notification?.message || "";
+
+    if (
+        notification?.type !== "StaffDonationReceived" ||
+        language !== "en"
+    ) {
+        return ui(message);
+    }
+
+    const match = message.match(
+        /^บริจาค #([^:]+):\s*(.*)$/
+    );
+
+    if (!match) {
+        return ui(message);
+    }
+
+    const donationId = match[1];
+    const rawItems = match[2];
+
+    const translatedItems = rawItems
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .map((part) => {
+            const itemMatch = part.match(
+                /^(.*?)\s+(\d+(?:\.\d+)?)\s+(.+)$/
+            );
+
+            if (!itemMatch) {
+                return ui(part);
+            }
+
+            const [, itemName, quantity, unit] =
+                itemMatch;
+
+            return `${ui(itemName)} ${quantity} ${ui(unit)}`;
+        })
+        .join(", ");
+
+    return `Donation #${donationId}: ${translatedItems}`;
 }
 
 export default function StaffNotificationDropdown({
@@ -131,10 +184,19 @@ export default function StaffNotificationDropdown({
 
                                 <div className="min-w-0 flex-1 pr-4">
                                     <p className="text-sm font-black text-slate-800">
-                                        {ui(notification.title)}
+                                        {notification.type ===
+                                        "StaffDonationReceived"
+                                            ? language === "en"
+                                                ? "Donation received at the center today"
+                                                : notification.title
+                                            : ui(notification.title)}
                                     </p>
                                     <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                                        {ui(notification.message)}
+                                        {formatDonationNotificationMessage(
+                                            notification,
+                                            language,
+                                            ui
+                                        )}
                                     </p>
                                     <p className="mt-2 text-[11px] font-medium text-slate-400">
                                         {formatNotificationTime(

@@ -2,8 +2,8 @@
 
 import { useNativeUi } from "@/hooks/useNativeUi";
 
-import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
 import DonationSearchForm from "./DonationSearchForm";
@@ -18,6 +18,8 @@ import {
 export default function StaffDonationVerify() {
     const { ui, language } = useNativeUi();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const autoLoadedDonationId = useRef("");
     const [trackingId, setTrackingId] = useState("");
     const [donation, setDonation] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -54,8 +56,30 @@ export default function StaffDonationVerify() {
                 setIsLoading(false);
             }
         },
-        [trackingId]
+        [trackingId, ui]
     );
+
+
+    useEffect(() => {
+        const donationId =
+            extractDonationId(
+                searchParams.get("id")
+            );
+
+        if (
+            !donationId ||
+            autoLoadedDonationId.current === donationId
+        ) {
+            return;
+        }
+
+        autoLoadedDonationId.current = donationId;
+        setTrackingId(donationId);
+        searchDonation(donationId);
+    }, [
+        searchParams,
+        searchDonation,
+    ]);
 
     const handleQrDetected = useCallback(
         async (rawValue) => {

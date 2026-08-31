@@ -1,6 +1,7 @@
 "use client";
 
 import { useNativeUi } from "@/hooks/useNativeUi";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -8,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { buttons } from "@/constants/buttons";
 import StaffNotificationDropdown from "./StaffNotificationDropdown";
 import LanguageSwitcher from "@/components/common/LanguageSwitcher";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
     getMyNotifications,
     markAllNotificationsAsRead,
@@ -154,6 +154,18 @@ export default function StaffNavbar({
         ) {
             router.push(
                 `/staff/staff-mission-active?id=${encodeURIComponent(
+                    notificationItem.referenceId
+                )}`
+            );
+            return;
+        }
+
+        if (
+            notificationItem.type === "StaffDonationReceived" &&
+            notificationItem.referenceId
+        ) {
+            router.push(
+                `/staff/staff-verify?id=${encodeURIComponent(
                     notificationItem.referenceId
                 )}`
             );
