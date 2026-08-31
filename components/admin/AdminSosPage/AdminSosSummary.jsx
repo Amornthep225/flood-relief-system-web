@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 const cards = [
     {
         key: "total",
@@ -49,6 +53,7 @@ const cards = [
 export default function AdminSosSummary({
     summary,
 }) {
+    const { ui } = useNativeUi();
     return (
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {cards.map((card) => (
@@ -58,7 +63,7 @@ export default function AdminSosSummary({
                 >
                     <div>
                         <p className="mb-1 text-xs font-bold">
-                            {card.title}
+                            {ui(card.title)}
                         </p>
 
                         <p className="text-3xl font-black">

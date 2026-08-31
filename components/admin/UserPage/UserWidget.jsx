@@ -1,4 +1,9 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function UserWidget({ user, isBanned, onToggle }) {
+    const { ui } = useNativeUi();
     return (
         <>
             <div className="bg-slate-50 rounded-xl p-4 mb-6 border border-slate-100 flex items-center gap-4">
@@ -19,12 +24,12 @@ export default function UserWidget({ user, isBanned, onToggle }) {
             <div className="border border-slate-200 rounded-xl p-5 mb-6">
                 <div className="flex items-center justify-between mb-2">
                     <div>
-                        <p className="font-bold text-slate-800">สถานะการเข้าใช้งาน</p>
+                        <p className="font-bold text-slate-800">{ui("สถานะการเข้าใช้งาน")}</p>
                         <p className="text-xs text-slate-500 mt-0.5">
                             {isBanned ? (
-                                <span className="text-red-500 font-bold">ระงับบัญชีชั่วคราว</span>
+                                <span className="text-red-500 font-bold">{ui("ระงับบัญชีชั่วคราว")}</span>
                             ) : (
-                                <span className="text-green-600 font-bold">ใช้งานปกติ</span>
+                                <span className="text-green-600 font-bold">{ui("ใช้งานปกติ")}</span>
                             )}
                         </p>
                     </div>
@@ -52,7 +57,7 @@ export default function UserWidget({ user, isBanned, onToggle }) {
                     <div className="mt-4 bg-red-50 border border-red-100 rounded-lg p-3 text-xs text-red-600 flex gap-2">
                         <span className="material-symbols-outlined text-sm">error</span>
                         <span>
-                            เมื่อระงับบัญชี ผู้ใช้จะไม่สามารถล็อกอิน แจ้งเหตุ หรือทำรายการใดๆ ในระบบได้
+                            {ui("เมื่อระงับบัญชี ผู้ใช้จะไม่สามารถล็อกอิน แจ้งเหตุ หรือทำรายการใดๆ ในระบบได้")}
                         </span>
                     </div>
                 )}

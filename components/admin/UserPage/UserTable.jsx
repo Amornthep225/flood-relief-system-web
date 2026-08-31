@@ -1,6 +1,11 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import UserStatusBadge from "./UserStatusBadge";
 
 export default function UserTable({ users, totalUsers, loading, onManage }) {
+    const { ui, language } = useNativeUi();
     return (
         <section className="bg-white rounded-b-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
@@ -8,10 +13,10 @@ export default function UserTable({ users, totalUsers, loading, onManage }) {
                     <thead>
                         <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
                             <th className="p-4 font-bold w-16">ID</th>
-                            <th className="p-4 font-bold">ชื่อผู้ใช้</th>
-                            <th className="p-4 font-bold">ข้อมูลติดต่อ</th>
-                            <th className="p-4 font-bold text-center">สถานะ</th>
-                            <th className="p-4 font-bold text-right">จัดการ</th>
+                            <th className="p-4 font-bold">{ui("ชื่อผู้ใช้")}</th>
+                            <th className="p-4 font-bold">{ui("ข้อมูลติดต่อ")}</th>
+                            <th className="p-4 font-bold text-center">{ui("สถานะ")}</th>
+                            <th className="p-4 font-bold text-right">{ui("จัดการ")}</th>
                         </tr>
                     </thead>
 
@@ -19,7 +24,7 @@ export default function UserTable({ users, totalUsers, loading, onManage }) {
                         {loading && (
                             <tr>
                                 <td colSpan={5} className="p-8 text-center text-slate-400">
-                                    กำลังโหลดข้อมูลผู้ใช้...
+                                    {ui("กำลังโหลดข้อมูลผู้ใช้...")}
                                 </td>
                             </tr>
                         )}
@@ -27,7 +32,7 @@ export default function UserTable({ users, totalUsers, loading, onManage }) {
                         {!loading && users.length === 0 && (
                             <tr>
                                 <td colSpan={5} className="p-8 text-center text-slate-400">
-                                    ไม่พบข้อมูลผู้ใช้
+                                    {ui("ไม่พบข้อมูลผู้ใช้")}
                                 </td>
                             </tr>
                         )}
@@ -48,7 +53,7 @@ export default function UserTable({ users, totalUsers, loading, onManage }) {
                                                     {user.fullName}
                                                 </p>
                                                 <p className="text-xs text-slate-400">
-                                                    เข้าร่วมเมื่อ: {formatDate(user.createdAt)}
+                                                    {ui("เข้าร่วมเมื่อ")}: {formatDate(user.createdAt, language)}
                                                 </p>
                                             </div>
                                         </div>
@@ -86,14 +91,14 @@ export default function UserTable({ users, totalUsers, loading, onManage }) {
 
             <div className="p-4 border-t border-slate-100 flex justify-between items-center bg-slate-50">
                 <span className="text-xs text-slate-500">
-                    แสดง {users.length} จาก {totalUsers} รายการ
+                    {language === "en" ? `Showing ${users.length} of ${totalUsers} items` : `แสดง ${users.length} จาก ${totalUsers} รายการ`}
                 </span>
             </div>
         </section>
     );
 }
 
-function formatDate(value) {
+function formatDate(value, language) {
     if (!value) return "-";
-    return new Date(value).toLocaleDateString("th-TH");
+    return new Date(value).toLocaleDateString(language === "en" ? "en-US" : "th-TH");
 }

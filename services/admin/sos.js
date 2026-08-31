@@ -121,8 +121,9 @@ export async function getActiveStaffs(signal) {
 
 export async function assignSosRequest(
     id,
-    assignedStaffId,
+    staffId,
     {
+        centerId,
         staffRemark = "",
         priority,
     } = {}
@@ -131,20 +132,21 @@ export async function assignSosRequest(
         throw new Error("ไม่พบรหัสคำขอความช่วยเหลือ");
     }
 
-    if (!assignedStaffId) {
+    if (!staffId) {
         throw new Error("กรุณาเลือกเจ้าหน้าที่");
     }
 
+    if (!centerId) {
+        throw new Error("ไม่พบศูนย์ของเจ้าหน้าที่ที่เลือก");
+    }
+
     const payload = {
-        assignedStaffId,
+        centerId: String(centerId).trim(),
+        staffId: String(staffId).trim(),
         staffRemark:
             String(staffRemark || "").trim() || null,
     };
 
-    /*
-     * ไม่กำหนด Normal อัตโนมัติ
-     * ป้องกัน Critical/Urgent ถูกเปลี่ยนระดับตอนมอบหมาย
-     */
     if (
         priority !== undefined &&
         priority !== null &&

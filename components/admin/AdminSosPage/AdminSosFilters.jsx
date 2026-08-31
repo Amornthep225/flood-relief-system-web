@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 const statusFilters = [
     {
         value: "all",
@@ -27,6 +31,7 @@ export default function AdminSosFilters({
     filter,
     onFilterChange,
 }) {
+    const { ui } = useNativeUi();
     return (
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -41,7 +46,7 @@ export default function AdminSosFilters({
                         onChange={(event) =>
                             onSearchChange(event.target.value)
                         }
-                        placeholder="ค้นหาชื่อ เบอร์โทร รหัสเคส ศูนย์..."
+                        placeholder={ui("ค้นหาชื่อ เบอร์โทร รหัสเคส ศูนย์...")}
                         className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
                     />
                 </div>
@@ -61,7 +66,7 @@ export default function AdminSosFilters({
                                         : "border border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:text-sky-600"
                                 }`}
                             >
-                                {item.label}
+                                {ui(item.label)}
                             </button>
                         ))}
                     </div>

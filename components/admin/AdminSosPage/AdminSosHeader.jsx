@@ -1,13 +1,18 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function AdminSosHeader({
     onRefresh,
     refreshing,
 }) {
+    const { ui } = useNativeUi();
     return (
         <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur md:px-8">
             <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4">
                 <div>
                     <h1 className="flex items-center gap-2 text-xl font-black text-slate-800">
-                        จัดการเคสขอความช่วยเหลือ
+                        {ui("จัดการเคสขอความช่วยเหลือ")}
 
                         <span className="rounded-md bg-red-100 px-2 py-0.5 text-xs font-bold text-red-600">
                             Live Incoming
@@ -15,7 +20,7 @@ export default function AdminSosHeader({
                     </h1>
 
                     <p className="mt-1 text-sm text-slate-400">
-                        SOS ฉุกเฉินจะแสดงเป็นระดับวิกฤตและอยู่บนสุดเสมอ
+                        {ui("SOS ฉุกเฉินจะแสดงเป็นระดับวิกฤตและอยู่บนสุดเสมอ")}
                     </p>
                 </div>
 
@@ -33,9 +38,7 @@ export default function AdminSosHeader({
                         refresh
                     </span>
 
-                    {refreshing
-                        ? "กำลังอัปเดต..."
-                        : "อัปเดตข้อมูล"}
+                    {refreshing ? ui("กำลังอัปเดต...") : ui("อัปเดตข้อมูล")}
                 </button>
             </div>
         </header>

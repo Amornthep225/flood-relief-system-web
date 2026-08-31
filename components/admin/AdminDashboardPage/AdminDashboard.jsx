@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import {
     useCallback,
     useEffect,
@@ -140,12 +142,12 @@ function toDateKey(value) {
     return `${year}-${month}-${day}`;
 }
 
-function buildLastDays(days) {
+function buildLastDays(days, language) {
     const result = [];
 
     const formatter =
         new Intl.DateTimeFormat(
-            "th-TH",
+            language === "en" ? "en-US" : "th-TH",
             {
                 weekday: "short",
             }
@@ -244,6 +246,7 @@ function createActivityFromDonation(
 }
 
 export default function AdminDashboard() {
+    const { ui, language } = useNativeUi();
     const [
         sosRequests,
         setSosRequests,
@@ -412,15 +415,11 @@ export default function AdminDashboard() {
                     await Swal.fire({
                         icon: "error",
 
-                        title:
-                            "โหลดข้อมูลไม่สำเร็จ",
+                        title: ui("โหลดข้อมูลไม่สำเร็จ"),
 
-                        text:
-                            error?.message ||
-                            "ไม่สามารถโหลดข้อมูล Dashboard ได้",
+                        text: ui(error?.message || "ไม่สามารถโหลดข้อมูล Dashboard ได้"),
 
-                        confirmButtonText:
-                            "ตกลง",
+                        confirmButtonText: ui("ตกลง"),
                     });
                 } finally {
                     if (
@@ -431,7 +430,7 @@ export default function AdminDashboard() {
                     }
                 }
             },
-            []
+            [ui]
         );
 
     useEffect(() => {

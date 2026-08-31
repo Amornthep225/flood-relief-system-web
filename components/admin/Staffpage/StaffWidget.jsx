@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function StaffWidget({
     staff,
     isBanned,
@@ -5,6 +9,7 @@ export default function StaffWidget({
     editForm,
     onEditChange,
 }) {
+    const { ui } = useNativeUi();
     return (
         <>
             <div className="bg-slate-50 rounded-xl p-4 mb-6 border border-slate-100 flex items-center gap-4">
@@ -35,7 +40,7 @@ export default function StaffWidget({
                     name="fullName"
                     value={editForm.fullName}
                     onChange={onEditChange}
-                    placeholder="ชื่อ-นามสกุล"
+                    placeholder={ui("ชื่อ-นามสกุล")}
                     className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm"
                 />
 
@@ -59,7 +64,7 @@ export default function StaffWidget({
                     name="phoneNumber"
                     value={editForm.phoneNumber}
                     onChange={onEditChange}
-                    placeholder="เบอร์โทร"
+                    placeholder={ui("เบอร์โทร")}
                     className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm"
                 />
             </div>
@@ -67,12 +72,12 @@ export default function StaffWidget({
             <div className="border border-slate-200 rounded-xl p-5 mb-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <p className="font-bold text-slate-800">สถานะการเข้าใช้งาน</p>
+                        <p className="font-bold text-slate-800">{ui("สถานะการเข้าใช้งาน")}</p>
                         <p className="text-xs mt-0.5">
                             {isBanned ? (
-                                <span className="text-red-500 font-bold">ระงับบัญชีชั่วคราว</span>
+                                <span className="text-red-500 font-bold">{ui("ระงับบัญชีชั่วคราว")}</span>
                             ) : (
-                                <span className="text-green-600 font-bold">ใช้งานปกติ</span>
+                                <span className="text-green-600 font-bold">{ui("ใช้งานปกติ")}</span>
                             )}
                         </p>
                     </div>

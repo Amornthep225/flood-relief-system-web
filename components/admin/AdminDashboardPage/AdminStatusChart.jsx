@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import {
     useEffect,
     useRef,
@@ -11,6 +13,7 @@ export default function AdminStatusChart({
     progress,
     completed,
 }) {
+    const { ui } = useNativeUi();
     const canvasRef =
         useRef(null);
     const chartRef =
@@ -30,9 +33,9 @@ export default function AdminStatusChart({
                     type: "doughnut",
                     data: {
                         labels: [
-                            "รอการช่วยเหลือ",
-                            "กำลังดำเนินการ",
-                            "สำเร็จแล้ว",
+                            ui("รอการช่วยเหลือ"),
+                            ui("กำลังดำเนินการ"),
+                            ui("สำเร็จแล้ว"),
                         ],
                         datasets: [
                             {
@@ -70,17 +73,18 @@ export default function AdminStatusChart({
         waiting,
         progress,
         completed,
+        ui,
     ]);
 
     return (
         <div className="rounded-2xl border border-slate-100 bg-white shadow-sm">
             <div className="border-b border-slate-100 p-6">
                 <h3 className="text-lg font-bold text-slate-800">
-                    สถานะคำขอ
+                    {ui("สถานะคำขอ")}
                 </h3>
 
                 <p className="text-sm text-slate-500">
-                    สัดส่วนสถานะปัจจุบัน
+                    {ui("สัดส่วนสถานะปัจจุบัน")}
                 </p>
             </div>
 

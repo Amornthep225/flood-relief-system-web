@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import {
     useCallback,
     useEffect,
@@ -125,6 +127,7 @@ function inventoryOf(item,index){
 }
 
 export default function AdminReport(){
+    const { ui } = useNativeUi();
     const [tab,setTab]=useState("donors");
     const [dateFilter,setDateFilter]=useState("");
     const [donations,setDonations]=useState([]);
@@ -173,11 +176,7 @@ export default function AdminReport(){
             }
         }catch(error){
             if(error?.name!=="AbortError"){
-                await Swal.fire(
-                    "โหลดรายงานไม่สำเร็จ",
-                    error?.message||"ไม่สามารถโหลดข้อมูลได้",
-                    "error"
-                );
+                await Swal.fire(ui("โหลดรายงานไม่สำเร็จ"), ui(error?.message || "ไม่สามารถโหลดข้อมูลได้"), "error");
             }
         }finally{
             if(!signal?.aborted){
@@ -185,7 +184,7 @@ export default function AdminReport(){
                 setRefreshing(false);
             }
         }
-    },[]);
+    },[ui]);
 
     useEffect(()=>{
         const controller=new AbortController();
@@ -221,7 +220,7 @@ export default function AdminReport(){
     const config=useMemo(()=>{
         if(tab==="sos"){
             return {
-                title:"รายงานสถานการณ์ผู้ประสบภัย (SOS)",
+                title: ui("รายงานสถานการณ์ผู้ประสบภัย (SOS)"),
                 ref:"RPT-SOS",
                 summary:[
                     ["จำนวนเคสทั้งหมด",shownSos.length],
@@ -232,7 +231,7 @@ export default function AdminReport(){
 
         if(tab==="inventory"){
             return {
-                title:"รายงานการเคลื่อนไหวคลังบริจาค",
+                title: ui("รายงานการเคลื่อนไหวคลังบริจาค"),
                 ref:"RPT-INV",
                 summary:[
                     ["รายการเคลื่อนไหว",shownInventory.length],
@@ -243,7 +242,7 @@ export default function AdminReport(){
         }
 
         return {
-            title:"รายงานสรุปยอดผู้บริจาค",
+            title: ui("รายงานสรุปยอดผู้บริจาค"),
             ref:"RPT-DON",
             summary:[
                 ["รายการบริจาค",shownDonations.length],
@@ -262,8 +261,8 @@ export default function AdminReport(){
             <header className="no-print sticky top-0 z-10 border-b bg-white px-4 py-4">
                 <div className="mx-auto flex max-w-[1150px] items-center justify-between">
                     <div>
-                        <h1 className="text-xl font-black">ระบบพิมพ์รายงาน</h1>
-                        <p className="text-xs text-slate-500">เชื่อมข้อมูลจาก API จริง</p>
+                        <h1 className="text-xl font-black">{ui("ระบบพิมพ์รายงาน")}</h1>
+                        <p className="text-xs text-slate-500">{ui("เชื่อมข้อมูลจาก API จริง")}</p>
                     </div>
                     <div className="flex gap-2">
                         <button
@@ -274,13 +273,13 @@ export default function AdminReport(){
                             disabled={refreshing}
                             className="rounded-xl border px-4 py-2 text-sm font-bold"
                         >
-                            {refreshing?"กำลังอัปเดต...":"อัปเดต"}
+                            {refreshing ? ui("กำลังอัปเดต...") : ui("อัปเดต")}
                         </button>
                         <button
                             onClick={()=>window.print()}
                             className="rounded-xl bg-indigo-600 px-5 py-2 text-sm font-bold text-white"
                         >
-                            พิมพ์เอกสาร
+                            {ui("พิมพ์เอกสาร")}
                         </button>
                     </div>
                 </div>
@@ -293,7 +292,7 @@ export default function AdminReport(){
                     <ReportHeader title={config.title} refCode={config.ref}/>
 
                     <div className="no-print mb-6 flex flex-wrap items-center gap-3 rounded-xl border bg-slate-50 p-4">
-                        <span className="text-sm font-bold">กรองตามวันที่</span>
+                        <span className="text-sm font-bold">{ui("กรองตามวันที่")}</span>
                         <input
                             type="date"
                             value={dateFilter}
@@ -304,21 +303,21 @@ export default function AdminReport(){
                             onClick={()=>setDateFilter("")}
                             className="text-sm font-bold text-indigo-600"
                         >
-                            แสดงทั้งหมด
+                            {ui("แสดงทั้งหมด")}
                         </button>
                     </div>
 
                     <div className="mb-8 grid gap-4 rounded-xl border bg-indigo-50 p-6 sm:grid-cols-2 lg:grid-cols-3">
                         {config.summary.map(([label,value])=>
                             <div key={label}>
-                                <p className="text-sm font-bold text-slate-500">{label}</p>
+                                <p className="text-sm font-bold text-slate-500">{ui(label)}</p>
                                 <p className="mt-1 text-2xl font-black">{value}</p>
                             </div>
                         )}
                     </div>
 
                     {loading
-                        ?<div className="py-24 text-center">กำลังโหลดข้อมูล...</div>
+                        ?<div className="py-24 text-center">{ui("กำลังโหลดข้อมูล...")}</div>
                         :tab==="donors"
                           ?<DonorTable rows={shownDonations}/>
                           :tab==="sos"
@@ -327,8 +326,8 @@ export default function AdminReport(){
                     }
 
                     <div className="mt-16 flex justify-between border-t pt-8 text-center">
-                        <Signature label="ผู้จัดทำรายงาน"/>
-                        <Signature label="ผู้ตรวจสอบ"/>
+                        <Signature label={ui("ผู้จัดทำรายงาน")}/>
+                        <Signature label={ui("ผู้ตรวจสอบ")}/>
                     </div>
                 </section>
             </main>

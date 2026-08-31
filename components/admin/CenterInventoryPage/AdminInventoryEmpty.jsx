@@ -1,6 +1,11 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function AdminInventoryEmpty({
     activeTab,
 }) {
+    const { ui } = useNativeUi();
     return (
         <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
             <span className="material-symbols-outlined text-6xl text-slate-300">
@@ -11,10 +16,7 @@ export default function AdminInventoryEmpty({
             </span>
 
             <h2 className="mt-4 font-bold text-slate-700">
-                {activeTab ===
-                "inventory"
-                    ? "ไม่พบข้อมูลสินค้าในคลัง"
-                    : "ไม่พบประวัติ Transaction"}
+                {activeTab === "inventory" ? ui("ไม่พบข้อมูลสินค้าในคลัง") : ui("ไม่พบประวัติ Transaction")}
             </h2>
         </div>
     );

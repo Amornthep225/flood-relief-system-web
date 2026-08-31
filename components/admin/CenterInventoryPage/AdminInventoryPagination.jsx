@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function AdminInventoryPagination({
     page,
     totalPages,
@@ -5,6 +9,7 @@ export default function AdminInventoryPagination({
     pageSize,
     onPageChange,
 }) {
+    const { ui, language } = useNativeUi();
     const start =
         totalItems === 0
             ? 0
@@ -20,8 +25,7 @@ export default function AdminInventoryPagination({
     return (
         <section className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-slate-500">
-                แสดง {start}-{end} จาก{" "}
-                {totalItems} รายการ
+                {language === "en" ? `Showing ${start}-${end} of ${totalItems} items` : `แสดง ${start}-${end} จาก ${totalItems} รายการ`}
             </p>
 
             <div className="flex items-center gap-1">
@@ -33,7 +37,7 @@ export default function AdminInventoryPagination({
                     }
                     className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold disabled:opacity-40"
                 >
-                    ก่อนหน้า
+                    {ui("ก่อนหน้า")}
                 </button>
 
                 {Array.from(
@@ -72,7 +76,7 @@ export default function AdminInventoryPagination({
                     }
                     className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold disabled:opacity-40"
                 >
-                    ถัดไป
+                    {ui("ถัดไป")}
                 </button>
             </div>
         </section>

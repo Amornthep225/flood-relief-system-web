@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useEffect, useState } from "react";
 
 export default function InventoryActionModal({
@@ -9,6 +11,7 @@ export default function InventoryActionModal({
     onClose,
     onSubmit,
 }) {
+    const { ui, language } = useNativeUi();
     const [quantity, setQuantity] = useState("");
 
     useEffect(() => {
@@ -31,11 +34,11 @@ export default function InventoryActionModal({
             >
                 <div className="border-b border-slate-100 bg-slate-50 p-5">
                     <h2 className="text-lg font-bold text-slate-800">
-                        กำหนดจุดแจ้งเตือนขั้นต่ำ
+                        {ui("กำหนดจุดแจ้งเตือนขั้นต่ำ")}
                     </h2>
 
                     <p className="mt-1 text-sm text-slate-500">
-                        {item.reliefItemName}
+                        {ui(item.reliefItemName)}
                     </p>
                 </div>
 
@@ -44,13 +47,13 @@ export default function InventoryActionModal({
 
                     <div className="rounded-xl bg-slate-50 p-4">
                         <p className="text-xs text-slate-500">
-                            คงเหลือปัจจุบัน
+                            {ui("คงเหลือปัจจุบัน")}
                         </p>
 
                         <p className="text-2xl font-bold text-slate-800">
-                            {item.quantity.toLocaleString("th-TH")}{" "}
+                            {item.quantity.toLocaleString(language === "en" ? "en-US" : "th-TH")}{" "}
                             <span className="text-sm font-normal text-slate-500">
-                                {item.unit}
+                                {ui(item.unit)}
                             </span>
                         </p>
                     </div>
@@ -58,7 +61,7 @@ export default function InventoryActionModal({
 
                     <label className="block">
                         <span className="mb-1 block text-xs font-bold text-slate-500">
-                            จำนวนขั้นต่ำ
+                            {ui("จำนวนขั้นต่ำ")}
                         </span>
 
                         <input
@@ -83,7 +86,7 @@ export default function InventoryActionModal({
                             disabled={saving}
                             className="flex-1 rounded-xl border border-slate-200 py-3 font-bold text-slate-600 disabled:opacity-50"
                         >
-                            ยกเลิก
+                            {ui("ยกเลิก")}
                         </button>
 
 
@@ -92,9 +95,7 @@ export default function InventoryActionModal({
                             disabled={saving}
                             className="flex-1 rounded-xl bg-sky-600 py-3 font-bold text-white disabled:opacity-50"
                         >
-                            {saving
-                                ? "กำลังบันทึก..."
-                                : "บันทึกจำนวนขั้นต่ำ"}
+                            {saving ? ui("กำลังบันทึก...") : ui("บันทึกจำนวนขั้นต่ำ")}
                         </button>
 
                     </div>

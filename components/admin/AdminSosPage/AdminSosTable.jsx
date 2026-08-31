@@ -1,7 +1,11 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import AdminSosPriorityBadge from "./AdminSosPriorityBadge";
 import AdminSosStatusBadge from "./AdminSosStatusBadge";
 
-function formatDate(value) {
+function formatDate(value, language) {
     if (!value) return "-";
 
     const date = new Date(value);
@@ -10,7 +14,7 @@ function formatDate(value) {
         return "-";
     }
 
-    return new Intl.DateTimeFormat("th-TH", {
+    return new Intl.DateTimeFormat(language === "en" ? "en-US" : "th-TH", {
         dateStyle: "medium",
         timeStyle: "short",
     }).format(date);
@@ -38,6 +42,9 @@ export default function AdminSosTable({
     onView,
     onAssign,
 }) {
+    const { ui, language } = useNativeUi();
+    const tx = (th, en) =>
+        language === "en" ? en : th;
     return (
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
@@ -48,22 +55,22 @@ export default function AdminSosTable({
                                 Case ID
                             </th>
                             <th className="p-4">
-                                ผู้แจ้ง
+                                {tx("ผู้แจ้ง", "Requester")}
                             </th>
                             <th className="p-4">
-                                พื้นที่ / ศูนย์
+                                {tx("พื้นที่ / ศูนย์", "Area / Center")}
                             </th>
                             <th className="p-4 text-center">
-                                ระดับ
+                                {tx("ระดับ", "Priority")}
                             </th>
                             <th className="p-4 text-center">
-                                สถานะ
+                                {tx("สถานะ", "Status")}
                             </th>
                             <th className="p-4">
-                                ผู้รับผิดชอบ
+                                {tx("ผู้รับผิดชอบ", "Assigned Staff")}
                             </th>
                             <th className="p-4 text-right">
-                                จัดการ
+                                {tx("จัดการ", "Actions")}
                             </th>
                         </tr>
                     </thead>
@@ -81,8 +88,19 @@ export default function AdminSosTable({
                                 <td className="p-4 font-mono text-slate-500">
                                     #{item.id}
                                     <p className="mt-1 text-[11px] font-sans text-slate-400">
-                                        {formatDate(item.createdAt)}
+                                        {formatDate(item.createdAt, language)}
                                     </p>
+                                    <span
+                                        className={`mt-2 inline-flex rounded-full px-2 py-1 font-sans text-[10px] font-black ${
+                                            isEmergencySos(item)
+                                                ? "bg-red-100 text-red-700"
+                                                : "bg-sky-100 text-sky-700"
+                                        }`}
+                                    >
+                                        {isEmergencySos(item)
+                                            ? tx("SOS ฉุกเฉิน", "Emergency SOS")
+                                            : tx("ขอรับสิ่งของ", "Relief Request")}
+                                    </span>
                                 </td>
 
                                 <td className="p-4">
@@ -104,7 +122,7 @@ export default function AdminSosTable({
                                         {item.address}
                                     </p>
                                     <p className="mt-1 text-xs font-bold text-sky-600">
-                                        {item.centerName}
+                                        {ui(item.centerName)}
                                     </p>
                                 </td>
 
@@ -134,7 +152,7 @@ export default function AdminSosTable({
                                         </div>
                                     ) : (
                                         <span className="text-xs font-bold text-orange-500">
-                                            ยังไม่มอบหมาย
+                                            {tx("ยังไม่มอบหมาย", "Not Assigned")}
                                         </span>
                                     )}
                                 </td>
@@ -156,7 +174,9 @@ export default function AdminSosTable({
                                             onClick={() => onAssign(item)}
                                             className="rounded-lg bg-sky-600 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-sky-700"
                                         >
-                                            มอบหมาย Staff
+                                            {isEmergencySos(item)
+                                                ? tx("มอบหมาย Staff", "Assign Staff")
+                                                : tx("ตรวจของ + มอบหมาย", "Check Stock + Assign")}
                                         </button>
                                     )}
                                 </td>

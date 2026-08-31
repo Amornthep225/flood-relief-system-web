@@ -1,6 +1,11 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function AdminSosStatusBadge({
     status,
 }) {
+    const { ui } = useNativeUi();
     const value = String(status || "")
         .trim()
         .toLowerCase();
@@ -54,7 +59,7 @@ export default function AdminSosStatusBadge({
         <span
             className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${config.className}`}
         >
-            {config.label}
+            {ui(config.label)}
         </span>
     );
 }

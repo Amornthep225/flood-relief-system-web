@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import {
     useCallback,
     useEffect,
@@ -133,6 +135,7 @@ function normalizeTransaction(item) {
 }
 
 export default function AdminInventory() {
+    const { ui } = useNativeUi();
     const searchParams = useSearchParams();
     const centerId =
         searchParams.get("centerId") ?? "";
@@ -163,9 +166,7 @@ export default function AdminInventory() {
     const loadData = useCallback(
         async () => {
             if (!centerId) {
-                setError(
-                    "ไม่พบ centerId ใน URL"
-                );
+                setError(ui("ไม่พบ centerId ใน URL"));
                 setLoading(false);
                 return;
             }
@@ -222,14 +223,13 @@ export default function AdminInventory() {
                 );
             } catch (requestError) {
                 setError(
-                    requestError?.message ||
-                    "เกิดข้อผิดพลาดในการโหลดข้อมูลคลัง"
+                    ui(requestError?.message || "เกิดข้อผิดพลาดในการโหลดข้อมูลคลัง")
                 );
             } finally {
                 setLoading(false);
             }
         },
-        [centerId]
+        [centerId, ui]
     );
 
     useEffect(() => {
@@ -370,7 +370,7 @@ export default function AdminInventory() {
                 minimumQuantity < 0
             ) {
                 throw new Error(
-                    "จำนวนขั้นต่ำต้องเป็นเลขจำนวนเต็มตั้งแต่ 0 ขึ้นไป"
+                    ui("จำนวนขั้นต่ำต้องเป็นเลขจำนวนเต็มตั้งแต่ 0 ขึ้นไป")
                 );
             }
 
@@ -384,18 +384,17 @@ export default function AdminInventory() {
 
             await Swal.fire({
                 icon: "success",
-                title: "แก้ไขจำนวนขั้นต่ำสำเร็จ",
-                confirmButtonText: "ตกลง",
+                title: ui("แก้ไขจำนวนขั้นต่ำสำเร็จ"),
+                confirmButtonText: ui("ตกลง"),
             });
 
         } catch (actionError) {
             await Swal.fire({
                 icon: "error",
-                title: "ทำรายการไม่สำเร็จ",
+                title: ui("ทำรายการไม่สำเร็จ"),
                 text:
-                    actionError?.message ||
-                    "กรุณาลองใหม่อีกครั้ง",
-                confirmButtonText: "ตกลง",
+                    ui(actionError?.message || "กรุณาลองใหม่อีกครั้ง"),
+                confirmButtonText: ui("ตกลง"),
             });
         } finally {
             setSaving(false);
@@ -458,7 +457,7 @@ export default function AdminInventory() {
                                 }
                                 className="rounded-lg bg-red-600 px-4 py-2 font-bold text-white"
                             >
-                                ลองใหม่
+                                {ui("ลองใหม่")}
                             </button>
                         </div>
                     )}

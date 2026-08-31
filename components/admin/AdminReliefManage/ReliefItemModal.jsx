@@ -1,7 +1,10 @@
 "use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
 import { useEffect, useState } from "react";
 
 export default function ReliefItemModal({ open, item, categories, saving, onClose, onSubmit }) {
+    const { ui } = useNativeUi();
     const [form, setForm] = useState({ name: "", unit: "", categoryId: "", isActive: true });
 
     useEffect(() => {
@@ -40,12 +43,12 @@ export default function ReliefItemModal({ open, item, categories, saving, onClos
                 className="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl"
             >
                 <div className="flex items-center justify-between border-b border-slate-100 bg-sky-50 px-6 py-5">
-                    <h2 className="text-xl font-black text-slate-800">{item ? "แก้ไขสินค้า" : "เพิ่มสินค้า"}</h2>
+                    <h2 className="text-xl font-black text-slate-800">{item ? ui("แก้ไขสินค้า") : ui("เพิ่มสินค้า")}</h2>
                     <button type="button" onClick={onClose} className="rounded-full bg-white p-2 text-slate-500">✕</button>
                 </div>
                 <div className="space-y-5 p-6">
                     <label className="block text-sm font-bold text-slate-700">
-                        ชื่อสินค้า
+                        {ui("ชื่อสินค้า")}
                         <input
                             required
                             value={form.name}
@@ -55,14 +58,14 @@ export default function ReliefItemModal({ open, item, categories, saving, onClos
                     </label>
                     <div className="grid gap-4 sm:grid-cols-2">
                         <label className="text-sm font-bold text-slate-700">
-                            หมวดหมู่
+                            {ui("หมวดหมู่")}
                             <select
                                 required
                                 value={form.categoryId}
                                 onChange={(event) => setForm({ ...form, categoryId: event.target.value })}
                                 className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 font-normal"
                             >
-                                <option value="">-- เลือกหมวดหมู่ --</option>
+                                <option value="">{ui("-- เลือกหมวดหมู่ --")}</option>
                                 {categories.map((category) => (
                                     <option key={category.id} value={category.id}>
                                         {category.name}
@@ -71,18 +74,18 @@ export default function ReliefItemModal({ open, item, categories, saving, onClos
                             </select>
                         </label>
                         <label className="text-sm font-bold text-slate-700">
-                            หน่วย
+                            {ui("หน่วย")}
                             <input
                                 required
                                 value={form.unit}
                                 onChange={(event) => setForm({ ...form, unit: event.target.value })}
-                                placeholder="แพ็ค / แผง / ถ้วย"
+                                placeholder={ui("แพ็ค / แผง / ถ้วย")}
                                 className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 font-normal"
                             />
                         </label>
                     </div>
                     <label className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
-                        <span className="font-bold text-slate-700">เปิดใช้งาน</span>
+                        <span className="font-bold text-slate-700">{ui("เปิดใช้งาน")}</span>
                         <input
                             type="checkbox"
                             checked={form.isActive}
@@ -91,9 +94,9 @@ export default function ReliefItemModal({ open, item, categories, saving, onClos
                         />
                     </label>
                     <div className="flex gap-3">
-                        <button type="button" onClick={onClose} className="flex-1 rounded-2xl border py-3 font-bold text-slate-600">ยกเลิก</button>
+                        <button type="button" onClick={onClose} className="flex-1 rounded-2xl border py-3 font-bold text-slate-600">{ui("ยกเลิก")}</button>
                         <button disabled={saving || !form.name.trim() || !form.unit.trim() || !form.categoryId} className="flex-1 rounded-2xl bg-sky-600 py-3 font-bold text-white disabled:bg-slate-300">
-                            {saving ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
+                            {saving ? ui("กำลังบันทึก...") : ui("บันทึกข้อมูล")}
                         </button>
                     </div>
                 </div>

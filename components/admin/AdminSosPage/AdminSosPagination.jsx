@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function AdminSosPagination({
     page,
     totalPages,
@@ -5,6 +9,7 @@ export default function AdminSosPagination({
     pageSize,
     onPageChange,
 }) {
+    const { ui, language } = useNativeUi();
     const start =
         totalItems === 0
             ? 0
@@ -18,7 +23,7 @@ export default function AdminSosPagination({
     return (
         <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-slate-500">
-                แสดง {start}-{end} จาก {totalItems} รายการ
+                {language === "en" ? `Showing ${start}-${end} of ${totalItems} items` : `แสดง ${start}-${end} จาก ${totalItems} รายการ`}
             </p>
 
             <div className="flex items-center gap-2">
@@ -28,7 +33,7 @@ export default function AdminSosPagination({
                     onClick={() => onPageChange(page - 1)}
                     className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 disabled:opacity-40"
                 >
-                    ก่อนหน้า
+                    {ui("ก่อนหน้า")}
                 </button>
 
                 <span className="text-sm font-bold text-slate-600">
@@ -41,7 +46,7 @@ export default function AdminSosPagination({
                     onClick={() => onPageChange(page + 1)}
                     className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 disabled:opacity-40"
                 >
-                    ถัดไป
+                    {ui("ถัดไป")}
                 </button>
             </div>
         </div>

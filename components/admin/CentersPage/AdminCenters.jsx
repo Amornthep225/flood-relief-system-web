@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import {
     useCallback,
     useEffect,
@@ -103,6 +105,7 @@ function getLowStockCenterId(item) {
 }
 
 export default function AdminCenters() {
+    const { ui, language } = useNativeUi();
     const [centers, setCenters] =
         useState([]);
     const [lowStockItems, setLowStockItems] =
@@ -164,14 +167,13 @@ export default function AdminCenters() {
                 setCenters([]);
                 setLowStockItems([]);
                 setError(
-                    requestError?.message ||
-                        "เกิดข้อผิดพลาดในการโหลดข้อมูล"
+                    ui(requestError?.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล")
                 );
             } finally {
                 setLoading(false);
             }
         },
-        []
+        [ui]
     );
 
     useEffect(() => {
@@ -372,7 +374,7 @@ export default function AdminCenters() {
             !payload.subDistrictId
         ) {
             throw new Error(
-                "กรุณากรอกชื่อศูนย์และที่อยู่ให้ครบถ้วน"
+                ui("กรุณากรอกชื่อศูนย์และที่อยู่ให้ครบถ้วน")
             );
         }
 
@@ -383,7 +385,7 @@ export default function AdminCenters() {
             )
         ) {
             throw new Error(
-                "เบอร์โทรศัพท์ต้องเป็นตัวเลข 9-10 หลัก"
+                ui("เบอร์โทรศัพท์ต้องเป็นตัวเลข 9-10 หลัก")
             );
         }
 
@@ -396,7 +398,7 @@ export default function AdminCenters() {
             )
         ) {
             throw new Error(
-                "Latitude และ Longitude ต้องเป็นตัวเลข"
+                ui("Latitude และ Longitude ต้องเป็นตัวเลข")
             );
         }
     }
@@ -437,22 +439,21 @@ export default function AdminCenters() {
                 icon: "success",
                 title:
                     modalMode === "edit"
-                        ? "แก้ไขข้อมูลสำเร็จ"
-                        : "เพิ่มศูนย์สำเร็จ",
+                        ? ui("แก้ไขข้อมูลสำเร็จ")
+                        : ui("เพิ่มศูนย์สำเร็จ"),
                 text:
                     modalMode === "edit"
-                        ? "ข้อมูลศูนย์ได้รับการอัปเดตแล้ว"
-                        : "เพิ่มศูนย์ใหม่เข้าสู่ระบบแล้ว",
-                confirmButtonText: "ตกลง",
+                        ? ui("ข้อมูลศูนย์ได้รับการอัปเดตแล้ว")
+                        : ui("เพิ่มศูนย์ใหม่เข้าสู่ระบบแล้ว"),
+                confirmButtonText: ui("ตกลง"),
             });
         } catch (saveError) {
             await Swal.fire({
                 icon: "error",
-                title: "บันทึกข้อมูลไม่สำเร็จ",
+                title: ui("บันทึกข้อมูลไม่สำเร็จ"),
                 text:
-                    saveError?.message ||
-                    "กรุณาลองใหม่อีกครั้ง",
-                confirmButtonText: "ตกลง",
+                    ui(saveError?.message || "กรุณาลองใหม่อีกครั้ง"),
+                confirmButtonText: ui("ตกลง"),
             });
         } finally {
             setSaving(false);
@@ -463,13 +464,11 @@ export default function AdminCenters() {
         const result =
             await Swal.fire({
                 icon: "warning",
-                title: "ยืนยันการลบศูนย์",
-                html: `ต้องการลบ <strong>${center.centerName}</strong> หรือไม่`,
+                title: ui("ยืนยันการลบศูนย์"),
+                html: language === "en" ? `Delete <strong>${center.centerName}</strong>?` : `ต้องการลบ <strong>${center.centerName}</strong> หรือไม่`,
                 showCancelButton: true,
-                confirmButtonText:
-                    "ลบศูนย์",
-                cancelButtonText:
-                    "ยกเลิก",
+                confirmButtonText: ui("ลบศูนย์"),
+                cancelButtonText: ui("ยกเลิก"),
                 confirmButtonColor:
                     "#dc2626",
             });
@@ -491,18 +490,17 @@ export default function AdminCenters() {
 
             await Swal.fire({
                 icon: "success",
-                title: "ลบศูนย์สำเร็จ",
-                text: "ข้อมูลศูนย์ถูกลบออกจากระบบแล้ว",
-                confirmButtonText: "ตกลง",
+                title: ui("ลบศูนย์สำเร็จ"),
+                text: ui("ข้อมูลศูนย์ถูกลบออกจากระบบแล้ว"),
+                confirmButtonText: ui("ตกลง"),
             });
         } catch (deleteError) {
             await Swal.fire({
                 icon: "error",
-                title: "ไม่สามารถลบศูนย์ได้",
+                title: ui("ไม่สามารถลบศูนย์ได้"),
                 text:
-                    deleteError?.message ||
-                    "ศูนย์นี้อาจมีข้อมูลที่เชื่อมโยงอยู่",
-                confirmButtonText: "ตกลง",
+                    ui(deleteError?.message || "ศูนย์นี้อาจมีข้อมูลที่เชื่อมโยงอยู่"),
+                confirmButtonText: ui("ตกลง"),
             });
         } finally {
             setDeletingId(null);
@@ -551,7 +549,7 @@ export default function AdminCenters() {
                                 }
                                 className="rounded-lg bg-red-600 px-4 py-2 font-bold text-white"
                             >
-                                ลองใหม่
+                                {ui("ลองใหม่")}
                             </button>
                         </div>
                     )}

@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import StaffWidget from "./StaffWidget";
 
 export default function ManageStaffModal({
@@ -10,6 +14,7 @@ export default function ManageStaffModal({
     onClose,
     onSave,
 }) {
+    const { ui } = useNativeUi();
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4">
             <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl relative overflow-hidden">
@@ -19,10 +24,10 @@ export default function ManageStaffModal({
                             <span className="material-symbols-outlined text-sky-500">
                                 manage_accounts
                             </span>
-                            จัดการบัญชี
+                            {ui("จัดการบัญชี")}
                         </h3>
                         <p className="text-xs text-slate-500 mt-1">
-                            ตั้งค่าการเข้าถึงระบบของเจ้าหน้าที่
+                            {ui("ตั้งค่าการเข้าถึงระบบของเจ้าหน้าที่")}
                         </p>
                     </div>
 
@@ -49,7 +54,7 @@ export default function ManageStaffModal({
                                 error
                             </span>
                             <span>
-                                เมื่อระงับบัญชี เจ้าหน้าที่จะไม่สามารถเข้าสู่ระบบหรือรับงานใหม่ได้ทันที
+                                {ui("เมื่อระงับบัญชี เจ้าหน้าที่จะไม่สามารถเข้าสู่ระบบหรือรับงานใหม่ได้ทันที")}
                             </span>
                         </div>
                     )}
@@ -59,7 +64,7 @@ export default function ManageStaffModal({
                             onClick={onClose}
                             className="flex-1 bg-white hover:bg-slate-50 text-slate-600 font-bold py-3 rounded-xl border border-slate-200 transition-colors"
                         >
-                            ยกเลิก
+                            {ui("ยกเลิก")}
                         </button>
 
                         <button
@@ -67,7 +72,7 @@ export default function ManageStaffModal({
                             disabled={isSaving}
                             className="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
                         >
-                            {isSaving ? "กำลังบันทึก..." : "บันทึก"}
+                            {isSaving ? ui("กำลังบันทึก...") : ui("บันทึก")}
                         </button>
                     </div>
                 </div>

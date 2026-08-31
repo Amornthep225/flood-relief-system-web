@@ -1,11 +1,16 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function AdminCentersHeader({
     onAdd,
 }) {
+    const { ui } = useNativeUi();
     return (
         <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur md:px-8">
             <div>
                 <h1 className="flex flex-wrap items-center gap-2 text-xl font-bold text-slate-800">
-                    จัดการจุดรับบริจาค
+                    {ui("จัดการจุดรับบริจาค")}
 
                     <span className="rounded-md bg-teal-100 px-2 py-0.5 text-xs font-bold text-teal-700">
                         Donation Centers
@@ -13,7 +18,7 @@ export default function AdminCentersHeader({
                 </h1>
 
                 <p className="mt-1 text-sm text-slate-500">
-                    เพิ่ม แก้ไข ลบ และตรวจสอบสถานะคลังของแต่ละศูนย์
+                    {ui("เพิ่ม แก้ไข ลบ และตรวจสอบสถานะคลังของแต่ละศูนย์")}
                 </p>
             </div>
 
@@ -27,7 +32,7 @@ export default function AdminCentersHeader({
                 </span>
 
                 <span className="hidden sm:inline">
-                    เพิ่มศูนย์ใหม่
+                    {ui("เพิ่มศูนย์ใหม่")}
                 </span>
             </button>
         </header>

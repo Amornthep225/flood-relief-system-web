@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
@@ -12,6 +14,7 @@ const initialForm = {
 };
 
 export default function AdminLoginForm({ dashboardPath }) {
+    const { ui } = useNativeUi();
     const router = useRouter();
 
     const [form, setForm] = useState(initialForm);
@@ -50,19 +53,19 @@ export default function AdminLoginForm({ dashboardPath }) {
 
             await Swal.fire({
                 icon: "success",
-                title: "เข้าสู่ระบบสำเร็จ",
+                title: ui("เข้าสู่ระบบสำเร็จ"),
                 timer: 1000,
                 showConfirmButton: false,
             });
 
             router.push(dashboardPath);
         } catch (err) {
-            const message = err.message || "เข้าสู่ระบบไม่สำเร็จ";
+            const message = ui(err.message || "เข้าสู่ระบบไม่สำเร็จ");
             setError(message);
 
             Swal.fire({
                 icon: "error",
-                title: "เข้าสู่ระบบไม่สำเร็จ",
+                title: ui("เข้าสู่ระบบไม่สำเร็จ"),
                 text: message,
             });
         } finally {
@@ -79,17 +82,17 @@ export default function AdminLoginForm({ dashboardPath }) {
             )}
 
             <InputField
-                label="ชื่อผู้ใช้งาน / อีเมล"
+                label={ui("ชื่อผู้ใช้งาน / อีเมล")}
                 name="usernameOrEmail"
                 type="text"
                 value={form.usernameOrEmail}
                 onChange={handleChange}
-                placeholder="ระบุชื่อผู้ใช้งานหรืออีเมล"
+                placeholder={ui("ระบุชื่อผู้ใช้งานหรืออีเมล")}
             />
 
             <div>
                 <label className="block text-xs font-bold text-slate-700 mb-2 ml-1">
-                    รหัสผ่าน
+                    {ui("รหัสผ่าน")}
                 </label>
 
                 <div className="relative">
@@ -98,7 +101,7 @@ export default function AdminLoginForm({ dashboardPath }) {
                         type={showPassword ? "text" : "password"}
                         value={form.password}
                         onChange={handleChange}
-                        placeholder="ระบุรหัสผ่าน"
+                        placeholder={ui("ระบุรหัสผ่าน")}
                         required
                         className={`w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none ${colors.admin.primaryRing} ${colors.admin.primaryBorder}`}
                     />
@@ -120,7 +123,7 @@ export default function AdminLoginForm({ dashboardPath }) {
                 disabled={loading}
                 className={`w-full ${colors.admin.primary} text-white font-bold py-3.5 rounded-xl shadow-lg ${colors.admin.primaryShadow}`}
             >
-                {loading ? "กำลังตรวจสอบ..." : "เข้าสู่ระบบศูนย์บัญชาการ"}
+                {loading ? ui("กำลังตรวจสอบ...") : ui("เข้าสู่ระบบศูนย์บัญชาการ")}
             </button>
         </form>
     );

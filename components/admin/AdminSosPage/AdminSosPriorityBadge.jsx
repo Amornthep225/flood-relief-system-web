@@ -1,6 +1,11 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function AdminSosPriorityBadge({
     priority,
 }) {
+    const { ui } = useNativeUi();
     const value = String(priority || "")
         .trim()
         .toLowerCase();
@@ -11,7 +16,7 @@ export default function AdminSosPriorityBadge({
                 <span className="material-symbols-outlined text-[15px]">
                     crisis_alert
                 </span>
-                วิกฤต
+                {ui("วิกฤต")}
             </span>
         );
     }
@@ -22,14 +27,14 @@ export default function AdminSosPriorityBadge({
                 <span className="material-symbols-outlined text-[15px]">
                     warning
                 </span>
-                เร่งด่วน
+                {ui("เร่งด่วน")}
             </span>
         );
     }
 
     return (
         <span className="inline-flex rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
-            ปกติ
+            {ui("ปกติ")}
         </span>
     );
 }

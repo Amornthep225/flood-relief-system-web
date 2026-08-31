@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import RoleGuard from "@/components/RoleGuard/RoleGuard";
@@ -53,6 +55,7 @@ const normalizeItem = (item) => ({
 });
 
 export default function AdminReliefManage() {
+    const { ui } = useNativeUi();
     const [activeTab, setActiveTab] = useState("items");
     const [categories, setCategories] = useState([]);
     const [items, setItems] = useState([]);
@@ -76,7 +79,7 @@ export default function AdminReliefManage() {
             setItems(asArray(itemResponse).map(normalizeItem));
         } catch (error) {
             if (error?.name !== "AbortError") {
-                await Swal.fire("โหลดข้อมูลไม่สำเร็จ", error.message, "error");
+                await Swal.fire(ui("โหลดข้อมูลไม่สำเร็จ"), ui(error.message), "error");
             }
         } finally {
             if (!signal?.aborted) {
@@ -84,7 +87,7 @@ export default function AdminReliefManage() {
                 setRefreshing(false);
             }
         }
-    }, []);
+    }, [ui]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -142,9 +145,9 @@ export default function AdminReliefManage() {
                 : await createReliefCategory(form);
             setCategoryModal({ open: false, item: null });
             await refreshData();
-            await Swal.fire({ icon: "success", title: "บันทึกหมวดหมู่สำเร็จ", timer: 900, showConfirmButton: false });
+            await Swal.fire({ icon: "success", title: ui("บันทึกหมวดหมู่สำเร็จ"), timer: 900, showConfirmButton: false });
         } catch (error) {
-            await Swal.fire("บันทึกไม่สำเร็จ", error.message, "error");
+            await Swal.fire(ui("บันทึกไม่สำเร็จ"), ui(error.message), "error");
         } finally {
             setSaving(false);
         }
@@ -158,9 +161,9 @@ export default function AdminReliefManage() {
                 : await createReliefItem(form);
             setItemModal({ open: false, item: null });
             await refreshData();
-            await Swal.fire({ icon: "success", title: "บันทึกสินค้าสำเร็จ", timer: 900, showConfirmButton: false });
+            await Swal.fire({ icon: "success", title: ui("บันทึกสินค้าสำเร็จ"), timer: 900, showConfirmButton: false });
         } catch (error) {
-            await Swal.fire("บันทึกไม่สำเร็จ", error.message, "error");
+            await Swal.fire(ui("บันทึกไม่สำเร็จ"), ui(error.message), "error");
         } finally {
             setSaving(false);
         }
@@ -170,11 +173,11 @@ export default function AdminReliefManage() {
         const nextStatus = !item.isActive;
         const result = await Swal.fire({
             icon: "question",
-            title: nextStatus ? "เปิดใช้งานข้อมูลนี้?" : "ปิดใช้งานข้อมูลนี้?",
+            title: nextStatus ? ui("เปิดใช้งานข้อมูลนี้?") : ui("ปิดใช้งานข้อมูลนี้?"),
             text: item.name,
             showCancelButton: true,
-            confirmButtonText: "ยืนยัน",
-            cancelButtonText: "ยกเลิก",
+            confirmButtonText: ui("ยืนยัน"),
+            cancelButtonText: ui("ยกเลิก"),
         });
         if (!result.isConfirmed) return;
 
@@ -186,7 +189,7 @@ export default function AdminReliefManage() {
             }
             await refreshData();
         } catch (error) {
-            await Swal.fire("เปลี่ยนสถานะไม่สำเร็จ", error.message, "error");
+            await Swal.fire(ui("เปลี่ยนสถานะไม่สำเร็จ"), ui(error.message), "error");
         }
     };
 
@@ -200,10 +203,10 @@ export default function AdminReliefManage() {
                                 Resource Management
                             </p>
                             <h1 className="mt-1 text-2xl font-black text-slate-800">
-                                จัดการสิ่งของและประเภท
+                                {ui("จัดการสิ่งของและประเภท")}
                             </h1>
                             <p className="mt-1 text-sm text-slate-500">
-                                จัดการข้อมูลสินค้าและหมวดหมู่สำหรับทุกศูนย์
+                                {ui("จัดการข้อมูลสินค้าและหมวดหมู่สำหรับทุกศูนย์")}
                             </p>
                         </div>
                         <button
@@ -215,7 +218,7 @@ export default function AdminReliefManage() {
                             <span className={`material-symbols-outlined text-[19px] ${refreshing ? "animate-spin" : ""}`}>
                                 refresh
                             </span>
-                            อัปเดตข้อมูล
+                            {ui("อัปเดตข้อมูล")}
                         </button>
                     </div>
                 </header>
@@ -251,7 +254,7 @@ export default function AdminReliefManage() {
                             <span className="material-symbols-outlined animate-spin text-4xl text-sky-500">
                                 progress_activity
                             </span>
-                            <p className="mt-3 text-sm font-bold text-slate-500">กำลังโหลดข้อมูล...</p>
+                            <p className="mt-3 text-sm font-bold text-slate-500">{ui("กำลังโหลดข้อมูล...")}</p>
                         </div>
                     ) : activeTab === "items" ? (
                         <ReliefItemTable

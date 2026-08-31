@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import {
     useCallback,
     useEffect,
@@ -38,67 +40,140 @@ function normalizeArray(response) {
 }
 
 function normalizeSos(item) {
+    const rawItems = Array.isArray(item?.items)
+        ? item.items
+        : Array.isArray(item?.Items)
+          ? item.Items
+          : [];
+
     return {
         id:
-            item.id ??
-            item.sosRequestId ??
+            item?.id ??
+            item?.sosRequestId ??
             "",
         userId:
-            item.userId ??
+            item?.userId ??
             "",
         name:
-            item.userFullName ??
-            item.userName ??
-            item.fullName ??
+            item?.userFullName ??
+            item?.userName ??
+            item?.fullName ??
             "-",
         phone:
-            item.userPhoneNumber ??
-            item.userPhone ??
-            item.phoneNumber ??
+            item?.userPhoneNumber ??
+            item?.userPhone ??
+            item?.phoneNumber ??
             "-",
+        email:
+            item?.userEmail ??
+            item?.email ??
+            "",
         address:
-            item.addressDetail ??
-            item.address ??
+            item?.addressDetail ??
+            item?.address ??
             "-",
-        latitude: Number(item.latitude ?? 0),
-        longitude: Number(item.longitude ?? 0),
+        latitude: Number(item?.latitude ?? 0),
+        longitude: Number(item?.longitude ?? 0),
+
         priority:
-            item.priority ??
+            item?.priority ??
             "Normal",
         requestType:
-            item.requestType ??
+            item?.requestType ??
             "Relief",
+
         emergencyType:
-            item.emergencyType ??
+            item?.emergencyType ??
             null,
+        emergencyDetail:
+            item?.emergencyDetail ??
+            "",
+        victimCount: Number(item?.victimCount ?? 0),
+        childCount: Number(item?.childCount ?? 0),
+        elderlyCount: Number(item?.elderlyCount ?? 0),
+        disabledCount: Number(item?.disabledCount ?? 0),
+        patientCount: Number(item?.patientCount ?? 0),
+        waterLevel:
+            item?.waterLevel !== null &&
+            item?.waterLevel !== undefined
+                ? Number(item.waterLevel)
+                : null,
+
+        items: rawItems.map((requestItem) => ({
+            id:
+                requestItem?.id ??
+                "",
+            reliefItemId:
+                requestItem?.reliefItemId ??
+                requestItem?.itemId ??
+                requestItem?.reliefItem?.id ??
+                "",
+            reliefItemName:
+                requestItem?.reliefItemName ??
+                requestItem?.name ??
+                requestItem?.reliefItem?.name ??
+                "-",
+            quantity: Number(
+                requestItem?.quantity ?? 0
+            ),
+            unit:
+                requestItem?.unit ??
+                requestItem?.reliefItem?.unit ??
+                "",
+        })),
+
         status:
-            item.status ??
+            item?.status ??
             "Pending",
         centerId:
-            item.centerId ??
+            item?.centerId ??
             "",
         centerName:
-            item.centerName ??
+            item?.centerName ??
             "-",
+        centerPhone:
+            item?.centerPhoneNumber ??
+            "",
+
         assignedStaffId:
-            item.assignedStaffId ??
+            item?.assignedStaffId ??
             null,
         assignedStaffName:
-            item.assignedStaffName ??
-            item.staffName ??
+            item?.assignedStaffName ??
+            item?.staffName ??
             "",
+        assignedStaffPhone:
+            item?.assignedStaffPhoneNumber ??
+            "",
+
         userRemark:
-            item.userRemark ??
-            item.remark ??
+            item?.userRemark ??
+            item?.remark ??
             "",
         staffRemark:
-            item.staffRemark ??
+            item?.staffRemark ??
             "",
+
         createdAt:
-            item.createdAt ??
+            item?.createdAt ??
+            null,
+        acceptedAt:
+            item?.acceptedAt ??
+            null,
+        preparingAt:
+            item?.preparingAt ??
+            null,
+        deliveringAt:
+            item?.deliveringAt ??
+            null,
+        completedAt:
+            item?.completedAt ??
+            null,
+        cancelledAt:
+            item?.cancelledAt ??
             null,
         updatedAt:
-            item.updatedAt ??
+            item?.updatedAt ??
             null,
     };
 }
@@ -170,6 +245,8 @@ function isEmergencySos(item) {
 }
 
 export default function AdminSos() {
+    const { ui, language } = useNativeUi();
+    const tx = (th, en) => language === "en" ? en : th;
     const [cases, setCases] = useState([]);
     const [staffs, setStaffs] = useState([]);
     const [searchText, setSearchText] = useState("");
@@ -235,11 +312,10 @@ export default function AdminSos() {
 
             await Swal.fire({
                 icon: "error",
-                title: "โหลดข้อมูลไม่สำเร็จ",
+                title: ui("โหลดข้อมูลไม่สำเร็จ"),
                 text:
-                    error?.message ||
-                    "ไม่สามารถโหลดข้อมูล SOS ได้",
-                confirmButtonText: "ตกลง",
+                    ui(error?.message || "ไม่สามารถโหลดข้อมูล SOS ได้"),
+                confirmButtonText: tx("ตกลง", "OK"),
             });
         } finally {
             if (!controller.signal.aborted) {
@@ -249,7 +325,7 @@ export default function AdminSos() {
         }
 
         return () => controller.abort();
-    }, []);
+    }, [ui]);
 
     useEffect(() => {
         loadData();
@@ -340,18 +416,42 @@ export default function AdminSos() {
         );
     }, [filteredCases, page]);
 
+    const loadLatestCaseDetail = async (item) => {
+        const response = await getSosRequestById(item.id);
+        const detail = response?.data ?? response ?? {};
+
+        return normalizeSos({
+            ...item,
+            ...detail,
+        });
+    };
+
     const openDetails = async (item) => {
         try {
-            const detail = await getSosRequestById(item.id);
-            setDetailCase(normalizeSos(detail));
+            const detail = await loadLatestCaseDetail(item);
+            setDetailCase(detail);
         } catch (error) {
             await Swal.fire({
                 icon: "error",
-                title: "โหลดรายละเอียดไม่สำเร็จ",
+                title: tx("โหลดรายละเอียดไม่สำเร็จ", "Failed to Load Details"),
                 text:
-                    error?.message ||
-                    "ไม่สามารถโหลดรายละเอียดเคสได้",
-                confirmButtonText: "ตกลง",
+                    ui(error?.message || "ไม่สามารถโหลดรายละเอียดเคสได้"),
+                confirmButtonText: tx("ตกลง", "OK"),
+            });
+        }
+    };
+
+    const openAssign = async (item) => {
+        try {
+            const detail = await loadLatestCaseDetail(item);
+            setAssignCase(detail);
+        } catch (error) {
+            await Swal.fire({
+                icon: "error",
+                title: tx("โหลดรายละเอียดไม่สำเร็จ", "Failed to Load Details"),
+                text:
+                    ui(error?.message || "ไม่สามารถโหลดรายละเอียดเคสได้"),
+                confirmButtonText: tx("ตกลง", "OK"),
             });
         }
     };
@@ -359,6 +459,7 @@ export default function AdminSos() {
     const handleAssign = async ({
         caseItem,
         staffId,
+        centerId,
         staffRemark,
     }) => {
         try {
@@ -368,6 +469,7 @@ export default function AdminSos() {
                 caseItem.id,
                 staffId,
                 {
+                    centerId,
                     staffRemark,
                 }
             );
@@ -385,6 +487,13 @@ export default function AdminSos() {
                                   result?.status ||
                                   result?.data?.status ||
                                   "Accepted",
+                              centerId:
+                                  selectedStaff?.centerId ||
+                                  centerId ||
+                                  item.centerId,
+                              centerName:
+                                  selectedStaff?.centerName ||
+                                  item.centerName,
                               assignedStaffId: staffId,
                               assignedStaffName:
                                   selectedStaff?.fullName ||
@@ -400,18 +509,17 @@ export default function AdminSos() {
 
             await Swal.fire({
                 icon: "success",
-                title: "มอบหมายงานสำเร็จ",
-                text: `เคส ${caseItem.id} ถูกมอบหมายให้ ${selectedStaff?.fullName || "เจ้าหน้าที่"} แล้ว`,
-                confirmButtonText: "ตกลง",
+                title: tx("มอบหมายงานสำเร็จ", "Assignment Successful"),
+                text: language === "en" ? `Case ${caseItem.id} was assigned to ${selectedStaff?.fullName || "Staff"}` : `เคส ${caseItem.id} ถูกมอบหมายให้ ${selectedStaff?.fullName || "เจ้าหน้าที่"} แล้ว`,
+                confirmButtonText: tx("ตกลง", "OK"),
             });
         } catch (error) {
             await Swal.fire({
                 icon: "error",
-                title: "มอบหมายงานไม่สำเร็จ",
+                title: tx("มอบหมายงานไม่สำเร็จ", "Assignment Failed"),
                 text:
-                    error?.message ||
-                    "ไม่สามารถมอบหมายเจ้าหน้าที่ได้",
-                confirmButtonText: "ตกลง",
+                    ui(error?.message || "ไม่สามารถมอบหมายเจ้าหน้าที่ได้"),
+                confirmButtonText: tx("ตกลง", "OK"),
             });
 
             await loadData(false);
@@ -461,7 +569,7 @@ export default function AdminSos() {
                             <AdminSosTable
                                 cases={paginatedCases}
                                 onView={openDetails}
-                                onAssign={setAssignCase}
+                                onAssign={openAssign}
                             />
 
                             <AdminSosPagination

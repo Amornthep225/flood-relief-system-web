@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function ReliefManageTabs({
     activeTab,
     onChange,
@@ -6,10 +10,11 @@ export default function ReliefManageTabs({
     categoryCount,
     categoryActive,
 }) {
+    const { ui } = useNativeUi();
     const cards = [
         {
             value: "items",
-            title: "รายการสินค้า",
+            title: ui("รายการสินค้า"),
             count: itemCount,
             activeCount: itemActive,
             icon: "inventory_2",
@@ -18,7 +23,7 @@ export default function ReliefManageTabs({
         },
         {
             value: "categories",
-            title: "หมวดหมู่สินค้า",
+            title: ui("หมวดหมู่สินค้า"),
             count: categoryCount,
             activeCount: categoryActive,
             icon: "category",
@@ -42,10 +47,10 @@ export default function ReliefManageTabs({
                 >
                     <div className="relative flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-bold text-slate-500">{card.title}</p>
+                            <p className="text-sm font-bold text-slate-500">{ui(card.title)}</p>
                             <p className="mt-2 text-4xl font-black text-slate-800">{card.count}</p>
                             <span className="mt-3 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
-                                เปิดใช้งาน {card.activeCount}
+                                {ui("เปิดใช้งาน")} {card.activeCount}
                             </span>
                         </div>
                         <div className={`flex h-16 w-16 items-center justify-center rounded-2xl text-white shadow-lg ${card.iconClass}`}>

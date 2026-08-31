@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import Link from "next/link";
 import CenterStatusBadge from "./CenterStatusBadge";
 
@@ -17,6 +21,7 @@ export default function AdminCentersTable({
     onEdit,
     onDelete,
 }) {
+    const { ui } = useNativeUi();
     return (
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
@@ -27,16 +32,16 @@ export default function AdminCentersTable({
                                 ID
                             </th>
                             <th className="p-4 font-bold">
-                                ข้อมูลจุดรับบริจาค
+                                {ui("ข้อมูลจุดรับบริจาค")}
                             </th>
                             <th className="p-4 font-bold">
-                                ผู้ดูแล
+                                {ui("ผู้ดูแล")}
                             </th>
                             <th className="p-4 text-center font-bold">
-                                สถานะ
+                                {ui("สถานะ")}
                             </th>
                             <th className="p-4 text-right font-bold">
-                                จัดการ
+                                {ui("จัดการ")}
                             </th>
                         </tr>
                     </thead>
@@ -105,7 +110,7 @@ export default function AdminCentersTable({
                                                     center.id
                                                 )}`}
                                                 className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-sky-500"
-                                                title="ดูคลัง"
+                                                title={ui("ดูคลัง")}
                                             >
                                                 <span className="material-symbols-outlined text-[18px]">
                                                     inventory_2
@@ -120,7 +125,7 @@ export default function AdminCentersTable({
                                                     )
                                                 }
                                                 className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-teal-600"
-                                                title="แก้ไข"
+                                                title={ui("แก้ไข")}
                                             >
                                                 <span className="material-symbols-outlined text-[18px]">
                                                     edit_square
@@ -139,7 +144,7 @@ export default function AdminCentersTable({
                                                     center.id
                                                 }
                                                 className="rounded-full p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                                                title="ลบ"
+                                                title={ui("ลบ")}
                                             >
                                                 <span
                                                     className={`material-symbols-outlined text-[18px] ${

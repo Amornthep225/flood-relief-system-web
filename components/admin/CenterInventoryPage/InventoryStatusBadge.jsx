@@ -1,6 +1,11 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function InventoryStatusBadge({
     status,
 }) {
+    const { ui } = useNativeUi();
     const config = {
         Normal: {
             label: "ปกติ",
@@ -27,7 +32,7 @@ export default function InventoryStatusBadge({
         <span
             className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-bold ${current.className}`}
         >
-            {current.label}
+            {ui(current.label)}
         </span>
     );
 }

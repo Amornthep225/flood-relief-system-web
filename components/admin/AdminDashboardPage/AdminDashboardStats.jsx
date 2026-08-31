@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 const statConfigs = [
     {
         key: "waiting",
@@ -64,6 +68,7 @@ const statConfigs = [
 export default function AdminDashboardStats({
     summary,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
             {statConfigs.map(
@@ -87,6 +92,7 @@ export default function AdminDashboardStats({
 function StatCard({
     item,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <div className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="absolute right-0 top-0 p-4 opacity-5 transition-opacity group-hover:opacity-10">
@@ -107,24 +113,22 @@ function StatCard({
                 <span
                     className={`rounded-full px-2 py-1 text-xs font-bold ${item.badgeStyle}`}
                 >
-                    {item.badge}
+                    {ui(item.badge)}
                 </span>
             </div>
 
             <p className="text-sm font-medium text-slate-500">
-                {item.title}
+                {ui(item.title)}
             </p>
 
             <h2 className="mt-1 text-3xl font-black text-slate-800">
                 {Number(
                     item.number || 0
-                ).toLocaleString(
-                    "th-TH"
-                )}
+                ).toLocaleString(language === "en" ? "en-US" : "th-TH")}
             </h2>
 
             <p className="mt-1 text-xs text-slate-400">
-                {item.detail}
+                {ui(item.detail)}
             </p>
         </div>
     );

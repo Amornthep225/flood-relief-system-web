@@ -1,11 +1,16 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 export default function StaffSummarySection({ staffs }) {
+    const { ui } = useNativeUi();
     const totalStaff = staffs.length;
     const activeStaff = staffs.filter((staff) => staff.isActive).length;
 
     return (
         <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <SummaryCard
-                title="เจ้าหน้าที่ทั้งหมด"
+                title={ui("เจ้าหน้าที่ทั้งหมด")}
                 number={totalStaff}
                 icon="groups"
                 boxStyle="bg-white border-slate-200"
@@ -15,7 +20,7 @@ export default function StaffSummarySection({ staffs }) {
             />
 
             <SummaryCard
-                title="ปฏิบัติงานอยู่ (Active)"
+                title={ui("ปฏิบัติงานอยู่ (Active)")}
                 number={activeStaff}
                 icon="check_circle"
                 boxStyle="bg-green-50 border-green-100"

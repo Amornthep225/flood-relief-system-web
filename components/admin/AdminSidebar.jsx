@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import {
     useEffect,
     useMemo,
@@ -48,8 +50,7 @@ const menuGroups = [
                 href: "/admin/admin-staff",
             },
             {
-                title:
-                    "จัดการศูนย์ (Centers)",
+                title: "จัดการศูนย์ (Centers)",
                 icon: "apartment",
                 href: "/admin/admin-centers",
             },
@@ -102,6 +103,7 @@ function normalizeArray(response) {
 }
 
 export default function AdminSidebar() {
+    const { ui } = useNativeUi();
     const router = useRouter();
     const pathname = usePathname();
 
@@ -179,15 +181,12 @@ export default function AdminSidebar() {
     const handleLogout = async () => {
         const result =
             await Swal.fire({
-                title: "ออกจากระบบ?",
-                text:
-                    "คุณต้องการออกจากระบบใช่หรือไม่",
+                title: ui("ออกจากระบบ?"),
+                text: ui("คุณต้องการออกจากระบบใช่หรือไม่"),
                 icon: "question",
                 showCancelButton: true,
-                confirmButtonText:
-                    "ออกจากระบบ",
-                cancelButtonText:
-                    "ยกเลิก",
+                confirmButtonText: ui("ออกจากระบบ"),
+                cancelButtonText: ui("ยกเลิก"),
                 confirmButtonColor:
                     "#0284c7",
                 cancelButtonColor:
@@ -207,8 +206,7 @@ export default function AdminSidebar() {
 
         await Swal.fire({
             icon: "success",
-            title:
-                "ออกจากระบบสำเร็จ",
+            title: ui("ออกจากระบบสำเร็จ"),
             timer: 800,
             showConfirmButton: false,
         });
@@ -252,9 +250,7 @@ export default function AdminSidebar() {
                             }
                         >
                             <p className="mb-2 mt-6 px-4 text-xs font-bold uppercase tracking-wider text-slate-400 first:mt-2">
-                                {
-                                    group.title
-                                }
+                                {ui(group.title)}
                             </p>
 
                             {group.items.map(
@@ -292,9 +288,7 @@ export default function AdminSidebar() {
                                             </span>
 
                                             <p className="text-sm font-medium">
-                                                {
-                                                    item.title
-                                                }
+                                                {ui(item.title)}
                                             </p>
 
                                             {badgeValue >
@@ -332,7 +326,7 @@ export default function AdminSidebar() {
                     </span>
 
                     <p className="text-sm font-medium">
-                        ออกจากระบบ
+                        {ui("ออกจากระบบ")}
                     </p>
                 </button>
             </div>

@@ -1,15 +1,20 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import ReliefStatusBadge from "./ReliefStatusBadge";
 
 export default function ReliefCategoryTable({ rows, onEdit, onToggle }) {
+    const { ui } = useNativeUi();
     return (
         <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-6 py-5">
-                <h2 className="font-black text-slate-800">หมวดหมู่สินค้า</h2>
-                <p className="mt-1 text-sm text-slate-500">ใช้จัดกลุ่มสิ่งของในระบบ</p>
+                <h2 className="font-black text-slate-800">{ui("หมวดหมู่สินค้า")}</h2>
+                <p className="mt-1 text-sm text-slate-500">{ui("ใช้จัดกลุ่มสิ่งของในระบบ")}</p>
             </div>
 
             {rows.length === 0 ? (
-                <div className="px-6 py-20 text-center text-slate-500">ไม่พบหมวดหมู่</div>
+                <div className="px-6 py-20 text-center text-slate-500">{ui("ไม่พบหมวดหมู่")}</div>
             ) : (
                 <div className="grid grid-cols-1 gap-4 p-5 md:grid-cols-2 xl:grid-cols-3">
                     {rows.map((item) => (
@@ -21,10 +26,10 @@ export default function ReliefCategoryTable({ rows, onEdit, onToggle }) {
                                 <ReliefStatusBadge isActive={item.isActive} />
                             </div>
                             <p className="mt-5 text-xs font-mono font-bold text-slate-400">#{item.id}</p>
-                            <h3 className="mt-1 text-lg font-black text-slate-800">{item.name}</h3>
+                            <h3 className="mt-1 text-lg font-black text-slate-800">{ui(item.name)}</h3>
                             <div className="mt-5 flex gap-2">
                                 <button onClick={() => onEdit(item)} className="flex-1 rounded-xl bg-sky-50 px-3 py-2.5 text-xs font-bold text-sky-700">
-                                    แก้ไข
+                                    {ui("แก้ไข")}
                                 </button>
                                 <button
                                     onClick={() => onToggle(item)}
@@ -34,7 +39,7 @@ export default function ReliefCategoryTable({ rows, onEdit, onToggle }) {
                                             : "bg-emerald-50 text-emerald-700"
                                     }`}
                                 >
-                                    {item.isActive ? "ปิดใช้งาน" : "เปิดใช้งาน"}
+                                    {item.isActive ? ui("ปิดใช้งาน") : ui("เปิดใช้งาน")}
                                 </button>
                             </div>
                         </article>

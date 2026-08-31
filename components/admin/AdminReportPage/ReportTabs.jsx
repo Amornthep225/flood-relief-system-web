@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 const tabs=[
     {value:"donors",label:"รายงานผู้บริจาค",icon:"volunteer_activism"},
     {value:"sos",label:"รายงาน SOS",icon:"crisis_alert"},
@@ -5,6 +9,7 @@ const tabs=[
 ];
 
 export default function ReportTabs({value,onChange}){
+    const { ui } = useNativeUi();
     return <div className="no-print grid grid-cols-1 gap-2 rounded-2xl border bg-white p-2 shadow-sm sm:grid-cols-3">
         {tabs.map(tab=><button
             key={tab.value}
@@ -16,7 +21,7 @@ export default function ReportTabs({value,onChange}){
             }`}
         >
             <span className="material-symbols-outlined text-[18px]">{tab.icon}</span>
-            {tab.label}
+            {ui(tab.label)}
         </button>)}
     </div>;
 }

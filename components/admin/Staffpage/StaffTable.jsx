@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import StaffStatusBadge from "./StaffStatusBadge";
 
 export default function StaffTable({
@@ -6,6 +10,7 @@ export default function StaffTable({
     loading,
     onManage,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <section className="bg-white rounded-b-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
@@ -13,10 +18,10 @@ export default function StaffTable({
                     <thead>
                         <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
                             <th className="p-4 font-bold w-16">ID</th>
-                            <th className="p-4 font-bold">ชื่อ - สกุล</th>
-                            <th className="p-4 font-bold">อีเมล</th>
-                            <th className="p-4 font-bold text-center">สถานะ</th>
-                            <th className="p-4 font-bold text-right">จัดการ</th>
+                            <th className="p-4 font-bold">{ui("ชื่อ - สกุล")}</th>
+                            <th className="p-4 font-bold">{ui("อีเมล")}</th>
+                            <th className="p-4 font-bold text-center">{ui("สถานะ")}</th>
+                            <th className="p-4 font-bold text-right">{ui("จัดการ")}</th>
                         </tr>
                     </thead>
 
@@ -24,7 +29,7 @@ export default function StaffTable({
                         {loading && (
                             <tr>
                                 <td colSpan={5} className="p-8 text-center text-slate-400">
-                                    กำลังโหลดข้อมูลเจ้าหน้าที่...
+                                    {ui("กำลังโหลดข้อมูลเจ้าหน้าที่...")}
                                 </td>
                             </tr>
                         )}
@@ -32,7 +37,7 @@ export default function StaffTable({
                         {!loading && staffs.length === 0 && (
                             <tr>
                                 <td colSpan={5} className="p-8 text-center text-slate-400">
-                                    ไม่พบข้อมูลเจ้าหน้าที่
+                                    {ui("ไม่พบข้อมูลเจ้าหน้าที่")}
                                 </td>
                             </tr>
                         )}
@@ -96,7 +101,7 @@ export default function StaffTable({
 
             <div className="p-4 border-t border-slate-100 flex justify-between items-center bg-slate-50">
                 <span className="text-xs text-slate-500">
-                    แสดง {staffs.length} จาก {totalStaff} รายการ
+                    {language === "en" ? `Showing ${staffs.length} of ${totalStaff} items` : `แสดง ${staffs.length} จาก ${totalStaff} รายการ`}
                 </span>
             </div>
         </section>

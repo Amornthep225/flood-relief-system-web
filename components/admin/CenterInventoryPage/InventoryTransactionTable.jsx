@@ -1,10 +1,14 @@
-function formatDate(value) {
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
+function formatDate(value, language) {
     if (!value) return "-";
 
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return "-";
 
-    return new Intl.DateTimeFormat("th-TH", {
+    return new Intl.DateTimeFormat(language === "en" ? "en-US" : "th-TH", {
         dateStyle: "medium",
         timeStyle: "short",
     }).format(date);
@@ -71,20 +75,21 @@ function isStockIn(item) {
 }
 
 export default function InventoryTransactionTable({ transactions }) {
+    const { ui, language } = useNativeUi();
     return (
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
                 <table className="w-full border-collapse text-left">
                     <thead>
                         <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
-                            <th className="p-4">วันที่</th>
-                            <th className="p-4">ประเภท</th>
-                            <th className="p-4">รายการ</th>
-                            <th className="p-4 text-center">จำนวน</th>
-                            <th className="p-4 text-center">ก่อน → หลัง</th>
-                            <th className="p-4">อ้างอิง</th>
-                            <th className="p-4">ผู้ทำรายการ</th>
-                            <th className="p-4">หมายเหตุ</th>
+                            <th className="p-4">{ui("วันที่")}</th>
+                            <th className="p-4">{ui("ประเภท")}</th>
+                            <th className="p-4">{ui("รายการ")}</th>
+                            <th className="p-4 text-center">{ui("จำนวน")}</th>
+                            <th className="p-4 text-center">{ui("ก่อน → หลัง")}</th>
+                            <th className="p-4">{ui("อ้างอิง")}</th>
+                            <th className="p-4">{ui("ผู้ทำรายการ")}</th>
+                            <th className="p-4">{ui("หมายเหตุ")}</th>
                         </tr>
                     </thead>
 
@@ -112,7 +117,7 @@ export default function InventoryTransactionTable({ transactions }) {
                                                     : "rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-700"
                                             }
                                         >
-                                            {stockIn ? "ของเข้า" : "ของออก"}
+                                            {ui(stockIn ? "ของเข้า" : "ของออก")}
                                         </span>
                                     </td>
 

@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import Link from "next/link";
 
 export default function AdminInventoryHeader({
@@ -6,6 +10,7 @@ export default function AdminInventoryHeader({
     onRefresh,
     onOpenCenterHistory,
 }) {
+    const { ui } = useNativeUi();
     return (
         <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur md:px-8">
             <div className="mx-auto flex max-w-[1500px] flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -21,7 +26,7 @@ export default function AdminInventoryHeader({
 
                     <div>
                         <h1 className="text-xl font-bold text-slate-800">
-                            คลังสินค้า
+                            {ui("คลังสินค้า")}
                             {center?.centerName
                                 ? ` — ${center.centerName}`
                                 : ""}
@@ -42,7 +47,7 @@ export default function AdminInventoryHeader({
                         <span className="material-symbols-outlined text-[18px]">
                             history
                         </span>
-                        ประวัติศูนย์นี้
+                        {ui("ประวัติศูนย์นี้")}
                     </button>
                     <button
                         type="button"
@@ -52,7 +57,7 @@ export default function AdminInventoryHeader({
                         <span className="material-symbols-outlined text-[18px]">
                             refresh
                         </span>
-                        รีเฟรช
+                        {ui("รีเฟรช")}
                     </button>
                 </div>
             </div>

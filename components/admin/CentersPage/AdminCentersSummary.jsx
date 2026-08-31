@@ -1,3 +1,7 @@
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 const cards = [
     {
         key: "totalCenters",
@@ -44,6 +48,7 @@ const cards = [
 export default function AdminCentersSummary({
     summary,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {cards.map((item) => (
@@ -53,7 +58,7 @@ export default function AdminCentersSummary({
                 >
                     <div>
                         <p className="mb-1 text-xs text-slate-500">
-                            {item.title}
+                            {ui(item.title)}
                         </p>
 
                         <h2
@@ -63,9 +68,7 @@ export default function AdminCentersSummary({
                                 summary[
                                     item.key
                                 ] ?? 0
-                            ).toLocaleString(
-                                "th-TH"
-                            )}
+                            ).toLocaleString(language === "en" ? "en-US" : "th-TH")}
                         </h2>
                     </div>
 

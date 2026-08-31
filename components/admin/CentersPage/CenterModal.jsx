@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { useEffect, useState } from "react";
 import {
     getDistricts,
@@ -17,6 +19,7 @@ function SelectField({
     loading,
     required,
 }) {
+    const { ui, language } = useNativeUi();
     return (
         <label className="block">
             <span className="mb-1.5 block text-sm font-bold text-slate-700">
@@ -30,7 +33,7 @@ function SelectField({
                 required={required}
                 className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 disabled:cursor-not-allowed disabled:bg-slate-100"
             >
-                <option value="">{loading ? "กำลังโหลด..." : `เลือก${label}`}</option>
+                <option value="">{loading ? ui("กำลังโหลด...") : (language === "en" ? `Select ${label}` : `เลือก${label}`)}</option>
                 {options.map((item) => (
                     <option key={item.id} value={String(item.id)}>
                         {item.nameTh}
@@ -49,6 +52,7 @@ export default function CenterModal({
     onClose,
     onSave,
 }) {
+    const { ui, language } = useNativeUi();
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [subDistricts, setSubDistricts] = useState([]);
@@ -187,9 +191,7 @@ export default function CenterModal({
                         <span className="material-symbols-outlined text-teal-600">
                             {mode === "edit" ? "edit_square" : "add_business"}
                         </span>
-                        {mode === "edit"
-                            ? `แก้ไขข้อมูลศูนย์ ${form.id}`
-                            : "เพิ่มจุดรับบริจาคใหม่"}
+                        {mode === "edit" ? (language === "en" ? `Edit Center ${form.id}` : `แก้ไขข้อมูลศูนย์ ${form.id}`) : ui("เพิ่มจุดรับบริจาคใหม่")}
                     </h2>
                     <button
                         type="button"
@@ -203,13 +205,13 @@ export default function CenterModal({
 
                 <div className="max-h-[80vh] space-y-4 overflow-y-auto p-6">
                     <InputField
-                        label="ชื่อจุดรับบริจาค"
+                        label={ui("ชื่อจุดรับบริจาค")}
                         value={form.centerName}
                         onChange={(value) => updateField("centerName", value)}
                         required
                     />
                     <InputField
-                        label="ที่อยู่ เลขที่/หมู่/ถนน"
+                        label={ui("ที่อยู่ เลขที่/หมู่/ถนน")}
                         value={form.address}
                         onChange={(value) => updateField("address", value)}
                         required
@@ -217,7 +219,7 @@ export default function CenterModal({
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <SelectField
-                            label="จังหวัด"
+                            label={ui("จังหวัด")}
                             value={String(form.provinceId ?? "")}
                             onChange={handleProvinceChange}
                             options={provinces}
@@ -225,7 +227,7 @@ export default function CenterModal({
                             required
                         />
                         <SelectField
-                            label="อำเภอ / เขต"
+                            label={ui("อำเภอ / เขต")}
                             value={String(form.districtId ?? "")}
                             onChange={handleDistrictChange}
                             options={districts}
@@ -234,7 +236,7 @@ export default function CenterModal({
                             required
                         />
                         <SelectField
-                            label="ตำบล / แขวง"
+                            label={ui("ตำบล / แขวง")}
                             value={String(form.subDistrictId ?? "")}
                             onChange={handleSubDistrictChange}
                             options={subDistricts}
@@ -252,19 +254,19 @@ export default function CenterModal({
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <InputField
-                            label="รหัสไปรษณีย์"
+                            label={ui("รหัสไปรษณีย์")}
                             value={form.zipCode}
                             onChange={() => { }}
                             maxLength={5}
                             disabled
                         />
                         <InputField
-                            label="ชื่อผู้ประสานงาน"
+                            label={ui("ชื่อผู้ประสานงาน")}
                             value={form.contactName}
                             onChange={(value) => updateField("contactName", value)}
                         />
                         <InputField
-                            label="เบอร์โทรศัพท์"
+                            label={ui("เบอร์โทรศัพท์")}
                             value={form.phoneNumber}
                             onChange={(value) =>
                                 updateField("phoneNumber", value.replace(/\D/g, ""))
@@ -300,7 +302,7 @@ export default function CenterModal({
                                 }
                                 className="h-5 w-5 accent-teal-600"
                             />
-                            <span className="font-bold text-slate-700">เปิดใช้งานศูนย์</span>
+                            <span className="font-bold text-slate-700">{ui("เปิดใช้งานศูนย์")}</span>
                         </label>
                     )}
 
@@ -311,7 +313,7 @@ export default function CenterModal({
                             disabled={saving}
                             className="flex-1 rounded-xl border border-slate-200 bg-white py-3 font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50"
                         >
-                            ยกเลิก
+                            {ui("ยกเลิก")}
                         </button>
                         <button
                             type="submit"
@@ -323,7 +325,7 @@ export default function CenterModal({
                             }
                             className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-teal-600 py-3 font-bold text-white shadow-lg shadow-teal-500/30 hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            {saving ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
+                            {saving ? ui("กำลังบันทึก...") : ui("บันทึกข้อมูล")}
                         </button>
                     </div>
                 </div>

@@ -1,11 +1,14 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import { colors } from "@/constants/colors";
 import PublicNavbar from "@/components/common/public-navbar";
 import AdminLoginForm from "@/components/form/Admin/AdminLoginForm/AdminLoginForm";
 
 
 export default function AdminLoginPage() {
+    const { ui } = useNativeUi();
     return (
         <div className={`${colors.admin.page} relative min-h-screen flex flex-col overflow-hidden`}>
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -27,11 +30,11 @@ export default function AdminLoginPage() {
 
                     <div className="text-center mb-8">
                         <h1 className="text-2xl font-bold text-slate-800 mb-2">
-                            เข้าสู่ระบบ (ผู้ดูแลระบบ)
+                            {ui("เข้าสู่ระบบ (ผู้ดูแลระบบ)")}
                         </h1>
 
                         <p className="text-slate-400 text-xs">
-                            ระบบจัดการศูนย์บัญชาการช่วยเหลือผู้ประสบภัยน้ำท่วม
+                            {ui("ระบบจัดการศูนย์บัญชาการช่วยเหลือผู้ประสบภัยน้ำท่วม")}
                         </p>
                     </div>
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { useNativeUi } from "@/hooks/useNativeUi";
+
 import {
     useEffect,
     useRef,
@@ -11,6 +13,7 @@ export default function AdminReliefChart({
     rangeDays,
     onRangeChange,
 }) {
+    const { ui } = useNativeUi();
     const canvasRef =
         useRef(null);
     const chartRef =
@@ -34,7 +37,7 @@ export default function AdminReliefChart({
                         datasets: [
                             {
                                 label:
-                                    "คำขอเข้ามา",
+                                    ui("คำขอเข้ามา"),
                                 data:
                                     chartData.requests,
                                 backgroundColor:
@@ -47,7 +50,7 @@ export default function AdminReliefChart({
                             },
                             {
                                 label:
-                                    "ช่วยเหลือสำเร็จ",
+                                    ui("ช่วยเหลือสำเร็จ"),
                                 data:
                                     chartData.completed,
                                 backgroundColor:
@@ -81,18 +84,18 @@ export default function AdminReliefChart({
         return () => {
             chartRef.current?.destroy();
         };
-    }, [chartData]);
+    }, [chartData, ui]);
 
     return (
         <div className="rounded-2xl border border-slate-100 bg-white shadow-sm lg:col-span-2">
             <div className="flex items-center justify-between border-b border-slate-100 p-6">
                 <div>
                     <h3 className="text-lg font-bold text-slate-800">
-                        สถิติการช่วยเหลือ
+                        {ui("สถิติการช่วยเหลือ")}
                     </h3>
 
                     <p className="text-sm text-slate-500">
-                        เปรียบเทียบคำขอและเคสที่เสร็จสิ้น
+                        {ui("เปรียบเทียบคำขอและเคสที่เสร็จสิ้น")}
                     </p>
                 </div>
 
@@ -109,11 +112,11 @@ export default function AdminReliefChart({
                     className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600"
                 >
                     <option value={7}>
-                        7 วันล่าสุด
+                        {ui("7 วันล่าสุด")}
                     </option>
 
                     <option value={30}>
-                        30 วันล่าสุด
+                        {ui("30 วันล่าสุด")}
                     </option>
                 </select>
             </div>

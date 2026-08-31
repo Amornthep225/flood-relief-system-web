@@ -1,10 +1,14 @@
-function formatUpdatedAt(value) {
+"use client";
+
+import { useNativeUi } from "@/hooks/useNativeUi";
+
+function formatUpdatedAt(value, language) {
     if (!value) {
-        return "ยังไม่ได้อัปเดต";
+        return language === "en" ? "Not updated yet" : "ยังไม่ได้อัปเดต";
     }
 
     return new Intl.DateTimeFormat(
-        "th-TH",
+        language === "en" ? "en-US" : "th-TH",
         {
             dateStyle: "medium",
             timeStyle: "short",
@@ -17,6 +21,7 @@ export default function AdminDashboardHeader({
     refreshing,
     onRefresh,
 }) {
+    const { ui, language } = useNativeUi();
     let adminName = "Admin";
 
     if (
@@ -43,14 +48,11 @@ export default function AdminDashboardHeader({
         <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur md:px-8">
             <div>
                 <h1 className="text-xl font-black text-slate-800">
-                    Dashboard ภาพรวม
+                    {ui("Dashboard ภาพรวม")}
                 </h1>
 
                 <p className="mt-1 text-xs text-slate-500">
-                    อัปเดตล่าสุด:{" "}
-                    {formatUpdatedAt(
-                        updatedAt
-                    )}
+                    {ui("อัปเดตล่าสุด")}: {formatUpdatedAt(updatedAt, language)}
                 </p>
             </div>
 
@@ -78,7 +80,7 @@ export default function AdminDashboardHeader({
                     </p>
 
                     <p className="text-xs text-slate-500">
-                        ผู้ดูแลระบบ
+                        {ui("ผู้ดูแลระบบ")}
                     </p>
                 </div>
 
