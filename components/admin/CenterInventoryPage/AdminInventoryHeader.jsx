@@ -32,9 +32,6 @@ export default function AdminInventoryHeader({
                                 : ""}
                         </h1>
 
-                        <p className="text-sm text-slate-500">
-                            Center ID: {centerId || "-"}
-                        </p>
                     </div>
                 </div>
 

@@ -24,6 +24,7 @@ import StaffSosSkeleton from "./StaffSosSkeleton";
 
 import {
     acceptSosRequest,
+    checkSosStockBeforeAccept,
     getStaffSosRequestById,
     getStaffSosRequests,
 } from "@/services/staff/sos";
@@ -102,6 +103,17 @@ function sortSosRequests(requests) {
             return firstStatus - secondStatus;
         }
 
+        // งานที่ยังรอรับเรื่อง ให้เคสที่รอนานที่สุดขึ้นก่อน
+        if (
+            normalizeSortValue(first.status) === "pending" &&
+            normalizeSortValue(second.status) === "pending"
+        ) {
+            return (
+                new Date(first.createdAt || 0).getTime() -
+                new Date(second.createdAt || 0).getTime()
+            );
+        }
+
         return (
             new Date(second.createdAt || 0).getTime() -
             new Date(first.createdAt || 0).getTime()
@@ -109,7 +121,9 @@ function sortSosRequests(requests) {
     });
 }
 
-export default function StaffSos() {
+export default function StaffSos({
+    requestType = "emergency",
+}) {
     const { ui, language } = useNativeUi();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -148,7 +162,25 @@ export default function StaffSos() {
 
                 const data = normalizeRequests(response);
 
-                const sorted = sortSosRequests(data);
+                const filteredByType = data.filter((request) => {
+                    const type = String(
+                        request?.requestType || "Relief"
+                    )
+                        .trim()
+                        .toLowerCase();
+
+                    if (requestType === "emergency") {
+                        return type === "emergency";
+                    }
+
+                    if (requestType === "relief") {
+                        return type !== "emergency";
+                    }
+
+                    return true;
+                });
+
+                const sorted = sortSosRequests(filteredByType);
 
                 setRequests(sorted);
             } catch (error) {
@@ -162,7 +194,11 @@ export default function StaffSos() {
                     title: ui("โหลดข้อมูลไม่สำเร็จ"),
                     text:
                         error.message ||
-                        ui("ไม่สามารถโหลดรายการ SOS ได้"),
+                        ui(
+                            requestType === "relief"
+                                ? "ไม่สามารถโหลดคำขอรับสิ่งของได้"
+                                : "ไม่สามารถโหลดรายการ SOS ได้"
+                        ),
                     confirmButtonText: ui("ตกลง"),
                 });
             } finally {
@@ -170,7 +206,7 @@ export default function StaffSos() {
                 setRefreshing(false);
             }
         },
-        [filters]
+        [filters, requestType, ui]
     );
 
     useEffect(() => {
@@ -203,6 +239,33 @@ export default function StaffSos() {
                     return;
                 }
 
+                const detailIsEmergency =
+                    isEmergencyRequest(detail);
+
+                if (
+                    requestType === "emergency" &&
+                    !detailIsEmergency
+                ) {
+                    router.replace(
+                        `/staff/relief-requests?id=${encodeURIComponent(
+                            linkedRequestId
+                        )}`
+                    );
+                    return;
+                }
+
+                if (
+                    requestType === "relief" &&
+                    detailIsEmergency
+                ) {
+                    router.replace(
+                        `/staff/staff-sos?id=${encodeURIComponent(
+                            linkedRequestId
+                        )}`
+                    );
+                    return;
+                }
+
                 setDetailRequest(detail);
 
                 const status = normalizeStatus(detail?.status);
@@ -230,7 +293,11 @@ export default function StaffSos() {
                     confirmButtonText: ui("ตกลง"),
                 });
 
-                router.replace("/staff/staff-sos");
+                router.replace(
+                    requestType === "relief"
+                        ? "/staff/relief-requests"
+                        : "/staff/staff-sos"
+                );
             } finally {
                 if (!cancelled) {
                     setDetailLoading(false);
@@ -243,7 +310,7 @@ export default function StaffSos() {
         return () => {
             cancelled = true;
         };
-    }, [linkedRequestId, router]);
+    }, [linkedRequestId, requestType, router, ui]);
 
     const summary = useMemo(() => {
         const waiting = requests.filter((request) =>
@@ -347,100 +414,26 @@ export default function StaffSos() {
                 );
             }
 
-            const [detailResponse, inventoryResponse] =
-                await Promise.all([
-                    getStaffSosRequestById(request.id),
-                    getCenterInventory(centerId),
-                ]);
-
-            const detail =
-                detailResponse?.data ??
-                detailResponse;
-
-            const requestedItems =
-                Array.isArray(detail?.items)
-                    ? detail.items
-                    : [];
-
-            const inventories =
-                normalizeList(inventoryResponse);
-
-            const items = requestedItems.map(
-                (requested) => {
-                    const reliefItemId =
-                        requested.reliefItemId ??
-                        requested.itemId ??
-                        requested.reliefItem?.id ??
-                        "";
-
-                    const inventory =
-                        inventories.find(
-                            (item) =>
-                                String(
-                                    item.reliefItemId ??
-                                        item.itemId ??
-                                        item.reliefItem?.id ??
-                                        ""
-                                ) ===
-                                String(reliefItemId)
-                        );
-
-                    const requestedQuantity =
-                        Number(
-                            requested.quantity ?? 0
-                        );
-
-                    const availableQuantity =
-                        Number(
-                            inventory?.quantity ?? 0
-                        );
-
-                    const shortageQuantity =
-                        Math.max(
-                            requestedQuantity -
-                                availableQuantity,
-                            0
-                        );
-
-                    return {
-                        reliefItemId,
-                        reliefItemName:
-                            requested.reliefItemName ??
-                            requested.name ??
-                            requested.reliefItem?.name ??
-                            inventory?.reliefItemName ??
-                            inventory?.name ??
-                            ui("ไม่ระบุรายการ"),
-                        unit:
-                            requested.unit ??
-                            inventory?.unit ??
-                            requested.reliefItem?.unit ??
-                            ui("ชิ้น"),
-                        requestedQuantity,
-                        availableQuantity,
-                        remainingQuantity:
-                            Math.max(
-                                availableQuantity -
-                                    requestedQuantity,
-                                0
-                            ),
-                        shortageQuantity,
-                        isEnough:
-                            availableQuantity >=
-                            requestedQuantity,
-                    };
-                }
+            const stockResponse = await checkSosStockBeforeAccept(
+                request.id,
+                centerId
             );
 
+            const stockData =
+                stockResponse?.data ??
+                stockResponse;
+
             setStockCheck({
-                sosRequestId: request.id,
-                centerId,
-                items,
-                isAllEnough:
-                    items.length > 0 &&
-                    items.every(
-                        (item) => item.isEnough
-                    ),
+                ...stockData,
+                items: Array.isArray(stockData?.items)
+                    ? stockData.items.map((item) => ({
+                          ...item,
+                          id: item.sosRequestItemId,
+                      }))
+                    : [],
+                pendingRequests: Array.isArray(stockData?.pendingRequests)
+                    ? stockData.pendingRequests
+                    : [],
             });
         } catch (error) {
             setConfirmRequest(null);
@@ -459,11 +452,8 @@ export default function StaffSos() {
         }
     };
 
-    const handleConfirmAccept = async () => {
-        if (
-            !confirmRequest?.id ||
-            !stockCheck?.isAllEnough
-        ) {
+    const handleConfirmAccept = async (approvedItems = []) => {
+        if (!confirmRequest?.id) {
             return;
         }
 
@@ -473,7 +463,9 @@ export default function StaffSos() {
             const acceptedId =
                 confirmRequest.id;
 
-            await acceptSosRequest(acceptedId);
+            await acceptSosRequest(acceptedId, {
+                approvedItems,
+            });
 
             setConfirmRequest(null);
             setStockCheck(null);
@@ -541,6 +533,7 @@ export default function StaffSos() {
     return (
         <section className="w-full space-y-6">
             <StaffSosHeader
+                requestType={requestType}
                 refreshing={refreshing}
                 onRefresh={() =>
                     loadRequests({
@@ -551,12 +544,16 @@ export default function StaffSos() {
             />
 
             <StaffSosFilter
+                requestType={requestType}
                 filters={filters}
                 onSearch={handleFilterSearch}
                 onReset={handleResetFilters}
             />
 
-            <StaffSosSummary summary={summary} />
+            <StaffSosSummary
+                requestType={requestType}
+                summary={summary}
+            />
 
             <section className="w-full space-y-6 border border-slate-200 rounded-xl bg-[#f3f3f3] p-6 shadow-sm">
             <StaffSosTabs
@@ -607,7 +604,9 @@ export default function StaffSos() {
 
                         if (linkedRequestId) {
                             router.replace(
-                                "/staff/staff-sos"
+                                requestType === "relief"
+                                    ? "/staff/relief-requests"
+                                    : "/staff/staff-sos"
                             );
                         }
                     }}

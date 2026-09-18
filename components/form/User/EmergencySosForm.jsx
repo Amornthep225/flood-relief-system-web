@@ -26,9 +26,18 @@ const initialForm = {
     elderlyCount: 0,
     disabledCount: 0,
     patientCount: 0,
+    deathCount: 0,
+    severity: "Moderate",
     waterLevel: "",
     emergencyDetail: "",
 };
+
+const severityOptions = [
+    { value: "Mild", icon: "sentiment_satisfied", tone: "emerald" },
+    { value: "Moderate", icon: "warning", tone: "amber" },
+    { value: "Severe", icon: "personal_injury", tone: "orange" },
+    { value: "Critical", icon: "emergency", tone: "red" },
+];
 
 export default function EmergencySosForm() {
     const router = useRouter();
@@ -97,7 +106,8 @@ export default function EmergencySosForm() {
         Number(form.childCount) +
         Number(form.elderlyCount) +
         Number(form.disabledCount) +
-        Number(form.patientCount);
+        Number(form.patientCount) +
+        Number(form.deathCount);
     // ==========================================
     // จำนวนคน
     // ==========================================
@@ -184,6 +194,10 @@ export default function EmergencySosForm() {
                 disabledCount: Number(form.disabledCount),
 
                 patientCount: Number(form.patientCount),
+
+                deathCount: Number(form.deathCount),
+
+                severity: form.severity,
 
                 waterLevel: form.waterLevel === "" ? null : Number(form.waterLevel),
 
@@ -333,7 +347,49 @@ export default function EmergencySosForm() {
                         description={t("sos.emergency.victimsDescription")}
                     />
 
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                        <p className="mb-3 text-sm font-black text-slate-700">
+                            {t("sos.emergency.severityTitle")}
+                        </p>
+
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                            {severityOptions.map((option) => {
+                                const active = form.severity === option.value;
+
+                                return (
+                                    <button
+                                        key={option.value}
+                                        type="button"
+                                        onClick={() =>
+                                            setForm((previous) => ({
+                                                ...previous,
+                                                severity: option.value,
+                                            }))
+                                        }
+                                        className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition ${
+                                            active
+                                                ? "border-red-400 bg-white ring-2 ring-red-100"
+                                                : "border-slate-200 bg-white hover:border-red-200"
+                                        }`}
+                                    >
+                                        <span className={`material-symbols-outlined ${active ? "text-red-500" : "text-slate-400"}`}>
+                                            {option.icon}
+                                        </span>
+                                        <div>
+                                            <p className="text-sm font-black text-slate-800">
+                                                {t(`sos.emergency.severity.${option.value.toLowerCase()}.label`)}
+                                            </p>
+                                            <p className="text-xs text-slate-500">
+                                                {t(`sos.emergency.severity.${option.value.toLowerCase()}.description`)}
+                                            </p>
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
 
                         <NumberField
                             label={t("sos.emergency.child")}
@@ -362,7 +418,21 @@ export default function EmergencySosForm() {
                             value={form.patientCount}
                             onChange={(value) => setNumber("patientCount", value)}
                         />
+
+                        <NumberField
+                            label={t("sos.emergency.deceased")}
+                            unit={t("sos.emergency.personUnit")}
+                            value={form.deathCount}
+                            onChange={(value) => setNumber("deathCount", value)}
+                            danger
+                        />
                     </div>
+
+                    {Number(form.deathCount) > 0 && (
+                        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700">
+                            {t("sos.emergency.deceasedWarning", { count: form.deathCount })}
+                        </div>
+                    )}
 
                     <div className="max-w-sm">
                         <label className="mb-2 block text-sm font-bold text-slate-700">
@@ -450,9 +520,15 @@ export default function EmergencySosForm() {
     );
 }
 
-function NumberField({ label, value, onChange, min = 0, unit }) {
+function NumberField({ label, value, onChange, min = 0, unit, danger = false }) {
     return (
-        <label className="block rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <label
+            className={`block rounded-2xl border p-4 ${
+                danger
+                    ? "border-red-200 bg-red-50"
+                    : "border-slate-200 bg-slate-50"
+            }`}
+        >
             <span className="mb-2 block text-xs font-bold text-slate-500">
                 {label}
             </span>
@@ -462,7 +538,9 @@ function NumberField({ label, value, onChange, min = 0, unit }) {
                 min={min}
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
-                className="w-full bg-transparent text-2xl font-black text-slate-800 outline-none"
+                className={`w-full bg-transparent text-2xl font-black outline-none ${
+                    danger ? "text-red-700" : "text-slate-800"
+                }`}
             />
 
             <span className="text-xs text-slate-400">{unit}</span>

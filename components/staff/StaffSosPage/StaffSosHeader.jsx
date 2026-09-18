@@ -3,23 +3,36 @@
 import { useNativeUi } from "@/hooks/useNativeUi";
 
 export default function StaffSosHeader({
+    requestType = "emergency",
     refreshing,
     onRefresh,
 }) {
-    const { ui, language } = useNativeUi();
+    const { ui } = useNativeUi();
+    const isEmergency = requestType === "emergency";
+
     return (
         <div className="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
             <div>
                 <h1 className="flex items-center gap-3 text-2xl font-black text-slate-800">
-                    <span className="material-symbols-outlined animate-pulse text-red-500">
-                        cell_tower
+                    <span
+                        className={`material-symbols-outlined ${
+                            isEmergency
+                                ? "animate-pulse text-red-500"
+                                : "text-sky-500"
+                        }`}
+                    >
+                        {isEmergency ? "cell_tower" : "inventory_2"}
                     </span>
 
-                    {ui("รายการแจ้งขอความช่วยเหลือ (SOS)")}
+                    {isEmergency
+                        ? ui("รายการแจ้งเหตุฉุกเฉิน (SOS)")
+                        : ui("รายการคำขอรับสิ่งของ")}
                 </h1>
 
                 <p className="mt-2 text-sm text-slate-500">
-                    {ui("จัดการภารกิจและติดตามสถานะการช่วยเหลือ")}
+                    {isEmergency
+                        ? ui("จัดการเหตุฉุกเฉินและติดตามสถานะการช่วยเหลือ")
+                        : ui("จัดการคำขอรับสิ่งของและติดตามสถานะการดำเนินงาน")}
                 </p>
             </div>
 

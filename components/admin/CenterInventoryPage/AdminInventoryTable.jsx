@@ -4,10 +4,7 @@ import { useNativeUi } from "@/hooks/useNativeUi";
 
 import InventoryStatusBadge from "./InventoryStatusBadge";
 
-export default function AdminInventoryTable({
-    items,
-    onMinimum,
-}) {
+export default function AdminInventoryTable({ items, onThresholds }) {
     const { ui } = useNativeUi();
     return (
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -19,6 +16,7 @@ export default function AdminInventoryTable({
                             <th className="p-4">{ui("รายการสิ่งของ")}</th>
                             <th className="p-4 text-center">{ui("คงเหลือ")}</th>
                             <th className="p-4 text-center">{ui("จุดขั้นต่ำ")}</th>
+                            <th className="p-4 text-center">{ui("จุดสูงสุด")}</th>
                             <th className="p-4 text-center">{ui("สถานะ")}</th>
                             <th className="p-4 text-right">{ui("จัดการ")}</th>
                         </tr>
@@ -52,18 +50,24 @@ export default function AdminInventoryTable({
                                 <td className="p-4 text-center text-slate-600">
                                     {item.minimumQuantity.toLocaleString("th-TH")} {ui(item.unit)}
                                 </td>
+                                <td className="p-4 text-center text-slate-600">
+                                    {item.maximumQuantity > 0
+                                        ? `${item.maximumQuantity.toLocaleString("th-TH")} ${ui(
+                                            item.unit
+                                        )}`
+                                        : ui("ไม่จำกัด")}
+                                </td>
                                 <td className="p-4 text-center">
                                     <InventoryStatusBadge status={item.stockStatus} />
                                 </td>
                                 <td className="p-4 text-right">
                                     <div className="flex flex-wrap justify-end gap-2">
-
                                         <button
                                             type="button"
-                                            onClick={() => onMinimum(item)}
+                                            onClick={() => onThresholds(item)}
                                             className="rounded-lg bg-sky-50 px-3 py-2 text-xs font-bold text-sky-700 hover:bg-sky-100"
                                         >
-                                            {ui("แก้ขั้นต่ำ")}
+                                            {ui("แก้ Min / Max")}
                                         </button>
                                     </div>
                                 </td>

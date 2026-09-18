@@ -66,6 +66,7 @@ export function normalizeCrisisCaseDetail(rawDetail, fallback = {}) {
         elderlyCount: Number(detail.elderlyCount ?? fallback.elderlyCount ?? 0),
         disabledCount: Number(detail.disabledCount ?? fallback.disabledCount ?? 0),
         patientCount: Number(detail.patientCount ?? fallback.patientCount ?? 0),
+        deathCount: Number(detail.deathCount ?? fallback.deathCount ?? 0),
         waterLevel:
             detail.waterLevel === undefined || detail.waterLevel === null
                 ? fallback.waterLevel ?? null

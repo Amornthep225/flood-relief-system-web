@@ -124,6 +124,8 @@ CenterInventories 1 ── * InventoryTransactions
 | Latitude | double | Latitude |
 | Longitude | double | Longitude |
 | AddressDetail | varchar(500) | จุดสังเกต |
+| RequestType | varchar(20) | ประเภทคำขอ (`Relief`, `Emergency`) |
+| ReceiveMethod | varchar(20) NULL | วิธีรับสิ่งของ: `Delivery` = เจ้าหน้าที่จัดส่ง, `Pickup` = ผู้ใช้มารับเองที่ศูนย์; ใช้กับคำขอ `Relief` |
 | Priority | varchar(20) | `Normal`, `High` ฯลฯ |
 | Status | varchar(30) | สถานะงาน |
 | UserRemark | varchar(500) NULL | หมายเหตุ User |
@@ -131,22 +133,18 @@ CenterInventories 1 ── * InventoryTransactions
 | CreatedAt | datetime(6) | วันที่สร้าง |
 | AcceptedAt | datetime(6) NULL | วันที่รับเรื่อง |
 | PreparingAt | datetime(6) NULL | วันที่เริ่มเตรียม |
-| DeliveringAt | datetime(6) NULL | วันที่เริ่มนำส่ง |
+| DeliveringAt | datetime(6) NULL | วันที่เริ่มนำส่ง หรือวันที่สิ่งของพร้อมให้รับที่ศูนย์กรณี `Pickup` |
 | CompletedAt | datetime(6) NULL | วันที่เสร็จ |
 | CancelledAt | datetime(6) NULL | วันที่ยกเลิก |
 | UpdatedAt | datetime(6) NULL | วันที่แก้ไข |
-<<<<<<< Updated upstream
-=======
 | ChildCount | int(11) | จำนวนเด็ก |
 | DisabledCount | int(11) | จำนวนผู้พิการ |
 | ElderlyCount | int(11) | จำนวนผู้สูงอายุ |
 | EmergencyDetail | varchar(1000) NULL | รายละเอียดเหตุฉุกเฉิน |
 | EmergencyType | varchar(50) NULL | ประเภทเหตุฉุกเฉิน |
 | PatientCount | int(11) | จำนวนผู้ป่วย |
-| RequestType | varchar(20) | ประเภทคำขอ (`Relief` ฯลฯ) |
 | VictimCount | int(11) | จำนวนผู้ประสบภัย |
 | WaterLevel | decimal(5,2) NULL | ระดับน้ำ |
->>>>>>> Stashed changes
 
 Status:
 
@@ -394,3 +392,12 @@ Validate all requested items
 ```
 
 หากรายการใดล้มเหลว ต้อง Rollback ทั้งชุด
+
+
+## Requirement 10 — Relief item request limit
+
+ตาราง `relief_items` เพิ่มคอลัมน์ `MaximumRequestQuantity INT NOT NULL DEFAULT 0`
+
+- ใช้กำหนดจำนวนสูงสุดที่ผู้ใช้ขอได้ต่อ 1 คำขอ
+- `0` หมายถึงไม่จำกัด
+- เปลี่ยนด้วย SQL: `database/req10_maximum_request_quantity.sql`

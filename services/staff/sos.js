@@ -435,6 +435,7 @@ export async function acceptSosRequest(
     {
         priority,
         staffRemark = "",
+        approvedItems = [],
     } = {}
 ) {
     if (!id) {
@@ -461,6 +462,13 @@ export async function acceptSosRequest(
             String(priority).trim();
     }
 
+    if (Array.isArray(approvedItems) && approvedItems.length > 0) {
+        payload.approvedItems = approvedItems.map((item) => ({
+            sosRequestItemId: String(item.sosRequestItemId || item.id || "").trim(),
+            approvedQuantity: Number(item.approvedQuantity ?? 0),
+        }));
+    }
+
     return authorizedFetch(
         `${API_URL}/sos-requests/${encodeURIComponent(
             id
@@ -475,6 +483,22 @@ export async function acceptSosRequest(
     );
 }
 
+
+
+export async function checkSosStockBeforeAccept(id, centerId = "") {
+    if (!id) {
+        throw new Error("ไม่พบรหัสคำขอความช่วยเหลือ");
+    }
+
+    const query = centerId
+        ? `?centerId=${encodeURIComponent(centerId)}`
+        : "";
+
+    return authorizedFetch(
+        `${API_URL}/sos-requests/${encodeURIComponent(id)}/stock-check${query}`,
+        { method: "GET" }
+    );
+}
 /*
 |--------------------------------------------------------------------------
 | อัปเดตสถานะ SOS

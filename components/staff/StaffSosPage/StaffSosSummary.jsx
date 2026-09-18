@@ -2,13 +2,7 @@
 
 import { useNativeUi } from "@/hooks/useNativeUi";
 
-const cards = [
-    {
-        key: "total",
-        title: "คำขอทั้งหมด",
-        icon: "assignment",
-        style: "bg-slate-800",
-    },
+const baseCards = [
     {
         key: "waiting",
         title: "รอรับเรื่อง",
@@ -29,8 +23,28 @@ const cards = [
     },
 ];
 
-export default function StaffSosSummary({ summary }) {
-    const { ui, language } = useNativeUi();
+export default function StaffSosSummary({
+    requestType = "emergency",
+    summary,
+}) {
+    const { ui } = useNativeUi();
+
+    const cards = [
+        {
+            key: "total",
+            title:
+                requestType === "emergency"
+                    ? "SOS ทั้งหมด"
+                    : "คำขอรับสิ่งของทั้งหมด",
+            icon:
+                requestType === "emergency"
+                    ? "emergency"
+                    : "inventory_2",
+            style: "bg-slate-800",
+        },
+        ...baseCards,
+    ];
+
     return (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {cards.map((card) => (
@@ -41,7 +55,7 @@ export default function StaffSosSummary({ summary }) {
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium text-white/80">
-                                {card.title}
+                                {ui(card.title)}
                             </p>
 
                             <p className="mt-2 text-3xl font-black">

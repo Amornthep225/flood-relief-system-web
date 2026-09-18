@@ -20,7 +20,10 @@ export default function SosTrackingCard({ request }) {
                     "emergency" ? (
                         <EmergencySummary request={request} t={t} />
                     ) : (
-                        <SosRequestItems items={request.items} />
+                        <>
+                            <ReceiveMethodSummary request={request} t={t} />
+                            <SosRequestItems items={request.items} />
+                        </>
                     )}
 
                     <SosTimeline request={request} />
@@ -63,6 +66,50 @@ function TrackingHeader({ requestId, t }) {
     );
 }
 
+function ReceiveMethodSummary({ request, t }) {
+    const isPickup =
+        String(request?.receiveMethod || "Delivery").toLowerCase() === "pickup";
+
+    return (
+        <section className={`rounded-2xl border p-5 shadow-sm ${
+            isPickup
+                ? "border-emerald-100 bg-emerald-50"
+                : "border-blue-100 bg-blue-50"
+        }`}>
+            <div className="flex items-start gap-3">
+                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+                    isPickup
+                        ? "bg-emerald-600 text-white"
+                        : "bg-blue-600 text-white"
+                }`}>
+                    <span className="material-symbols-outlined">
+                        {isPickup ? "storefront" : "local_shipping"}
+                    </span>
+                </div>
+                <div>
+                    <p className="text-xs font-bold text-slate-500">
+                        {t("sos.tracking.receiveMethodLabel")}
+                    </p>
+                    <h2 className="font-black text-slate-800">
+                        {t(
+                            isPickup
+                                ? "sos.tracking.receiveMethodPickup"
+                                : "sos.tracking.receiveMethodDelivery"
+                        )}
+                    </h2>
+                    <p className="mt-1 text-sm text-slate-600">
+                        {t(
+                            isPickup
+                                ? "sos.tracking.receiveMethodPickupDetail"
+                                : "sos.tracking.receiveMethodDeliveryDetail"
+                        )}
+                    </p>
+                </div>
+            </div>
+        </section>
+    );
+}
+
 function EmergencySummary({ request, t }) {
     const typeKey = request.emergencyType || "Other";
     const emergencyKey = `sos.success.emergencyTypes.${typeKey}`;
@@ -86,7 +133,7 @@ function EmergencySummary({ request, t }) {
                 </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
                 <EmergencyStat
                     label={t("sos.tracking.affectedPeople")}
                     value={`${request.victimCount || 1} ${t(
@@ -109,6 +156,12 @@ function EmergencySummary({ request, t }) {
                     label={t("sos.tracking.patientDisabled")}
                     value={`${(request.patientCount || 0) +
                         (request.disabledCount || 0)} ${t(
+                        "sos.tracking.personUnit"
+                    )}`}
+                />
+                <EmergencyStat
+                    label={t("sos.tracking.deceased")}
+                    value={`${request.deathCount || 0} ${t(
                         "sos.tracking.personUnit"
                     )}`}
                 />

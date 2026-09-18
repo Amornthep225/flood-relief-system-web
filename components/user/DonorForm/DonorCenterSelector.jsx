@@ -18,7 +18,17 @@ export default function DonorCenterSelector({
             try {
                 setIsLoading(true);
                 const data = await getCenters();
-                setCenters(data || []);
+
+                // หน้า User ต้องเห็นเฉพาะศูนย์ที่เปิดใช้งาน
+                // Backend ส่งทั้ง Active / Inactive เพื่อให้หน้า Admin จัดการได้
+                setCenters(
+                    Array.isArray(data)
+                        ? data.filter(
+                              (center) =>
+                                  center.isActive !== false
+                          )
+                        : []
+                );
             } catch (error) {
                 alert(
                     translateUiText(error?.message || "", language) ||

@@ -9,6 +9,7 @@ import {
 } from "react";
 import AdminSosPriorityBadge from "./AdminSosPriorityBadge";
 import { getInventoryByCenter } from "@/services/admin/center-inventory";
+import { checkSosStockBeforeAccept } from "@/services/admin/sos";
 
 function normalizeArray(response) {
     if (Array.isArray(response)) {
@@ -61,6 +62,8 @@ export default function AdminAssignSosModal({
         useState(null);
     const [stockError, setStockError] =
         useState("");
+    const [approvedQuantities, setApprovedQuantities] =
+        useState({});
 
     const isEmergency =
         String(caseItem?.requestType || "Relief")
@@ -116,6 +119,7 @@ export default function AdminAssignSosModal({
         setStockCheck(null);
         setStockError("");
         setCheckingStock(false);
+        setApprovedQuantities({});
     }, [caseItem?.id]);
 
     useEffect(() => {
@@ -167,10 +171,14 @@ export default function AdminAssignSosModal({
             try {
                 setCheckingStock(true);
 
-                const response =
-                    await getInventoryByCenter(
-                        selectedStaff.centerId
-                    );
+                const [response, stockResponse] =
+                    await Promise.all([
+                        getInventoryByCenter(selectedStaff.centerId),
+                        checkSosStockBeforeAccept(
+                            caseItem.id,
+                            selectedStaff.centerId
+                        ),
+                    ]);
 
                 if (cancelled) {
                     return;
@@ -178,6 +186,8 @@ export default function AdminAssignSosModal({
 
                 const inventories =
                     normalizeArray(response);
+                const stockData =
+                    stockResponse?.data ?? stockResponse;
 
                 const items = requestedItems.map(
                     (requested) => {
@@ -240,6 +250,7 @@ export default function AdminAssignSosModal({
                                     ?.reliefItem
                                     ?.unit ??
                                 "",
+                            id: requested?.id ?? requested?.sosRequestItemId ?? reliefItemId,
                             requestedQuantity,
                             availableQuantity,
                             remainingQuantity:
@@ -256,6 +267,15 @@ export default function AdminAssignSosModal({
                     }
                 );
 
+                const initialApproved = {};
+                items.forEach((item) => {
+                    initialApproved[item.id || item.reliefItemId] = Math.min(
+                        Number(item.requestedQuantity ?? 0),
+                        Number(item.availableQuantity ?? 0)
+                    );
+                });
+                setApprovedQuantities(initialApproved);
+
                 setStockCheck({
                     centerId:
                         selectedStaff.centerId,
@@ -263,6 +283,9 @@ export default function AdminAssignSosModal({
                         selectedStaff.centerName,
                     isEmergency: false,
                     items,
+                    pendingRequests: Array.isArray(stockData?.pendingRequests)
+                        ? stockData.pendingRequests
+                        : [],
                     isAllEnough:
                         items.length > 0 &&
                         items.every(
@@ -307,12 +330,36 @@ export default function AdminAssignSosModal({
         return null;
     }
 
+    const approvedTotal = (stockCheck?.items || []).reduce(
+        (sum, item) =>
+            sum +
+            Number(
+                approvedQuantities[
+                    item.id || item.reliefItemId
+                ] ?? 0
+            ),
+        0
+    );
+
     const canConfirm =
         Boolean(staffId) &&
         !assigning &&
         !checkingStock &&
         (isEmergency ||
-            stockCheck?.isAllEnough === true);
+            ((stockCheck?.items || []).length > 0 &&
+                approvedTotal > 0 &&
+                (stockCheck?.items || []).every((item) => {
+                    const value = Number(
+                        approvedQuantities[
+                            item.id || item.reliefItemId
+                        ] ?? 0
+                    );
+                    return (
+                        value >= 0 &&
+                        value <= Number(item.requestedQuantity ?? 0) &&
+                        value <= Number(item.availableQuantity ?? 0)
+                    );
+                })));
 
     const handleSubmit = () => {
         if (!canConfirm || !selectedStaff) {
@@ -325,6 +372,16 @@ export default function AdminAssignSosModal({
             centerId:
                 selectedStaff.centerId,
             staffRemark,
+            approvedItems: isEmergency
+                ? []
+                : (stockCheck?.items || []).map((item) => ({
+                      sosRequestItemId: item.id,
+                      approvedQuantity: Number(
+                          approvedQuantities[
+                              item.id || item.reliefItemId
+                          ] ?? 0
+                      ),
+                  })),
         });
     };
 
@@ -494,6 +551,23 @@ export default function AdminAssignSosModal({
                         </div>
                     )}
 
+                    {!isEmergency && Array.isArray(stockCheck?.pendingRequests) && stockCheck.pendingRequests.length > 0 && (
+                        <section className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                            <h4 className="font-black text-amber-800">
+                                {tx("คำขอรายการเดียวกันที่ยังไม่ได้อนุมัติ", "Other Pending Requests for the Same Items")}
+                            </h4>
+                            <div className="mt-3 space-y-2">
+                                {stockCheck.pendingRequests.map((pending, index) => (
+                                    <div key={`${pending.sosRequestId}-${pending.reliefItemId}-${index}`} className="flex items-center justify-between gap-3 rounded-lg bg-white px-3 py-2">
+                                        <span className="font-mono text-xs font-bold text-slate-500">#{pending.sosRequestId}</span>
+                                        <span className="font-bold text-slate-700">{ui(pending.reliefItemName)}</span>
+                                        <span className="font-black text-amber-700">{pending.requestedQuantity} {ui(pending.unit)}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
                     <label className="block text-sm font-bold text-slate-700">
                         {tx(
                             "เลือกเจ้าหน้าที่",
@@ -659,6 +733,9 @@ export default function AdminAssignSosModal({
                                                         )}
                                                     </th>
                                                     <th className="px-4 py-3 text-center">
+                                                        {tx("อนุมัติ", "Approve")}
+                                                    </th>
+                                                    <th className="px-4 py-3 text-center">
                                                         {tx(
                                                             "ผลตรวจ",
                                                             "Result"
@@ -706,6 +783,23 @@ export default function AdminAssignSosModal({
                                                                 {ui(
                                                                     item.unit
                                                                 )}
+                                                            </td>
+                                                            <td className="px-4 py-3 text-center">
+                                                                <input
+                                                                    type="number"
+                                                                    min="0"
+                                                                    max={Math.min(Number(item.requestedQuantity ?? 0), Number(item.availableQuantity ?? 0))}
+                                                                    value={approvedQuantities[item.id || item.reliefItemId] ?? 0}
+                                                                    onChange={(event) => {
+                                                                        const raw = Number(event.target.value);
+                                                                        const max = Math.min(Number(item.requestedQuantity ?? 0), Number(item.availableQuantity ?? 0));
+                                                                        setApprovedQuantities((current) => ({
+                                                                            ...current,
+                                                                            [item.id || item.reliefItemId]: Math.max(0, Math.min(Number.isFinite(raw) ? raw : 0, max)),
+                                                                        }));
+                                                                    }}
+                                                                    className="w-24 rounded-lg border border-slate-300 px-2 py-1 text-center font-black outline-none focus:border-sky-500"
+                                                                />
                                                             </td>
                                                             <td className="px-4 py-3 text-center">
                                                                 {item.isEnough ? (
@@ -788,11 +882,10 @@ export default function AdminAssignSosModal({
                                       "กำลังมอบหมาย...",
                                       "Assigning..."
                                   )
-                                : !isEmergency &&
-                                    stockCheck?.isAllEnough
+                                : !isEmergency && approvedTotal > 0
                                   ? tx(
-                                        "ตรวจของผ่านแล้ว — ยืนยันมอบหมาย",
-                                        "Stock Check Passed — Confirm Assignment"
+                                        `อนุมัติ ${approvedTotal} หน่วย — ยืนยันมอบหมาย`,
+                                        `Approve ${approvedTotal} units — Confirm Assignment`
                                     )
                                   : tx(
                                         "ยืนยันมอบหมาย",

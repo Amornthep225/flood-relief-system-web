@@ -2,12 +2,7 @@
 
 import { useNativeUi } from "@/hooks/useNativeUi";
 
-import {
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 import RoleGuard from "@/components/RoleGuard/RoleGuard";
@@ -15,7 +10,7 @@ import {
     getCenterById,
     getInventoryByCenter,
     getTransactionsByInventories,
-    updateMinimumQuantity,
+    updateInventoryThresholds,
 } from "@/services/admin/center-inventory";
 import AdminInventoryHeader from "./AdminInventoryHeader";
 import AdminInventorySummary from "./AdminInventorySummary";
@@ -46,47 +41,25 @@ function normalizeArray(data) {
 }
 
 function normalizeInventory(item) {
-    const quantity = Number(
-        item.quantity ??
-        item.currentQuantity ??
-        0
-    );
+    const quantity = Number(item.quantity ?? item.currentQuantity ?? 0);
 
-    const minimumQuantity = Number(
-        item.minimumQuantity ??
-        item.minQuantity ??
-        0
-    );
-
+    const minimumQuantity = Number(item.minimumQuantity ?? item.minQuantity ?? 0);
+    const maximumQuantity = Number(item.maximumQuantity ?? item.maxQuantity ?? 0);
     return {
         id: item.id ?? "",
-        centerId:
-            item.centerId ??
-            item.center?.id ??
-            "",
-        centerName:
-            item.centerName ??
-            item.center?.centerName ??
-            "",
-        reliefItemId:
-            item.reliefItemId ??
-            item.reliefItem?.id ??
-            "",
-        reliefItemName:
-            item.reliefItemName ??
-            item.reliefItem?.name ??
-            "-",
+        centerId: item.centerId ?? item.center?.id ?? "",
+        centerName: item.centerName ?? item.center?.centerName ?? "",
+        reliefItemId: item.reliefItemId ?? item.reliefItem?.id ?? "",
+        reliefItemName: item.reliefItemName ?? item.reliefItem?.name ?? "-",
         categoryName:
             item.categoryName ??
             item.reliefCategoryName ??
             item.reliefItem?.categoryName ??
             "",
-        unit:
-            item.unit ??
-            item.reliefItem?.unit ??
-            "",
+        unit: item.unit ?? item.reliefItem?.unit ?? "",
         quantity,
         minimumQuantity,
+        maximumQuantity,
         stockStatus:
             item.stockStatus ??
             (quantity === 0
@@ -94,143 +67,96 @@ function normalizeInventory(item) {
                 : quantity <= minimumQuantity
                     ? "LowStock"
                     : "Normal"),
-        updatedAt:
-            item.updatedAt ??
-            item.createdAt ??
-            null,
+        updatedAt: item.updatedAt ?? item.createdAt ?? null,
     };
 }
 
 function normalizeTransaction(item) {
     return {
         id: item.id ?? "",
-        transactionType:
-            item.transactionType ??
-            item.type ??
-            "-",
-        reliefItemName:
-            item.reliefItemName ??
-            item.reliefItem?.name ??
-            "-",
-        quantity:
-            Number(item.quantity ?? 0),
-        quantityBefore:
-            item.quantityBefore ?? null,
-        quantityAfter:
-            item.quantityAfter ?? null,
-        referenceType:
-            item.referenceType ?? "-",
-        referenceId:
-            item.referenceId ?? "-",
+        transactionType: item.transactionType ?? item.type ?? "-",
+        reliefItemName: item.reliefItemName ?? item.reliefItem?.name ?? "-",
+        quantity: Number(item.quantity ?? 0),
+        quantityBefore: item.quantityBefore ?? null,
+        quantityAfter: item.quantityAfter ?? null,
+        referenceType: item.referenceType ?? "-",
+        referenceId: item.referenceId ?? "-",
         note: item.note ?? item.remark ?? "",
-        createdBy:
-            item.createdByName ??
-            item.staffName ??
-            item.createdBy ??
-            "-",
+        createdBy: item.createdByName ?? item.staffName ?? item.createdBy ?? "-",
         unit: item.unit ?? "",
-        createdAt:
-            item.createdAt ?? null,
+        createdAt: item.createdAt ?? null,
     };
 }
 
 export default function AdminInventory() {
     const { ui } = useNativeUi();
     const searchParams = useSearchParams();
-    const centerId =
-        searchParams.get("centerId") ?? "";
+    const centerId = searchParams.get("centerId") ?? "";
 
-    const [center, setCenter] =
-        useState(null);
-    const [items, setItems] =
-        useState([]);
-    const [transactions, setTransactions] =
-        useState([]);
-    const [activeTab, setActiveTab] =
-        useState("inventory");
-    const [searchText, setSearchText] =
-        useState("");
-    const [statusFilter, setStatusFilter] =
-        useState("all");
-    const [page, setPage] =
-        useState(1);
-    const [loading, setLoading] =
-        useState(true);
-    const [saving, setSaving] =
-        useState(false);
-    const [error, setError] =
-        useState("");
-    const [modal, setModal] =
-        useState(null);
+    const [center, setCenter] = useState(null);
+    const [items, setItems] = useState([]);
+    const [transactions, setTransactions] = useState([]);
+    const [activeTab, setActiveTab] = useState("inventory");
+    const [searchText, setSearchText] = useState("");
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+    const [modal, setModal] = useState(null);
 
-    const loadData = useCallback(
-        async () => {
-            if (!centerId) {
-                setError(ui("ไม่พบ centerId ใน URL"));
-                setLoading(false);
-                return;
+    const loadData = useCallback(async () => {
+        if (!centerId) {
+            setError(ui("ไม่พบ centerId ใน URL"));
+            setLoading(false);
+            return;
+        }
+
+        try {
+            setLoading(true);
+            setError("");
+
+            const [centerResult, inventoryResult] = await Promise.allSettled([
+                getCenterById(centerId),
+                getInventoryByCenter(centerId),
+            ]);
+
+            if (centerResult.status === "rejected") {
+                throw centerResult.reason;
             }
 
-            try {
-                setLoading(true);
-                setError("");
-
-                const [
-                    centerResult,
-                    inventoryResult,
-                ] = await Promise.allSettled([
-                    getCenterById(centerId),
-                    getInventoryByCenter(centerId),
-                ]);
-
-                if (
-                    centerResult.status ===
-                    "rejected"
-                ) {
-                    throw centerResult.reason;
-                }
-
-                if (
-                    inventoryResult.status ===
-                    "rejected"
-                ) {
-                    throw inventoryResult.reason;
-                }
-
-                setCenter(
-                    centerResult.value
-                );
-
-                const normalizedItems = normalizeArray(
-                    inventoryResult.value
-                ).map(normalizeInventory);
-
-                setItems(normalizedItems);
-
-                const transactionResult =
-                    await getTransactionsByInventories(
-                        normalizedItems
-                    );
-
-                setTransactions(
-                    normalizeArray(transactionResult)
-                        .map(normalizeTransaction)
-                        .sort(
-                            (first, second) =>
-                                new Date(second.createdAt || 0) -
-                                new Date(first.createdAt || 0)
-                        )
-                );
-            } catch (requestError) {
-                setError(
-                    ui(requestError?.message || "เกิดข้อผิดพลาดในการโหลดข้อมูลคลัง")
-                );
-            } finally {
-                setLoading(false);
+            if (inventoryResult.status === "rejected") {
+                throw inventoryResult.reason;
             }
-        },
-        [centerId, ui]
-    );
+
+            setCenter(centerResult.value);
+
+            const normalizedItems = normalizeArray(inventoryResult.value).map(
+                normalizeInventory
+            );
+
+            setItems(normalizedItems);
+
+            const transactionResult = await getTransactionsByInventories(
+                normalizedItems
+            );
+
+            setTransactions(
+                normalizeArray(transactionResult)
+                    .map(normalizeTransaction)
+                    .sort(
+                        (first, second) =>
+                            new Date(second.createdAt || 0) - new Date(first.createdAt || 0)
+                    )
+            );
+        } catch (requestError) {
+            setError(
+                ui(requestError?.message || "เกิดข้อผิดพลาดในการโหลดข้อมูลคลัง")
+            );
+        } finally {
+            setLoading(false);
+        }
+    }, [centerId, ui]);
 
     useEffect(() => {
         loadData();
@@ -238,85 +164,51 @@ export default function AdminInventory() {
 
     useEffect(() => {
         setPage(1);
-    }, [
-        searchText,
-        statusFilter,
-        activeTab,
-    ]);
+    }, [searchText, statusFilter, activeTab]);
 
     const filteredItems = useMemo(() => {
-        const keyword = searchText
-            .trim()
-            .toLowerCase();
+        const keyword = searchText.trim().toLowerCase();
 
         return items.filter((item) => {
             const matchSearch =
                 !keyword ||
-                [
-                    item.reliefItemId,
-                    item.reliefItemName,
-                    item.categoryName,
-                    item.unit,
-                ]
+                [item.reliefItemId, item.reliefItemName, item.categoryName, item.unit]
                     .filter(Boolean)
                     .join(" ")
                     .toLowerCase()
                     .includes(keyword);
 
             const matchStatus =
-                statusFilter === "all" ||
-                item.stockStatus ===
-                statusFilter;
+                statusFilter === "all" || item.stockStatus === statusFilter;
 
-            return (
-                matchSearch &&
-                matchStatus
-            );
+            return matchSearch && matchStatus;
         });
-    }, [
-        items,
-        searchText,
-        statusFilter,
-    ]);
+    }, [items, searchText, statusFilter]);
 
-    const filteredTransactions =
-        useMemo(() => {
-            const keyword = searchText
-                .trim()
-                .toLowerCase();
+    const filteredTransactions = useMemo(() => {
+        const keyword = searchText.trim().toLowerCase();
 
-            return transactions.filter(
-                (item) =>
-                    !keyword ||
-                    [
-                        item.transactionType,
-                        item.reliefItemName,
-                        item.referenceType,
-                        item.referenceId,
-                        item.note,
-                    ]
-                        .filter(Boolean)
-                        .join(" ")
-                        .toLowerCase()
-                        .includes(keyword)
-            );
-        }, [
-            transactions,
-            searchText,
-        ]);
+        return transactions.filter(
+            (item) =>
+                !keyword ||
+                [
+                    item.transactionType,
+                    item.reliefItemName,
+                    item.referenceType,
+                    item.referenceId,
+                    item.note,
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase()
+                    .includes(keyword)
+        );
+    }, [transactions, searchText]);
 
     const currentRows =
-        activeTab === "inventory"
-            ? filteredItems
-            : filteredTransactions;
+        activeTab === "inventory" ? filteredItems : filteredTransactions;
 
-    const totalPages = Math.max(
-        1,
-        Math.ceil(
-            currentRows.length /
-            PAGE_SIZE
-        )
-    );
+    const totalPages = Math.max(1, Math.ceil(currentRows.length / PAGE_SIZE));
 
     useEffect(() => {
         if (page > totalPages) {
@@ -325,37 +217,18 @@ export default function AdminInventory() {
     }, [page, totalPages]);
 
     const paginatedRows = useMemo(() => {
-        const start =
-            (page - 1) * PAGE_SIZE;
+        const start = (page - 1) * PAGE_SIZE;
 
-        return currentRows.slice(
-            start,
-            start + PAGE_SIZE
-        );
+        return currentRows.slice(start, start + PAGE_SIZE);
     }, [currentRows, page]);
 
     const summary = useMemo(() => {
         return {
             totalItems: items.length,
-            totalQuantity:
-                items.reduce(
-                    (sum, item) =>
-                        sum +
-                        item.quantity,
-                    0
-                ),
-            lowStock:
-                items.filter(
-                    (item) =>
-                        item.stockStatus ===
-                        "LowStock"
-                ).length,
-            outOfStock:
-                items.filter(
-                    (item) =>
-                        item.stockStatus ===
-                        "OutOfStock"
-                ).length,
+            totalQuantity: items.reduce((sum, item) => sum + item.quantity, 0),
+            lowStock: items.filter((item) => item.stockStatus === "LowStock").length,
+            outOfStock: items.filter((item) => item.stockStatus === "OutOfStock")
+                .length,
         };
     }, [items]);
 
@@ -363,37 +236,48 @@ export default function AdminInventory() {
         try {
             setSaving(true);
 
-            const minimumQuantity = Number(values.quantity);
+            const minimumQuantity = Number(values.minimumQuantity);
 
-            if (
-                !Number.isInteger(minimumQuantity) ||
-                minimumQuantity < 0
-            ) {
-                throw new Error(
-                    ui("จำนวนขั้นต่ำต้องเป็นเลขจำนวนเต็มตั้งแต่ 0 ขึ้นไป")
-                );
+            const maximumQuantity = Number(values.maximumQuantity);
+
+            // ตรวจจำนวนขั้นต่ำ
+            if (!Number.isInteger(minimumQuantity) || minimumQuantity < 0) {
+                throw new Error(ui("จำนวนขั้นต่ำต้องเป็นเลขจำนวนเต็มตั้งแต่ 0 ขึ้นไป"));
             }
 
-            await updateMinimumQuantity(
+            // ตรวจจำนวนสูงสุด
+            if (!Number.isInteger(maximumQuantity) || maximumQuantity < 0) {
+                throw new Error(ui("จำนวนสูงสุดต้องเป็นเลขจำนวนเต็มตั้งแต่ 0 ขึ้นไป"));
+            }
+
+            // ถ้า Max ไม่ใช่ 0 ต้องมากกว่าหรือเท่ากับ Min
+            if (maximumQuantity > 0 && maximumQuantity < minimumQuantity) {
+                throw new Error(ui("จำนวนสูงสุดต้องมากกว่าหรือเท่ากับจำนวนขั้นต่ำ"));
+            }
+
+            // เรียก API ใหม่
+            await updateInventoryThresholds(
                 modal.item.id,
-                minimumQuantity
+                minimumQuantity,
+                maximumQuantity
             );
 
+            // ปิด Modal
             setModal(null);
+
+            // โหลดข้อมูลใหม่
             await loadData();
 
             await Swal.fire({
                 icon: "success",
-                title: ui("แก้ไขจำนวนขั้นต่ำสำเร็จ"),
+                title: ui("แก้ไขจำนวนขั้นต่ำและจำนวนสูงสุดสำเร็จ"),
                 confirmButtonText: ui("ตกลง"),
             });
-
-        } catch (actionError) {
+        } catch (error) {
             await Swal.fire({
                 icon: "error",
                 title: ui("ทำรายการไม่สำเร็จ"),
-                text:
-                    ui(actionError?.message || "กรุณาลองใหม่อีกครั้ง"),
+                text: ui(error?.message || "กรุณาลองใหม่อีกครั้ง"),
                 confirmButtonText: ui("ตกลง"),
             });
         } finally {
@@ -402,11 +286,7 @@ export default function AdminInventory() {
     }
 
     return (
-        <RoleGuard
-            role="Admin"
-            storageKey="admin"
-            loginPath="/admin-login"
-        >
+        <RoleGuard role="Admin" storageKey="admin" loginPath="/admin-login">
             <div className="min-h-screen bg-slate-50 text-slate-900">
                 <AdminInventoryHeader
                     center={center}
@@ -421,40 +301,24 @@ export default function AdminInventory() {
                 />
 
                 <main className="mx-auto w-full max-w-[1500px] space-y-6 p-4 md:p-8">
-                    <AdminInventorySummary
-                        summary={summary}
-                    />
+                    <AdminInventorySummary summary={summary} />
 
                     <AdminInventoryFilters
                         activeTab={activeTab}
-                        searchText={
-                            searchText
-                        }
-                        statusFilter={
-                            statusFilter
-                        }
-                        onTabChange={
-                            setActiveTab
-                        }
-                        onSearchChange={
-                            setSearchText
-                        }
-                        onStatusChange={
-                            setStatusFilter
-                        }
+                        searchText={searchText}
+                        statusFilter={statusFilter}
+                        onTabChange={setActiveTab}
+                        onSearchChange={setSearchText}
+                        onStatusChange={setStatusFilter}
                     />
 
                     {error && (
                         <div className="flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 md:flex-row md:items-center md:justify-between">
-                            <span>
-                                {error}
-                            </span>
+                            <span>{error}</span>
 
                             <button
                                 type="button"
-                                onClick={
-                                    loadData
-                                }
+                                onClick={loadData}
                                 className="rounded-lg bg-red-600 px-4 py-2 font-bold text-white"
                             >
                                 {ui("ลองใหม่")}
@@ -464,48 +328,30 @@ export default function AdminInventory() {
 
                     {loading ? (
                         <AdminInventorySkeleton />
-                    ) : currentRows.length ===
-                        0 ? (
-                        <AdminInventoryEmpty
-                            activeTab={
-                                activeTab
-                            }
-                        />
+                    ) : currentRows.length === 0 ? (
+                        <AdminInventoryEmpty activeTab={activeTab} />
                     ) : (
                         <>
-                            {activeTab ===
-                                "inventory" ? (
+                            {activeTab === "inventory" ? (
                                 <AdminInventoryTable
                                     items={paginatedRows}
-                                    onMinimum={(item) =>
+                                    onThresholds={(item) =>
                                         setModal({
-                                            mode: "minimum",
+                                            mode: "thresholds",
                                             item,
                                         })
                                     }
                                 />
                             ) : (
-                                <InventoryTransactionTable
-                                    transactions={
-                                        paginatedRows
-                                    }
-                                />
+                                <InventoryTransactionTable transactions={paginatedRows} />
                             )}
 
                             <AdminInventoryPagination
                                 page={page}
-                                totalPages={
-                                    totalPages
-                                }
-                                totalItems={
-                                    currentRows.length
-                                }
-                                pageSize={
-                                    PAGE_SIZE
-                                }
-                                onPageChange={
-                                    setPage
-                                }
+                                totalPages={totalPages}
+                                totalItems={currentRows.length}
+                                pageSize={PAGE_SIZE}
+                                onPageChange={setPage}
                             />
                         </>
                     )}
@@ -516,13 +362,8 @@ export default function AdminInventory() {
                         mode={modal.mode}
                         item={modal.item}
                         saving={saving}
-                        onClose={() =>
-                            !saving &&
-                            setModal(null)
-                        }
-                        onSubmit={
-                            submitStockAction
-                        }
+                        onClose={() => !saving && setModal(null)}
+                        onSubmit={submitStockAction}
                     />
                 )}
             </div>

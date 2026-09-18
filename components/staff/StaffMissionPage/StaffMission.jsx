@@ -6,6 +6,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
+import RouteCompanionPanel from "./RouteCompanionPanel";
+import {
+    clearRouteBatch,
+    getRouteBatchIds,
+} from "@/services/staff/routeBatch";
+
 import {
     getStaffSosRequestById,
     updateSosRequestStatus,
@@ -46,11 +52,61 @@ const STATUS_CONFIG = {
     },
 };
 
+function getStatusConfig(request) {
+    const base = STATUS_CONFIG[request?.status] || null;
+
+    if (!base) return null;
+
+    const isEmergency =
+        String(request?.requestType || "Relief").trim().toLowerCase() ===
+        "emergency";
+    const isPickup =
+        !isEmergency &&
+        String(request?.receiveMethod || "Delivery").trim().toLowerCase() ===
+            "pickup";
+
+    if (!isPickup) return base;
+
+    if (request.status === "Preparing") {
+        return {
+            ...base,
+            description: "จัดเตรียมสิ่งของให้พร้อมสำหรับผู้ขอมารับที่ศูนย์",
+            nextLabel: "ยืนยันพร้อมให้รับที่ศูนย์",
+        };
+    }
+
+    if (request.status === "Delivering") {
+        return {
+            ...base,
+            label: "พร้อมรับที่ศูนย์",
+            description: "สิ่งของพร้อมแล้ว รอผู้ขอมารับที่ศูนย์",
+            nextLabel: "ยืนยันว่าผู้ขอรับสิ่งของแล้ว",
+            icon: "storefront",
+            colour: "bg-emerald-600",
+        };
+    }
+
+    if (request.status === "Completed") {
+        return {
+            ...base,
+            label: "รับสิ่งของเรียบร้อยแล้ว",
+            description: "ผู้ขอรับสิ่งของจากศูนย์เรียบร้อยแล้ว",
+        };
+    }
+
+    return base;
+}
+
 export default function StaffMission() {
     const { ui, language } = useNativeUi();
     const router = useRouter();
     const searchParams = useSearchParams();
     const requestId = searchParams.get("id");
+
+    const staffInfo = useMemo(
+        () => readStaffInfo(),
+        []
+    );
 
     const [request, setRequest] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -85,49 +141,146 @@ export default function StaffMission() {
     }, [loadRequest]);
 
     const statusConfig = useMemo(() => {
-        return STATUS_CONFIG[request?.status] || null;
-    }, [request?.status]);
+        return getStatusConfig(request);
+    }, [request]);
 
     const handleUpdateStatus = async () => {
-        if (!request?.id || !statusConfig?.nextStatus) return;
+        if (
+            !request?.id ||
+            !statusConfig?.nextStatus
+        ) {
+            return;
+        }
+
+        const isPickup =
+            String(request.receiveMethod || "Delivery").toLowerCase() === "pickup";
+
+        const batchIds = isPickup
+            ? []
+            : getRouteBatchIds(
+                  request.id,
+                  staffInfo.id
+              );
+
+        const nextLabel =
+            isPickup && statusConfig.nextStatus === "Delivering"
+                ? "พร้อมรับที่ศูนย์"
+                : statusConfig.nextStatus === "Completed" && isPickup
+                    ? "รับสิ่งของเรียบร้อยแล้ว"
+                    : STATUS_CONFIG[statusConfig.nextStatus]?.label ||
+                      statusConfig.nextStatus;
 
         const result = await Swal.fire({
             icon: "question",
-            title: ui(`เปลี่ยนสถานะเป็น “${STATUS_CONFIG[statusConfig.nextStatus]?.label || statusConfig.nextStatus}”`),
+            title:
+                batchIds.length > 0
+                    ? language === "en"
+                        ? `Update this delivery trip to “${ui(nextLabel)}”?`
+                        : `เปลี่ยนสถานะรอบส่งนี้เป็น “${ui(nextLabel)}”`
+                    : ui(
+                          `เปลี่ยนสถานะเป็น “${nextLabel}”`
+                      ),
+            html:
+                batchIds.length > 0
+                    ? language === "en"
+                        ? `The main case and <b>${batchIds.length}</b> additional stop(s) will be updated together.`
+                        : `เคสหลักและจุดส่งเพิ่ม <b>${batchIds.length}</b> เคสจะถูกอัปเดตสถานะพร้อมกัน`
+                    : undefined,
             input: "textarea",
-            inputLabel: ui("หมายเหตุเจ้าหน้าที่ (ไม่บังคับ)"),
-            inputPlaceholder: ui("ระบุรายละเอียดเพิ่มเติม..."),
+            inputLabel: ui(
+                "หมายเหตุเจ้าหน้าที่ (ไม่บังคับ)"
+            ),
+            inputPlaceholder: ui(
+                "ระบุรายละเอียดเพิ่มเติม..."
+            ),
             showCancelButton: true,
-            confirmButtonText: ui("ยืนยัน"),
-            cancelButtonText: ui("ยกเลิก"),
+            confirmButtonText:
+                ui("ยืนยัน"),
+            cancelButtonText:
+                ui("ยกเลิก"),
             reverseButtons: true,
         });
 
-        if (!result.isConfirmed) return;
+        if (!result.isConfirmed) {
+            return;
+        }
 
         try {
             setUpdating(true);
 
+            const remark =
+                result.value || "";
+
+            // อัปเดตจุดส่งเพิ่มก่อน
+            // ถ้ามีเคสใดอัปเดตไม่ได้ จะหยุดก่อนอัปเดตเคสหลัก
+            for (
+                const batchId
+                of batchIds
+            ) {
+                await updateSosRequestStatus(
+                    batchId,
+                    statusConfig.nextStatus,
+                    remark ||
+                        `Route batch with ${request.id}`
+                );
+            }
+
             await updateSosRequestStatus(
                 request.id,
                 statusConfig.nextStatus,
-                result.value || ""
+                remark
             );
+
+            if (
+                statusConfig.nextStatus ===
+                "Completed"
+            ) {
+                clearRouteBatch(
+                    request.id,
+                    staffInfo.id
+                );
+            }
 
             await loadRequest();
 
             await Swal.fire({
                 icon: "success",
-                title: ui("อัปเดตสถานะสำเร็จ"),
-                text: ui(`สถานะถูกเปลี่ยนเป็น ${STATUS_CONFIG[statusConfig.nextStatus]?.label || statusConfig.nextStatus}`),
-                confirmButtonText: ui("ตกลง"),
+                title:
+                    batchIds.length > 0
+                        ? language === "en"
+                            ? "Delivery trip updated"
+                            : "อัปเดตรอบส่งสำเร็จ"
+                        : ui(
+                              "อัปเดตสถานะสำเร็จ"
+                          ),
+                text:
+                    batchIds.length > 0
+                        ? language === "en"
+                            ? `Updated ${batchIds.length + 1} cases together.`
+                            : `อัปเดตพร้อมกัน ${batchIds.length + 1} เคส`
+                        : ui(
+                              `สถานะถูกเปลี่ยนเป็น ${nextLabel}`
+                          ),
+                confirmButtonText:
+                    ui("ตกลง"),
             });
         } catch (error) {
             await Swal.fire({
                 icon: "error",
-                title: ui("อัปเดตสถานะไม่สำเร็จ"),
-                text: ui(error.message || "ไม่สามารถอัปเดตสถานะได้"),
-                confirmButtonText: ui("ตกลง"),
+                title:
+                    batchIds.length > 0
+                        ? language === "en"
+                            ? "Could not update the delivery trip"
+                            : "อัปเดตรอบส่งไม่สำเร็จ"
+                        : ui(
+                              "อัปเดตสถานะไม่สำเร็จ"
+                          ),
+                text: ui(
+                    error.message ||
+                        "ไม่สามารถอัปเดตสถานะได้"
+                ),
+                confirmButtonText:
+                    ui("ตกลง"),
             });
         } finally {
             setUpdating(false);
@@ -153,6 +306,11 @@ export default function StaffMission() {
         String(request.requestType || "Relief")
             .trim()
             .toLowerCase() === "emergency";
+    const isPickup =
+        !isEmergency &&
+        String(request.receiveMethod || "Delivery")
+            .trim()
+            .toLowerCase() === "pickup";
     const latitude = Number(request.latitude);
     const longitude = Number(request.longitude);
     const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude);
@@ -207,6 +365,12 @@ export default function StaffMission() {
                                 />
                             )}
                             <InfoBox label={ui("ศูนย์รับผิดชอบ")} value={request.centerName || "ไม่ระบุ"} />
+                            {!isEmergency && (
+                                <InfoBox
+                                    label={ui("วิธีรับสิ่งของ")}
+                                    value={ui(isPickup ? "รับเองที่ศูนย์" : "เจ้าหน้าที่จัดส่ง")}
+                                />
+                            )}
                         </div>
 
                         <div className="mt-4 rounded-2xl bg-slate-50 p-4">
@@ -264,13 +428,14 @@ export default function StaffMission() {
                             )}
                         </div>
                     </div>
+
                 </div>
 
                 <div className="space-y-6">
                     <div className="rounded-3xl border border-sky-100 bg-sky-50 p-6 shadow-sm">
                         <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
-                            <span className="material-symbols-outlined text-sky-500">map</span>
-                            ตำแหน่งภารกิจ
+                            <span className="material-symbols-outlined text-sky-500">{isPickup ? "storefront" : "map"}</span>
+                            {isPickup ? ui("จุดรับสิ่งของ") : ui("ตำแหน่งภารกิจ")}
                         </h2>
 
                         <div className="mt-5 flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-sky-100 bg-white p-6 text-center">
@@ -292,7 +457,7 @@ export default function StaffMission() {
                             className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-sky-600 py-3 font-bold text-white transition hover:bg-sky-700"
                         >
                             <span className="material-symbols-outlined">near_me</span>
-                            เปิด Google Maps
+                            {ui(isPickup ? "ดูตำแหน่งศูนย์" : "เปิด Google Maps")}
                         </a>
                     </div>
 
@@ -322,14 +487,26 @@ export default function StaffMission() {
 
                         <button
                             type="button"
-                            onClick={() => router.push("/staff/staff-sos")}
+                            onClick={() =>
+                                router.push(
+                                    isEmergency
+                                        ? "/staff/staff-sos"
+                                        : "/staff/relief-requests"
+                                )
+                            }
                             className="mt-3 w-full rounded-xl border border-slate-200 bg-white py-3 font-bold text-slate-600 transition hover:bg-slate-50"
                         >
-                            กลับไปรายการ SOS
+                            {ui(isEmergency ? "กลับไปรายการ SOS" : "กลับไปคำขอรับสิ่งของ")}
                         </button>
                     </div>
                 </div>
             </section>
+
+            {!isPickup && (
+                <RouteCompanionPanel
+                    mainRequest={request}
+                />
+            )}
         </div>
     );
 }
@@ -359,6 +536,40 @@ function MissionState({ icon, title, description = "กรุณารอสั�
     );
 }
 
+
+
+function readStaffInfo() {
+    if (
+        typeof window === "undefined"
+    ) {
+        return {
+            id: "",
+        };
+    }
+
+    try {
+        const raw =
+            localStorage.getItem(
+                "staff"
+            );
+
+        const staff = raw
+            ? JSON.parse(raw)
+            : {};
+
+        return {
+            id:
+                staff?.id ??
+                staff?.staffId ??
+                staff?.Id ??
+                "",
+        };
+    } catch {
+        return {
+            id: "",
+        };
+    }
+}
 
 function formatPriorityLabel(priority) {
     const value = String(priority || "")

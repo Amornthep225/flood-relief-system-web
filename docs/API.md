@@ -88,6 +88,45 @@ Authorization: Bearer {token}
 | PUT | `/api/sos-requests/{id}/status` | อัปเดตสถานะ SOS | 🔒 |
 | PUT | `/api/sos-requests/{id}/cancel` | ยกเลิกคำขอ | 🔒 |
 
+### ReceiveMethod สำหรับคำขอรับสิ่งของ
+
+`CreateSosRequest` ต้องส่ง `receiveMethod` เป็นค่าใดค่าหนึ่ง:
+
+| ค่า | ความหมาย | พฤติกรรม |
+|---|---|---|
+| `Delivery` | เจ้าหน้าที่นำสิ่งของไปส่ง | ต้องระบุ `latitude`, `longitude` และ `addressDetail` |
+| `Pickup` | ผู้ใช้มารับสิ่งของด้วยตนเอง | ระบบผูกคำขอกับศูนย์ที่เปิดใช้งาน และใช้ตำแหน่งศูนย์เป็นจุดรับของ |
+
+ตัวอย่าง `Pickup`:
+
+```json
+{
+  "receiveMethod": "Pickup",
+  "latitude": 0,
+  "longitude": 0,
+  "addressDetail": null,
+  "userRemark": "ขอรับของช่วงบ่าย",
+  "items": [
+    {
+      "reliefItemId": "00001",
+      "quantity": 2
+    }
+  ]
+}
+```
+
+สำหรับ `Pickup` ผู้ใช้ไม่จำเป็นต้องส่งตำแหน่งของตนเอง เพราะ Backend จะใช้พิกัดและที่อยู่ของศูนย์ที่ผูกกับคำขอ
+
+
+### จำกัดจำนวนสิ่งของที่ผู้ใช้ขอได้ (Requirement 10)
+
+แต่ละ `ReliefItem` มี `maximumRequestQuantity` สำหรับกำหนดจำนวนสูงสุดที่ผู้ใช้สามารถขอได้ต่อ 1 คำขอ
+
+- `0` = ไม่จำกัด
+- Backend ตรวจสอบค่าซ้ำทุกครั้งที่ `POST /api/sos-requests` และจะปฏิเสธคำขอที่เกินกำหนด
+- `GET /api/relief-items` และ `GET /api/relief-items/active` ส่งค่าดังกล่าวให้ Frontend เพื่อใช้แสดงและจำกัดช่องจำนวน
+- Admin สามารถกำหนดค่านี้จากหน้า "จัดการสิ่งของและประเภท"
+
 ### กฎของ Status
 
 ```text
@@ -96,7 +135,7 @@ Pending → Accepted → Preparing → Delivering → Completed
 
 `Cancelled` เป็นสถานะปลายทางอีกกรณีหนึ่ง
 
-เมื่ออัปเดตเป็น `Delivering` Backend จะตัดสต็อกและสร้าง Transaction ประเภท `SOSOut`
+สำหรับ `Pickup`, `Delivering` หมายถึง “พร้อมรับที่ศูนย์” ไม่ได้หมายถึงเจ้าหน้าที่กำลังเดินทาง และเมื่ออัปเดตเป็น `Delivering` Backend จะตัดสต็อกและสร้าง Transaction ประเภท `SOSOut` เช่นเดียวกับ Delivery
 
 ---
 

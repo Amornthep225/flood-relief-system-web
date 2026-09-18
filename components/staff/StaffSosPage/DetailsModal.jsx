@@ -15,6 +15,11 @@ export default function DetailsModal({
         String(request?.requestType || "Relief")
             .trim()
             .toLowerCase() === "emergency";
+    const isPickup =
+        !isEmergency &&
+        String(request?.receiveMethod || "Delivery")
+            .trim()
+            .toLowerCase() === "pickup";
 
     return (
         <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/60 px-4 py-10 backdrop-blur-sm">
@@ -69,11 +74,18 @@ export default function DetailsModal({
                             />
 
                             {isEmergency && (
-                                <DetailBox
-                                    icon="flag"
-                                    label={ui("ระดับความเร่งด่วน")}
-                                    value={formatPriorityLabel(request?.priority)}
-                                />
+                                <>
+                                    <DetailBox
+                                        icon="flag"
+                                        label={ui("ระดับความเร่งด่วน")}
+                                        value={formatPriorityLabel(request?.priority)}
+                                    />
+                                    <DetailBox
+                                        icon="monitor_heart"
+                                        label={ui("ระดับความรุนแรง")}
+                                        value={ui(formatSeverityLabel(request?.severity))}
+                                    />
+                                </>
                             )}
 
                             <DetailBox
@@ -84,6 +96,14 @@ export default function DetailsModal({
                                     ui("ไม่ระบุ")
                                 }
                             />
+
+                            {!isEmergency && (
+                                <DetailBox
+                                    icon={isPickup ? "storefront" : "local_shipping"}
+                                    label={ui("วิธีรับสิ่งของ")}
+                                    value={ui(isPickup ? "รับเองที่ศูนย์" : "เจ้าหน้าที่จัดส่ง")}
+                                />
+                            )}
                         </div>
 
                         <DetailBox
@@ -101,6 +121,43 @@ export default function DetailsModal({
                                 label={ui("หมายเหตุจากผู้แจ้ง")}
                                 value={request.userRemark}
                             />
+                        )}
+
+                        {isEmergency && (
+                            <div>
+                                <h4 className="mb-3 flex items-center gap-2 font-bold text-slate-800">
+                                    <span className="material-symbols-outlined text-red-500">
+                                        groups
+                                    </span>
+                                    {ui("ข้อมูลผู้ประสบภัย")}
+                                </h4>
+
+                                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                                    <DetailBox icon="groups" label={ui("ผู้ประสบภัย")} value={request?.victimCount || 0} />
+                                    <DetailBox icon="child_care" label={ui("เด็ก")} value={request?.childCount || 0} />
+                                    <DetailBox icon="elderly" label={ui("ผู้สูงอายุ")} value={request?.elderlyCount || 0} />
+                                    <DetailBox icon="accessible" label={ui("ผู้พิการ")} value={request?.disabledCount || 0} />
+                                    <DetailBox icon="medical_services" label={ui("ผู้ป่วย")} value={request?.patientCount || 0} />
+
+                                    {(request?.deathCount || 0) > 0 && (
+                                        <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
+                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-600 text-white shadow-sm">
+                                                <span className="material-symbols-outlined text-lg">
+                                                    emergency
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold uppercase tracking-wider text-red-500">
+                                                    {ui("ผู้เสียชีวิต")}
+                                                </p>
+                                                <p className="mt-1 text-lg font-black text-red-700">
+                                                    {request.deathCount}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         )}
 
                         <div>
@@ -138,6 +195,13 @@ export default function DetailsModal({
                                                         0}{" "}
                                                     {item.unit || ""}
                                                 </p>
+                                                {item.approvedQuantity !== null &&
+                                                    item.approvedQuantity !== undefined && (
+                                                        <p className="mt-1 text-sm font-bold text-sky-600">
+                                                            {ui("จำนวนที่อนุมัติ")} {" "}
+                                                            {item.approvedQuantity} {item.unit || ""}
+                                                        </p>
+                                                    )}
                                             </div>
 
                                             <span className="material-symbols-outlined text-sky-500">
@@ -199,4 +263,14 @@ function formatPriorityLabel(priority) {
     }
 
     return "ปกติ";
+}
+
+
+function formatSeverityLabel(severity) {
+    const value = String(severity || "").trim().toLowerCase();
+    if (value === "critical") return "วิกฤต";
+    if (value === "severe") return "รุนแรง";
+    if (value === "moderate") return "ปานกลาง";
+    if (value === "mild") return "เล็กน้อย";
+    return "ไม่ระบุ";
 }

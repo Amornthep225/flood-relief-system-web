@@ -81,6 +81,9 @@ function normalizeSos(item) {
         requestType:
             item?.requestType ??
             "Relief",
+        receiveMethod:
+            item?.receiveMethod ??
+            "Delivery",
 
         emergencyType:
             item?.emergencyType ??
@@ -93,6 +96,7 @@ function normalizeSos(item) {
         elderlyCount: Number(item?.elderlyCount ?? 0),
         disabledCount: Number(item?.disabledCount ?? 0),
         patientCount: Number(item?.patientCount ?? 0),
+        deathCount: Number(item?.deathCount ?? 0),
         waterLevel:
             item?.waterLevel !== null &&
             item?.waterLevel !== undefined
@@ -116,6 +120,11 @@ function normalizeSos(item) {
             quantity: Number(
                 requestItem?.quantity ?? 0
             ),
+            approvedQuantity:
+                requestItem?.approvedQuantity !== null &&
+                requestItem?.approvedQuantity !== undefined
+                    ? Number(requestItem.approvedQuantity)
+                    : null,
             unit:
                 requestItem?.unit ??
                 requestItem?.reliefItem?.unit ??
@@ -461,6 +470,7 @@ export default function AdminSos() {
         staffId,
         centerId,
         staffRemark,
+        approvedItems = [],
     }) => {
         try {
             setAssigning(true);
@@ -471,6 +481,7 @@ export default function AdminSos() {
                 {
                     centerId,
                     staffRemark,
+                    approvedItems,
                 }
             );
 

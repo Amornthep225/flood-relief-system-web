@@ -46,6 +46,7 @@ function SelectField({
 
 export default function CenterModal({
     mode,
+    inline = false,
     form,
     saving,
     onFormChange,
@@ -181,10 +182,10 @@ export default function CenterModal({
     }
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-900/50 px-4 py-8 backdrop-blur-sm">
+        <div className={inline ? "w-full" : "fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-900/50 px-4 py-8 backdrop-blur-sm"}>
             <form
                 onSubmit={handleSubmit}
-                className="relative my-auto w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+                className={inline ? "w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" : "relative my-auto w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl"}
             >
                 <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-5">
                     <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
@@ -193,28 +194,30 @@ export default function CenterModal({
                         </span>
                         {mode === "edit" ? (language === "en" ? `Edit Center ${form.id}` : `แก้ไขข้อมูลศูนย์ ${form.id}`) : ui("เพิ่มจุดรับบริจาคใหม่")}
                     </h2>
-                    <button
+                    {!inline && <button
                         type="button"
                         onClick={onClose}
                         disabled={saving}
                         className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 disabled:opacity-50"
                     >
                         <span className="material-symbols-outlined text-sm">close</span>
-                    </button>
+                    </button>}
                 </div>
 
-                <div className="max-h-[80vh] space-y-4 overflow-y-auto p-6">
+                <fieldset disabled={saving} className={inline ? "space-y-4 p-4 md:p-6" : "max-h-[80vh] space-y-4 overflow-y-auto p-6"}>
                     <InputField
                         label={ui("ชื่อจุดรับบริจาค")}
                         value={form.centerName}
                         onChange={(value) => updateField("centerName", value)}
                         required
+                        maxLength={150}
                     />
                     <InputField
                         label={ui("ที่อยู่ เลขที่/หมู่/ถนน")}
                         value={form.address}
                         onChange={(value) => updateField("address", value)}
                         required
+                        maxLength={500}
                     />
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -264,6 +267,7 @@ export default function CenterModal({
                             label={ui("ชื่อผู้ประสานงาน")}
                             value={form.contactName}
                             onChange={(value) => updateField("contactName", value)}
+                            maxLength={150}
                         />
                         <InputField
                             label={ui("เบอร์โทรศัพท์")}
@@ -313,7 +317,7 @@ export default function CenterModal({
                             disabled={saving}
                             className="flex-1 rounded-xl border border-slate-200 bg-white py-3 font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50"
                         >
-                            {ui("ยกเลิก")}
+                            {ui(inline ? "คืนค่าที่บันทึกไว้" : "ยกเลิก")}
                         </button>
                         <button
                             type="submit"
@@ -328,7 +332,7 @@ export default function CenterModal({
                             {saving ? ui("กำลังบันทึก...") : ui("บันทึกข้อมูล")}
                         </button>
                     </div>
-                </div>
+                </fieldset>
             </form>
         </div>
     );

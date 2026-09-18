@@ -80,6 +80,9 @@ export default function AdminSosDetailModal({
         String(caseItem.requestType || "Relief")
             .trim()
             .toLowerCase() === "emergency";
+    const isPickup =
+        !isEmergency &&
+        String(caseItem?.receiveMethod || "Delivery").toLowerCase() === "pickup";
 
     const items = Array.isArray(caseItem.items)
         ? caseItem.items
@@ -220,7 +223,7 @@ export default function AdminSosDetailModal({
                                 />
                             </Section>
 
-                            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+                            <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
                                 <StatCard
                                     label={tx(
                                         "ผู้ประสบภัย",
@@ -271,6 +274,16 @@ export default function AdminSosDetailModal({
                                         0
                                     }
                                 />
+                                <StatCard
+                                    label={tx(
+                                        "ผู้เสียชีวิต",
+                                        "Deceased"
+                                    )}
+                                    value={
+                                        caseItem.deathCount ||
+                                        0
+                                    }
+                                />
                             </div>
 
                             {caseItem.emergencyDetail && (
@@ -286,7 +299,22 @@ export default function AdminSosDetailModal({
                             )}
                         </>
                     ) : (
-                        <div className="rounded-2xl border border-sky-100 bg-sky-50/60 p-5">
+                        <div className="space-y-4">
+                            <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                    {tx("วิธีรับสิ่งของ", "Receive Method")}
+                                </p>
+                                <div className="mt-2 flex items-center gap-2 font-black text-slate-800">
+                                    <span className="material-symbols-outlined text-sky-600">
+                                        {isPickup ? "storefront" : "local_shipping"}
+                                    </span>
+                                    {isPickup
+                                        ? tx("รับเองที่ศูนย์", "Pick Up at Center")
+                                        : tx("เจ้าหน้าที่จัดส่ง", "Staff Delivery")}
+                                </div>
+                            </div>
+
+                            <div className="rounded-2xl border border-sky-100 bg-sky-50/60 p-5">
                             <div className="mb-4 flex items-center justify-between gap-3">
                                 <div>
                                     <h3 className="font-black text-slate-800">
@@ -345,15 +373,16 @@ export default function AdminSosDetailModal({
                                                 </div>
 
                                                 <div className="shrink-0 text-right">
-                                                    <p className="text-lg font-black text-sky-600">
-                                                        {
-                                                            item.quantity
-                                                        }
+                                                    <p className="text-sm font-bold text-slate-500">
+                                                        {tx("ขอ", "Requested")} {item.quantity} {ui(item.unit)}
                                                     </p>
-                                                    <p className="text-xs font-bold text-slate-400">
-                                                        {ui(
-                                                            item.unit
-                                                        )}
+                                                    <p className="text-lg font-black text-sky-600">
+                                                        {item.approvedQuantity == null
+                                                            ? tx("ยังไม่อนุมัติ", "Not approved")
+                                                            : `${item.approvedQuantity} ${ui(item.unit)}`}
+                                                    </p>
+                                                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                                                        {tx("จำนวนที่อนุมัติ", "Approved Quantity")}
                                                     </p>
                                                 </div>
                                             </div>
@@ -361,6 +390,7 @@ export default function AdminSosDetailModal({
                                     )}
                                 </div>
                             )}
+                            </div>
                         </div>
                     )}
 

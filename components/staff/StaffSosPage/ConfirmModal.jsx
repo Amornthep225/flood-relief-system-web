@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useNativeUi } from "@/hooks/useNativeUi";
 
 export default function ConfirmModal({
@@ -30,9 +31,65 @@ export default function ConfirmModal({
         (item) => !item.isEnough
     );
 
+    const [approvedQuantities, setApprovedQuantities] = useState({});
+
+    useEffect(() => {
+        const initial = {};
+        items.forEach((item) => {
+            initial[item.id || item.reliefItemId] = Math.min(
+                Number(item.requestedQuantity ?? 0),
+                Number(item.availableQuantity ?? 0)
+            );
+        });
+        setApprovedQuantities(initial);
+    }, [request?.id, stockCheck]);
+
+    const approvedTotal = items.reduce(
+        (sum, item) =>
+            sum +
+            Number(
+                approvedQuantities[
+                    item.id || item.reliefItemId
+                ] ?? 0
+            ),
+        0
+    );
+
     const canConfirm =
         !checkingStock &&
-        stockCheck?.isAllEnough === true;
+        (isEmergency ||
+            (items.length > 0 &&
+                approvedTotal > 0 &&
+                items.every((item) => {
+                    const value = Number(
+                        approvedQuantities[
+                            item.id || item.reliefItemId
+                        ] ?? 0
+                    );
+                    return (
+                        value >= 0 &&
+                        value <= Number(item.requestedQuantity ?? 0) &&
+                        value <= Number(item.availableQuantity ?? 0)
+                    );
+                })));
+
+    const handleConfirm = () => {
+        if (!canConfirm) return;
+        if (isEmergency) {
+            onConfirm();
+            return;
+        }
+        onConfirm(
+            items.map((item) => ({
+                sosRequestItemId: item.id,
+                approvedQuantity: Number(
+                    approvedQuantities[
+                        item.id || item.reliefItemId
+                    ] ?? 0
+                ),
+            }))
+        );
+    };
 
     return (
         <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/55 px-4 py-6 backdrop-blur-sm">
@@ -94,8 +151,8 @@ export default function ConfirmModal({
                                               "Emergency cases can be accepted immediately without an inventory check."
                                           )
                                         : tx(
-                                              "ตรวจสอบจำนวนที่ต้องใช้เทียบกับของคงเหลือก่อนยืนยันรับงาน",
-                                              "Review requested quantities against available inventory before accepting."
+                                              "ตรวจสอบคลัง แล้วกำหนดจำนวนที่อนุมัติได้ตามของที่มี",
+                                              "Review inventory, then choose the quantity you can approve based on available stock."
                                           )}
                                 </p>
                             </div>
@@ -405,6 +462,30 @@ export default function ConfirmModal({
                                                     }
                                                 />
                                             </div>
+
+                                            <div className="mt-3 rounded-xl border border-sky-100 bg-sky-50/60 p-3">
+                                                <label className="block text-xs font-bold text-slate-600">
+                                                    {tx("จำนวนที่อนุมัติ", "Approved Quantity")}
+                                                </label>
+                                                <div className="mt-2 flex items-center gap-2">
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        max={Math.min(Number(item.requestedQuantity ?? 0), Number(item.availableQuantity ?? 0))}
+                                                        value={approvedQuantities[item.id || item.reliefItemId] ?? 0}
+                                                        onChange={(event) => {
+                                                            const raw = Number(event.target.value);
+                                                            const max = Math.min(Number(item.requestedQuantity ?? 0), Number(item.availableQuantity ?? 0));
+                                                            setApprovedQuantities((current) => ({
+                                                                ...current,
+                                                                [item.id || item.reliefItemId]: Math.max(0, Math.min(Number.isFinite(raw) ? raw : 0, max)),
+                                                            }));
+                                                        }}
+                                                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-center font-black outline-none focus:border-sky-500"
+                                                    />
+                                                    <span className="shrink-0 text-xs font-bold text-slate-500">{ui(item.unit)}</span>
+                                                </div>
+                                            </div>
                                         </article>
                                     ))}
                                 </div>
@@ -440,6 +521,10 @@ export default function ConfirmModal({
                                                         "หลังจ่าย",
                                                         "After Issue"
                                                     )}
+                                                </th>
+
+                                                <th className="px-4 py-3.5 text-center">
+                                                    {tx("อนุมัติ", "Approve")}
                                                 </th>
 
                                                 <th className="px-6 py-3.5 text-center">
@@ -519,6 +604,24 @@ export default function ConfirmModal({
                                                         />
 
                                                         <td className="px-6 py-4 text-center">
+                                                            <input
+                                                                type="number"
+                                                                min="0"
+                                                                max={Math.min(Number(item.requestedQuantity ?? 0), Number(item.availableQuantity ?? 0))}
+                                                                value={approvedQuantities[item.id || item.reliefItemId] ?? 0}
+                                                                onChange={(event) => {
+                                                                    const raw = Number(event.target.value);
+                                                                    const max = Math.min(Number(item.requestedQuantity ?? 0), Number(item.availableQuantity ?? 0));
+                                                                    setApprovedQuantities((current) => ({
+                                                                        ...current,
+                                                                        [item.id || item.reliefItemId]: Math.max(0, Math.min(Number.isFinite(raw) ? raw : 0, max)),
+                                                                    }));
+                                                                }}
+                                                                className="w-24 rounded-lg border border-slate-300 px-2 py-1 text-center font-black outline-none focus:border-sky-500"
+                                                            />
+                                                        </td>
+
+                                                        <td className="px-6 py-4 text-center">
                                                             {item.isEnough ? (
                                                                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700">
                                                                     <span className="material-symbols-outlined text-sm">
@@ -555,7 +658,7 @@ export default function ConfirmModal({
                                         <tfoot className="border-t border-slate-200 bg-slate-50">
                                             <tr>
                                                 <td
-                                                    colSpan={5}
+                                                    colSpan={6}
                                                     className="px-6 py-3.5"
                                                 >
                                                     <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
@@ -693,6 +796,30 @@ export default function ConfirmModal({
                     </main>
                 )}
 
+                {!isEmergency && Array.isArray(stockCheck?.pendingRequests) && stockCheck.pendingRequests.length > 0 && (
+                    <section className="border-t border-amber-200 bg-amber-50 px-6 py-4 md:px-8">
+                        <div className="flex items-start gap-3">
+                            <span className="material-symbols-outlined mt-0.5 text-amber-600">inventory</span>
+                            <div className="min-w-0 flex-1">
+                                <h4 className="font-black text-amber-800">
+                                    {tx("คำขอรายการเดียวกันที่ยังไม่ได้อนุมัติ", "Other Pending Requests for the Same Items")}
+                                </h4>
+                                <div className="mt-3 grid gap-2 md:grid-cols-2">
+                                    {stockCheck.pendingRequests.map((pending, index) => (
+                                        <div key={`${pending.sosRequestId}-${pending.reliefItemId}-${index}`} className="rounded-xl border border-amber-100 bg-white p-3">
+                                            <div className="flex items-center justify-between gap-3">
+                                                <span className="font-mono text-xs font-bold text-slate-500">#{pending.sosRequestId}</span>
+                                                <span className="font-black text-amber-700">{pending.requestedQuantity} {ui(pending.unit)}</span>
+                                            </div>
+                                            <p className="mt-1 font-bold text-slate-800">{ui(pending.reliefItemName)}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                )}
+
                 <footer className="grid grid-cols-1 gap-3 border-t border-slate-200 bg-white px-6 py-4 md:grid-cols-[180px_1fr] md:px-8">
                     <button
                         type="button"
@@ -713,7 +840,7 @@ export default function ConfirmModal({
 
                     <button
                         type="button"
-                        onClick={onConfirm}
+                        onClick={handleConfirm}
                         disabled={loading || !canConfirm}
                         className="rounded-xl bg-sky-600 py-3 font-bold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                     >
@@ -727,14 +854,14 @@ export default function ConfirmModal({
                                     "ยืนยันรับเคส SOS",
                                     "Accept SOS Case"
                                 )
-                              : stockCheck?.isAllEnough
+                              : approvedTotal > 0
                                 ? tx(
-                                      "ยืนยันรับงาน",
-                                      "Accept Case"
+                                      `อนุมัติ ${approvedTotal} หน่วยและรับงาน`,
+                                      `Approve ${approvedTotal} units and Accept`
                                   )
                                 : tx(
-                                      "ยังไม่สามารถรับงานได้",
-                                      "Cannot Accept Yet"
+                                      "กรุณาระบุจำนวนที่อนุมัติ",
+                                      "Enter an approved quantity"
                                   )}
                     </button>
                 </footer>

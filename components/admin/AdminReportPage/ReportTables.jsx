@@ -25,13 +25,14 @@ export function DonorTable({rows}){
 
 export function SosTable({rows}){
     const { ui, language } = useNativeUi();
-    return <Table headers={[ui("วันที่"),"Case ID",ui("ผู้แจ้ง"),ui("สถานที่"),ui("รายละเอียด"),ui("ระดับ"),ui("สถานะ")]}>
+    return <Table headers={[ui("วันที่"),"Case ID",ui("ผู้แจ้ง"),ui("สถานที่"),ui("รายละเอียด"),ui("ผู้เสียชีวิต"),ui("ระดับ"),ui("สถานะ")]}>
         {rows.map(row=><tr key={row.id} className="border-b">
             <td className="p-4 text-slate-500">{dateText(row.createdAt, language)}</td>
             <td className="p-4 font-mono text-xs">#{row.id}</td>
             <td className="p-4 font-bold">{row.name}</td>
             <td className="p-4 text-slate-600">{row.place}</td>
             <td className="p-4 text-slate-600">{row.problem}</td>
+            <td className={`p-4 text-center font-black ${row.deathCount > 0 ? "text-red-600" : "text-slate-400"}`}>{row.deathCount || 0}</td>
             <td className="p-4 text-center font-bold">{ui(row.priority)}</td>
             <td className="p-4 text-center font-bold">{ui(row.status)}</td>
         </tr>)}

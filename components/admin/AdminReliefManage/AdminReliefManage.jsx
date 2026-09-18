@@ -22,18 +22,19 @@ import {
     createReliefItem,
     updateReliefItem,
     updateReliefItemStatus,
+    updateReliefItemDonationStatus,
 } from "@/services/admin/reliefItems";
 
 const asArray = (value) =>
     Array.isArray(value)
         ? value
         : Array.isArray(value?.data)
-          ? value.data
-          : Array.isArray(value?.items)
-            ? value.items
-            : Array.isArray(value?.categories)
-              ? value.categories
-              : [];
+            ? value.data
+            : Array.isArray(value?.items)
+                ? value.items
+                : Array.isArray(value?.categories)
+                    ? value.categories
+                    : [];
 
 const normalizeCategory = (item) => ({
     id: item.id ?? item.categoryId ?? "",
@@ -52,6 +53,8 @@ const normalizeItem = (item) => ({
         item.reliefCategoryName ??
         "",
     isActive: item.isActive !== false,
+    isDonationOpen: item.isDonationOpen !== false,
+    maximumRequestQuantity: Number(item.maximumRequestQuantity ?? 0),
 });
 
 export default function AdminReliefManage() {
@@ -156,14 +159,43 @@ export default function AdminReliefManage() {
     const saveItem = async (form) => {
         try {
             setSaving(true);
+
+            const payload = {
+                name: form.name,
+                unit: form.unit,
+                reliefCategoryId: form.categoryId,
+                isDonationOpen:
+                    form.isDonationOpen ?? true,
+                maximumRequestQuantity:
+                    Number(form.maximumRequestQuantity) || 0,
+            };
+
             itemModal.item
-                ? await updateReliefItem(itemModal.item.id, form)
-                : await createReliefItem(form);
-            setItemModal({ open: false, item: null });
+                ? await updateReliefItem(
+                    itemModal.item.id,
+                    payload
+                )
+                : await createReliefItem(payload);
+
+            setItemModal({
+                open: false,
+                item: null,
+            });
+
             await refreshData();
-            await Swal.fire({ icon: "success", title: ui("บันทึกสินค้าสำเร็จ"), timer: 900, showConfirmButton: false });
+
+            await Swal.fire({
+                icon: "success",
+                title: ui("บันทึกสินค้าสำเร็จ"),
+                timer: 900,
+                showConfirmButton: false,
+            });
         } catch (error) {
-            await Swal.fire(ui("บันทึกไม่สำเร็จ"), ui(error.message), "error");
+            await Swal.fire(
+                ui("บันทึกไม่สำเร็จ"),
+                ui(error.message),
+                "error"
+            );
         } finally {
             setSaving(false);
         }
@@ -192,12 +224,54 @@ export default function AdminReliefManage() {
             await Swal.fire(ui("เปลี่ยนสถานะไม่สำเร็จ"), ui(error.message), "error");
         }
     };
+    const toggleDonationStatus = async (item) => {
+        const nextStatus = !item.isDonationOpen;
 
+        const result = await Swal.fire({
+            icon: "question",
+            title: nextStatus
+                ? ui("เปิดรับบริจาครายการนี้?")
+                : ui("ปิดรับบริจาครายการนี้?"),
+            text: `${item.name} (${item.unit})`,
+            showCancelButton: true,
+            confirmButtonText: ui("ยืนยัน"),
+            cancelButtonText: ui("ยกเลิก"),
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            await updateReliefItemDonationStatus(
+                item.id,
+                nextStatus
+            );
+
+            await refreshData();
+
+            await Swal.fire({
+                icon: "success",
+                title: nextStatus
+                    ? ui("เปิดรับบริจาคแล้ว")
+                    : ui("ปิดรับบริจาคแล้ว"),
+                confirmButtonText: ui("ตกลง"),
+            });
+        } catch (error) {
+            await Swal.fire({
+                icon: "error",
+                title: ui("เปลี่ยนสถานะไม่สำเร็จ"),
+                text: ui(
+                    error?.message ||
+                    "กรุณาลองใหม่อีกครั้ง"
+                ),
+                confirmButtonText: ui("ตกลง"),
+            });
+        }
+    };
     return (
         <RoleGuard role="Admin" storageKey="admin" loginPath="/admin-login">
             <div className="min-h-screen bg-[#f4f8fb]">
                 <header className="border-b border-slate-200 bg-white px-5 py-5 md:px-8">
-                    <div className="mx-auto flex max-w-[1450px] items-center justify-between gap-4">
+                    <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-4">
                         <div>
                             <p className="text-xs font-black uppercase tracking-[0.2em] text-sky-500">
                                 Resource Management
@@ -223,7 +297,7 @@ export default function AdminReliefManage() {
                     </div>
                 </header>
 
-                <main className="mx-auto max-w-[1450px] space-y-6 p-5 md:p-8">
+                <main className="mx-auto max-w-screen-2xl space-y-6 p-5 md:p-8">
                     <ReliefManageTabs
                         activeTab={activeTab}
                         onChange={setActiveTab}
@@ -261,6 +335,7 @@ export default function AdminReliefManage() {
                             rows={filteredItems}
                             onEdit={(item) => setItemModal({ open: true, item })}
                             onToggle={(item) => toggleStatus("item", item)}
+                            onToggleDonation={toggleDonationStatus}
                         />
                     ) : (
                         <ReliefCategoryTable

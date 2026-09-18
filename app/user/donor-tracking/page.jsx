@@ -8,6 +8,7 @@ import DonationQrCard from "@/components/user/DonorTrackingPage/DonationQrCard";
 import DonationTimeline from "@/components/user/DonorTrackingPage/DonationTimeline";
 import DonationCenterCard from "@/components/user/DonorTrackingPage/DonationCenterCard";
 import DonationItemList from "@/components/user/DonorTrackingPage/DonationItemList";
+import DonorCenterInfo from "@/components/user/DonorForm/DonorCenterInfo";
 import { getDonationById, getMyDonations } from "@/services/user/donation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translateUiText } from "@/locales/uiPhrases";
@@ -110,6 +111,7 @@ function DonorTrackingContent() {
                 <DonationQrCard donation={donation} />
                 <DonationTimeline status={donation.status} />
                 <DonationCenterCard donation={donation} />
+                <DonorCenterInfo />
                 <DonationItemList items={donation.items || []} />
             </div>
         </div>

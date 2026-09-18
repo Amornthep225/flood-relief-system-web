@@ -4,6 +4,8 @@ import { useNativeUi } from "@/hooks/useNativeUi";
 
 import Link from "next/link";
 
+const LONG_WAIT_HOURS = 3;
+
 export default function StaffSosCard({
     request,
     onAccept,
@@ -15,6 +17,12 @@ export default function StaffSosCard({
     const isWaiting = status === "pending";
     const isCompleted = status === "completed";
     const isEmergency = isEmergencyRequest(request);
+    const isPickup =
+        !isEmergency &&
+        String(request.receiveMethod || "Delivery").toLowerCase() === "pickup";
+    const waitInfo = getWaitInfo(request.createdAt);
+    const isLongWaiting =
+        isWaiting && waitInfo.hours >= LONG_WAIT_HOURS;
 
     const style = getStatusStyle(status);
 
@@ -24,10 +32,16 @@ export default function StaffSosCard({
 
     return (
         <article
-            className={`relative overflow-hidden rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md ${style.border}`}
+            className={`relative overflow-hidden rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md ${
+                isLongWaiting
+                    ? "border-red-300 ring-2 ring-red-100"
+                    : style.border
+            }`}
         >
             <div
-                className={`absolute bottom-0 left-0 top-0 w-1 ${style.bar}`}
+                className={`absolute bottom-0 left-0 top-0 w-1 ${
+                    isLongWaiting ? "bg-red-500" : style.bar
+                }`}
             />
 
             <div className="flex flex-col gap-6 md:flex-row">
@@ -36,13 +50,13 @@ export default function StaffSosCard({
                         className={`flex h-14 w-14 items-center justify-center rounded-full ${style.icon}`}
                     >
                         <span className="material-symbols-outlined text-2xl">
-                            {getStatusIcon(status)}
+                            {isPickup && status === "delivering" ? "storefront" : getStatusIcon(status)}
                         </span>
                     </div>
 
                     <div className="md:text-center">
                         <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                            SOS ID
+                            {isEmergency ? "SOS ID" : ui("รหัสคำขอ")}
                         </p>
 
                         <p className="font-mono text-sm font-bold text-slate-700">
@@ -60,13 +74,40 @@ export default function StaffSosCard({
                         <span
                             className={`rounded-full px-3 py-1 text-xs font-bold ${style.badge}`}
                         >
-                            {ui(getStatusLabel(status))}
+                            {ui(isPickup && status === "delivering" ? "พร้อมรับที่ศูนย์" : getStatusLabel(status))}
                         </span>
 
                         {isEmergency && (
-                            <PriorityBadge
-                                priority={request.priority}
-                            />
+                            <>
+                                <PriorityBadge
+                                    priority={request.priority}
+                                />
+                                {request.severity && (
+                                    <SeverityBadge severity={request.severity} ui={ui} />
+                                )}
+                            </>
+                        )}
+
+                        {!isEmergency && (
+                            <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold ${
+                                isPickup
+                                    ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200"
+                                    : "bg-blue-100 text-blue-700 ring-1 ring-blue-200"
+                            }`}>
+                                <span className="material-symbols-outlined text-sm">
+                                    {isPickup ? "storefront" : "local_shipping"}
+                                </span>
+                                {ui(isPickup ? "รับเองที่ศูนย์" : "เจ้าหน้าที่จัดส่ง")}
+                            </span>
+                        )}
+
+                        {isLongWaiting && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-black text-red-700 ring-1 ring-red-200">
+                                <span className="material-symbols-outlined text-sm">
+                                    schedule
+                                </span>
+                                {ui(formatLongWait(waitInfo))}
+                            </span>
                         )}
                     </div>
 
@@ -115,6 +156,11 @@ export default function StaffSosCard({
                             {(request.elderlyCount || 0) > 0 && (
                                 <span className="rounded-lg bg-orange-50 px-3 py-1.5 text-xs font-bold text-orange-700">
                                     {ui(`ผู้สูงอายุ ${request.elderlyCount} คน`)}
+                                </span>
+                            )}
+                            {(request.deathCount || 0) > 0 && (
+                                <span className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-black text-white shadow-sm">
+                                    {ui(`ผู้เสียชีวิต ${request.deathCount} คน`)}
                                 </span>
                             )}
                             {request.waterLevel != null && (
@@ -184,18 +230,20 @@ export default function StaffSosCard({
                         </Link>
                     )}
 
-                    <button
-                        type="button"
-                        onClick={() =>
-                            onOpenGps(request)
-                        }
-                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-600 transition hover:border-sky-200 hover:text-sky-600"
-                    >
-                        <span className="material-symbols-outlined text-lg">
-                            map
-                        </span>
-                        {ui("ดูพิกัด")}
-                    </button>
+                    {!isPickup && (
+                        <button
+                            type="button"
+                            onClick={() =>
+                                onOpenGps(request)
+                            }
+                            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-600 transition hover:border-sky-200 hover:text-sky-600"
+                        >
+                            <span className="material-symbols-outlined text-lg">
+                                map
+                            </span>
+                            {ui("ดูพิกัด")}
+                        </button>
+                    )}
 
                     <button
                         type="button"
@@ -228,6 +276,28 @@ function Information({ icon, text, full = false }) {
 
             <span className="break-words">{text}</span>
         </div>
+    );
+}
+
+function SeverityBadge({ severity, ui }) {
+    const value = String(severity || "").trim().toLowerCase();
+    const labels = {
+        mild: "เล็กน้อย",
+        moderate: "ปานกลาง",
+        severe: "รุนแรง",
+        critical: "วิกฤต",
+    };
+    const styles = {
+        mild: "bg-emerald-100 text-emerald-700",
+        moderate: "bg-amber-100 text-amber-700",
+        severe: "bg-orange-100 text-orange-700",
+        critical: "bg-red-600 text-white",
+    };
+
+    return (
+        <span className={`rounded-full px-3 py-1 text-xs font-black ${styles[value] || "bg-slate-100 text-slate-700"}`}>
+            {ui("ระดับความรุนแรง")}: {ui(labels[value] || severity)}
+        </span>
     );
 }
 
@@ -376,6 +446,28 @@ function getRequestTitle(request) {
     }
 
     return `ขอความช่วยเหลือ ${items.length} รายการ`;
+}
+
+function getWaitInfo(value) {
+    const createdAt = new Date(value || 0);
+
+    if (Number.isNaN(createdAt.getTime())) {
+        return { hours: 0, days: 0 };
+    }
+
+    const diffMs = Math.max(0, Date.now() - createdAt.getTime());
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(hours / 24);
+
+    return { hours, days };
+}
+
+function formatLongWait(waitInfo) {
+    if (waitInfo.days >= 1) {
+        return `รอนาน ${waitInfo.days} วัน`;
+    }
+
+    return `รอนาน ${Math.max(waitInfo.hours, 1)} ชม.`;
 }
 
 function formatDateTime(value, language) {

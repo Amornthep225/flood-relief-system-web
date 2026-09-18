@@ -40,9 +40,6 @@ export default function StaffLoginPage() {
                         <h1 className="text-2xl font-bold text-slate-800 mb-1">
                             เข้าสู่ระบบ
                         </h1>
-                        <p className="text-slate-400 text-xs">
-                            สำหรับเจ้าหน้าที่และหน่วยงานที่เกี่ยวข้อง
-                        </p>
                     </div>
 
                     <StaffLoginForm links={mockData.links} />

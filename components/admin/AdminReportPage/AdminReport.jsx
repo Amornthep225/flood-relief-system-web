@@ -93,6 +93,8 @@ function sosOf(item){
             "-",
         status:item.status??"-",
         priority:item.priority??"Normal",
+        requestType:item.requestType??"Relief",
+        deathCount:Number(item.deathCount??0),
         createdAt:item.createdAt,
     };
 }
@@ -225,6 +227,7 @@ export default function AdminReport(){
                 summary:[
                     ["จำนวนเคสทั้งหมด",shownSos.length],
                     ["รอรับเรื่อง",shownSos.filter(x=>String(x.status).toLowerCase()==="pending").length],
+                    ["ผู้เสียชีวิตทั้งหมด",shownSos.reduce((sum,x)=>sum+Number(x.deathCount||0),0)],
                 ],
             };
         }

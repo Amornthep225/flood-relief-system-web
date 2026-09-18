@@ -27,6 +27,10 @@ export default function SosTimeline({ request }) {
     const isEmergency =
         String(request?.requestType || "Relief").trim().toLowerCase() ===
         "emergency";
+    const isPickup =
+        !isEmergency &&
+        String(request?.receiveMethod || "Delivery").trim().toLowerCase() ===
+            "pickup";
 
     const statusOrder = isEmergency
         ? EMERGENCY_STATUS_ORDER
@@ -56,7 +60,9 @@ export default function SosTimeline({ request }) {
                   {
                       key: "Preparing",
                       title: t("sos.tracking.timeline.preparingTitle"),
-                      detail: t("sos.tracking.timeline.preparingDetail"),
+                      detail: isPickup
+                          ? t("sos.tracking.timeline.preparingPickupDetail")
+                          : t("sos.tracking.timeline.preparingDetail"),
                       time: request?.preparingAt,
                       icon: "inventory_2",
                   },
@@ -64,17 +70,23 @@ export default function SosTimeline({ request }) {
             : []),
         {
             key: "Delivering",
-            title: t("sos.tracking.timeline.deliveringTitle"),
+            title: isPickup
+                ? t("sos.tracking.timeline.readyPickupTitle")
+                : t("sos.tracking.timeline.deliveringTitle"),
             detail: isEmergency
                 ? t("sos.tracking.timeline.deliveringEmergencyDetail")
-                : t("sos.tracking.timeline.deliveringReliefDetail"),
+                : isPickup
+                    ? t("sos.tracking.timeline.readyPickupDetail")
+                    : t("sos.tracking.timeline.deliveringReliefDetail"),
             time: request?.deliveringAt,
-            icon: "local_shipping",
+            icon: isPickup ? "storefront" : "local_shipping",
         },
         {
             key: "Completed",
             title: t("sos.tracking.timeline.completedTitle"),
-            detail: t("sos.tracking.timeline.completedDetail"),
+            detail: isPickup
+                ? t("sos.tracking.timeline.completedPickupDetail")
+                : t("sos.tracking.timeline.completedDetail"),
             time: request?.completedAt,
             icon: "flag",
         },

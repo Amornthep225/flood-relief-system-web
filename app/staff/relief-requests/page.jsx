@@ -3,7 +3,7 @@
 import StaffLayout from "@/components/layout/StaffLayout";
 import StaffSos from "@/components/staff/StaffSosPage/StaffSos";
 
-export default function StaffSosPage() {
+export default function StaffReliefRequestsPage() {
     return (
         <StaffLayout
             homeHref="/staff/staff-home"
@@ -11,7 +11,7 @@ export default function StaffSosPage() {
             logoutHref="/staff/staff-login"
             showHome={false}
         >
-            <StaffSos requestType="emergency" />
+            <StaffSos requestType="relief" />
         </StaffLayout>
     );
 }

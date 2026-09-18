@@ -173,6 +173,30 @@ export default function StaffNavbar({
         }
 
         if (
+            notificationItem.type === "StaffNewRelief" &&
+            notificationItem.referenceId
+        ) {
+            router.push(
+                `/staff/relief-requests?id=${encodeURIComponent(
+                    notificationItem.referenceId
+                )}`
+            );
+            return;
+        }
+
+        if (
+            notificationItem.type === "StaffNewSos" &&
+            notificationItem.referenceId
+        ) {
+            router.push(
+                `/staff/staff-sos?id=${encodeURIComponent(
+                    notificationItem.referenceId
+                )}`
+            );
+            return;
+        }
+
+        if (
             notificationItem.referenceType === "SosRequest" &&
             notificationItem.referenceId
         ) {

@@ -40,6 +40,9 @@ export default function AdminLoginForm({ dashboardPath }) {
                 password: form.password,
             });
 
+            // เปลี่ยน session เป็น Admin และล้างข้อมูล Role เก่า
+            localStorage.removeItem("user");
+            localStorage.removeItem("staff");
             localStorage.setItem("token", data.token);
             localStorage.setItem(
                 "admin",

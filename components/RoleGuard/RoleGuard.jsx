@@ -26,12 +26,36 @@ export default function RoleGuard({
             const decoded = jwtDecode(token);
             const data = JSON.parse(userData);
 
-            const expired = decoded.exp * 1000 < Date.now();
-            const wrongRole = data.role !== role;
+            const expired =
+                !decoded?.exp ||
+                decoded.exp * 1000 < Date.now();
 
-            if (expired || wrongRole) {
-                localStorage.removeItem("token");
+            const expectedUserType =
+                String(role || "").toLowerCase();
+
+            const tokenUserType =
+                String(decoded?.userType || "").toLowerCase();
+
+            const wrongStoredRole =
+                String(data?.role || "").toLowerCase() !==
+                expectedUserType;
+
+            const wrongTokenRole =
+                tokenUserType !== expectedUserType;
+
+            if (
+                expired ||
+                wrongStoredRole ||
+                wrongTokenRole
+            ) {
+                // ถ้า token เป็นของ Role อื่น อย่าลบ session ของ Role นั้น
+                // ลบเฉพาะข้อมูล Role ปัจจุบันที่ไม่ตรง เพื่อหยุด redirect loop
                 localStorage.removeItem(storageKey);
+
+                if (expired) {
+                    localStorage.removeItem("token");
+                }
+
                 router.replace(loginPath);
                 return;
             }

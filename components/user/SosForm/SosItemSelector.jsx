@@ -89,6 +89,12 @@ export default function SosItemSelector({
                                                                 item.unit
                                                             }
                                                         </p>
+
+                                                        {Number(item.maximumRequestQuantity || 0) > 0 && (
+                                                            <p className="mt-1 text-xs font-medium text-amber-600">
+                                                                ขอได้ไม่เกิน {Number(item.maximumRequestQuantity).toLocaleString("th-TH")} {item.unit}
+                                                            </p>
+                                                        )}
                                                     </div>
                                                 </label>
 
@@ -111,6 +117,7 @@ export default function SosItemSelector({
                                                         <input
                                                             type="number"
                                                             min="1"
+                                                            max={Number(item.maximumRequestQuantity || 0) > 0 ? item.maximumRequestQuantity : undefined}
                                                             value={
                                                                 quantities[
                                                                     item

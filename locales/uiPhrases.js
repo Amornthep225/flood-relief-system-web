@@ -720,6 +720,39 @@ export const UI_PHRASES = {
   "รายงานคลัง": "Inventory Report",
   "รายการบริจาค": "Donations",
   "ไม่สามารถโหลดข้อมูล Dashboard ได้": "Unable to load dashboard data",
+  "รายการคำขอรับสิ่งของ": "Relief Requests",
+  "ค้นหาคำขอรับสิ่งของ": "Search Relief Requests",
+  "จัดการคำขอรับสิ่งของและติดตามสถานะการดำเนินงาน": "Manage relief requests and track their progress",
+  "รายการแจ้งเหตุฉุกเฉิน (SOS)": "Emergency SOS Requests",
+  "จัดการเหตุฉุกเฉินและติดตามสถานะการช่วยเหลือ": "Manage emergency cases and track assistance progress",
+  "SOS ทั้งหมด": "Total SOS",
+  "คำขอรับสิ่งของทั้งหมด": "Total Relief Requests",
+  "รหัสคำขอ": "Request ID",
+  "ไม่สามารถโหลดคำขอรับสิ่งของได้": "Unable to load relief requests",
+  "ผู้เสียชีวิต": "Deceased",
+  "ผู้เสียชีวิตทั้งหมด": "Total Deaths",
+
+  "วิธีรับสิ่งของ": "Receive Method",
+  "รับเองที่ศูนย์": "Pick Up at Center",
+  "เจ้าหน้าที่จัดส่ง": "Staff Delivery",
+  "จุดรับสิ่งของ": "Pickup Point",
+  "ดูตำแหน่งศูนย์": "View Center Location",
+  "พร้อมรับที่ศูนย์": "Ready for Pickup",
+  "ยืนยันพร้อมให้รับที่ศูนย์": "Confirm Ready for Pickup",
+  "ยืนยันว่าผู้ขอรับสิ่งของแล้ว": "Confirm Supplies Collected",
+  "รับสิ่งของเรียบร้อยแล้ว": "Supplies Collected",
+  "จัดเตรียมสิ่งของให้พร้อมสำหรับผู้ขอมารับที่ศูนย์": "Prepare the supplies for pickup at the center",
+  "สิ่งของพร้อมแล้ว รอผู้ขอมารับที่ศูนย์": "Supplies are ready and waiting for pickup at the center",
+  "ผู้ขอรับสิ่งของจากศูนย์เรียบร้อยแล้ว": "The requester has collected the supplies from the center",
+
+  "กลับไปคำขอรับสิ่งของ": "Back to Relief Requests",
+  "สิ่งของพร้อมให้รับที่ศูนย์แล้ว": "Supplies are ready for pickup",
+
+  "ระดับความรุนแรง": "Severity",
+  "ระดับความรุนแรงของผู้ป่วย/ผู้ประสบภัย": "Patient / Victim Severity",
+  "เล็กน้อย": "Mild",
+  "ปานกลาง": "Moderate",
+  "รุนแรง": "Severe",
 
 };
 
@@ -874,6 +907,13 @@ export const UI_PATTERNS = [
     en: (m) => `Donation #${m[1]}`,
     enRegex: /^Donation\s+#([A-Za-z0-9_-]+)$/i,
     thValue: (m) => `รายการบริจาค #${m[1]}`,
+  },
+
+  {
+    th: /^ผู้เสียชีวิต\s+(\d+)\s+คน$/,
+    en: (m) => `${m[1]} deceased`,
+    enRegex: /^(\d+)\s+deceased$/i,
+    thValue: (m) => `ผู้เสียชีวิต ${m[1]} คน`,
   },
 
   // Inventory History dynamic remarks
@@ -1047,6 +1087,42 @@ export const UI_PATTERNS = [
     en: (m) => `Donation #${m[1]} was received by the center. Thank you for helping support affected people.`,
     enRegex: /^Donation #(.+?) was received by the center\. Thank you for helping support affected people\.$/i,
     thValue: (m) => `ของบริจาค #${m[1]} ถูกรับเข้าศูนย์เรียบร้อยแล้ว ขอบคุณที่ร่วมส่งต่อความช่วยเหลือ`,
+  },
+  {
+    th: /^มี SOS รอรับงาน\s+(\d+)\s+เคส$/,
+    en: (m) => `${m[1]} SOS cases waiting`,
+    enRegex: /^(\d+)\s+SOS cases waiting$/i,
+    thValue: (m) => `มี SOS รอรับงาน ${m[1]} เคส`,
+  },
+  {
+    th: /^มี SOS รอเจ้าหน้าที่รับงาน\s+(\d+)\s+เคส$/,
+    en: (m) => `${m[1]} SOS cases waiting for staff`,
+    enRegex: /^(\d+)\s+SOS cases waiting for staff$/i,
+    thValue: (m) => `มี SOS รอเจ้าหน้าที่รับงาน ${m[1]} เคส`,
+  },
+  {
+    th: /^มีคำขอรับสิ่งของ\s+(\d+)\s+รายการ$/,
+    en: (m) => `${m[1]} relief requests`,
+    enRegex: /^(\d+)\s+relief requests$/i,
+    thValue: (m) => `มีคำขอรับสิ่งของ ${m[1]} รายการ`,
+  },
+  {
+    th: /^มีคำขอรับสิ่งของรอเจ้าหน้าที่รับงาน\s+(\d+)\s+รายการ$/,
+    en: (m) => `${m[1]} relief requests waiting for staff`,
+    enRegex: /^(\d+)\s+relief requests waiting for staff$/i,
+    thValue: (m) => `มีคำขอรับสิ่งของรอเจ้าหน้าที่รับงาน ${m[1]} รายการ`,
+  },
+  {
+    th: /^รอนาน\s+(\d+)\s+ชม\.$/,
+    en: (m) => `Waiting ${m[1]} hrs`,
+    enRegex: /^Waiting\s+(\d+)\s+hrs$/i,
+    thValue: (m) => `รอนาน ${m[1]} ชม.`,
+  },
+  {
+    th: /^รอนาน\s+(\d+)\s+วัน$/,
+    en: (m) => `Waiting ${m[1]} days`,
+    enRegex: /^Waiting\s+(\d+)\s+days$/i,
+    thValue: (m) => `รอนาน ${m[1]} วัน`,
   },
 ];
 

@@ -43,6 +43,11 @@ export default function SosRequestItems({ items }) {
                                         quantity: item.quantity,
                                         unit,
                                     })}
+                                    {item.approvedQuantity != null && (
+                                        <span className="ml-2 font-bold text-sky-600">
+                                            • {language === "en" ? "Approved" : "อนุมัติ"} {item.approvedQuantity} {unit}
+                                        </span>
+                                    )}
                                 </p>
                             </div>
 

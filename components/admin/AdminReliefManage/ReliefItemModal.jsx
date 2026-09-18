@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function ReliefItemModal({ open, item, categories, saving, onClose, onSubmit }) {
     const { ui } = useNativeUi();
-    const [form, setForm] = useState({ name: "", unit: "", categoryId: "", isActive: true });
+    const [form, setForm] = useState({ name: "", unit: "", categoryId: "", maximumRequestQuantity: 0, isActive: true });
 
     useEffect(() => {
         if (!open) return;
@@ -15,12 +15,14 @@ export default function ReliefItemModal({ open, item, categories, saving, onClos
                       name: item.name || "",
                       unit: item.unit || "",
                       categoryId: item.categoryId || "",
+                      maximumRequestQuantity: item.maximumRequestQuantity ?? 0,
                       isActive: item.isActive !== false,
                   }
                 : {
                       name: "",
                       unit: "",
                       categoryId: categories[0]?.id || "",
+                      maximumRequestQuantity: 0,
                       isActive: true,
                   }
         );
@@ -37,6 +39,7 @@ export default function ReliefItemModal({ open, item, categories, saving, onClos
                         name: form.name.trim(),
                         unit: form.unit.trim(),
                         categoryId: form.categoryId,
+                        maximumRequestQuantity: Number(form.maximumRequestQuantity) || 0,
                         isActive: form.isActive,
                     });
                 }}
@@ -84,6 +87,27 @@ export default function ReliefItemModal({ open, item, categories, saving, onClos
                             />
                         </label>
                     </div>
+                    <label className="block text-sm font-bold text-slate-700">
+                        {ui("จำนวนที่ผู้ใช้ขอได้สูงสุดต่อคำขอ")}
+                        <input
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={form.maximumRequestQuantity}
+                            onChange={(event) => {
+                                const value = Number(event.target.value);
+                                setForm({
+                                    ...form,
+                                    maximumRequestQuantity:
+                                        Number.isInteger(value) && value >= 0 ? value : 0,
+                                });
+                            }}
+                            className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 font-normal outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+                        />
+                        <span className="mt-1 block text-xs font-normal text-slate-400">
+                            {ui("ใส่ 0 หากไม่จำกัดจำนวน")}
+                        </span>
+                    </label>
                     <label className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
                         <span className="font-bold text-slate-700">{ui("เปิดใช้งาน")}</span>
                         <input

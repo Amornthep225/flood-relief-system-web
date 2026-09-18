@@ -1,16 +1,20 @@
 "use client";
 
 import { useNativeUi } from "@/hooks/useNativeUi";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function StaffSosFilter({
+    requestType = "emergency",
     filters,
     onSearch,
     onReset,
 }) {
-    const { ui, language } = useNativeUi();
+    const { ui } = useNativeUi();
     const [draft, setDraft] = useState(filters);
+
+    useEffect(() => {
+        setDraft(filters);
+    }, [filters]);
 
     const updateDraft = (key, value) => {
         setDraft((current) => ({
@@ -38,7 +42,6 @@ export default function StaffSosFilter({
     const handleLast7Days = () => {
         const end = new Date();
         const start = new Date();
-
         start.setDate(end.getDate() - 6);
 
         applyPreset(
@@ -49,7 +52,6 @@ export default function StaffSosFilter({
 
     const handleThisMonth = () => {
         const now = new Date();
-
         const start = new Date(
             now.getFullYear(),
             now.getMonth(),
@@ -81,21 +83,23 @@ export default function StaffSosFilter({
                 </span>
 
                 <h2 className="text-lg font-bold text-slate-800">
-                    ค้นหารายการ SOS
+                    {requestType === "emergency"
+                        ? ui("ค้นหารายการ SOS")
+                        : ui("ค้นหาคำขอรับสิ่งของ")}
                 </h2>
             </div>
 
             <div className="mb-6 flex flex-wrap gap-3">
                 <PresetButton onClick={handleToday}>
-                    วันนี้
+                    {ui("วันนี้")}
                 </PresetButton>
 
                 <PresetButton onClick={handleLast7Days}>
-                    7 วันล่าสุด
+                    {ui("7 วันล่าสุด")}
                 </PresetButton>
 
                 <PresetButton onClick={handleThisMonth}>
-                    เดือนนี้
+                    {ui("เดือนนี้")}
                 </PresetButton>
             </div>
 
@@ -141,21 +145,11 @@ export default function StaffSosFilter({
                         className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
                     >
                         <option value="">{ui("ทั้งหมด")}</option>
-                        <option value="Pending">
-                            รอรับเรื่อง
-                        </option>
-                        <option value="Accepted">
-                            รับเรื่องแล้ว
-                        </option>
-                        <option value="Preparing">
-                            กำลังจัดเตรียม
-                        </option>
-                        <option value="Delivering">
-                            กำลังนำส่ง
-                        </option>
-                        <option value="Completed">
-                            เสร็จสิ้น
-                        </option>
+                        <option value="Pending">{ui("รอรับเรื่อง")}</option>
+                        <option value="Accepted">{ui("รับเรื่องแล้ว")}</option>
+                        <option value="Preparing">{ui("กำลังจัดเตรียม")}</option>
+                        <option value="Delivering">{ui("กำลังนำส่ง")}</option>
+                        <option value="Completed">{ui("เสร็จสิ้น")}</option>
                     </select>
                 </FilterField>
             </div>
@@ -166,7 +160,7 @@ export default function StaffSosFilter({
                     onClick={handleReset}
                     className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-slate-50"
                 >
-                    รีเซ็ต
+                    {ui("รีเซ็ต")}
                 </button>
 
                 <button
@@ -177,7 +171,7 @@ export default function StaffSosFilter({
                     <span className="material-symbols-outlined text-lg">
                         search
                     </span>
-                    ค้นหา
+                    {ui("ค้นหา")}
                 </button>
             </div>
         </div>
@@ -202,7 +196,6 @@ function FilterField({ label, children }) {
             <span className="mb-2 block text-sm font-bold text-slate-600">
                 {label}
             </span>
-
             {children}
         </label>
     );
@@ -210,11 +203,7 @@ function FilterField({ label, children }) {
 
 function formatDateInput(date) {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(
-        2,
-        "0"
-    );
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-
     return `${year}-${month}-${day}`;
 }

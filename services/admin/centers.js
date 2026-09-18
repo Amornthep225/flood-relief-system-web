@@ -201,3 +201,40 @@ export async function getLowStockItems(signal) {
         signal,
     });
 }
+
+// Include inactive centers so the existing center can be re-enabled.
+export async function getSingleCenter(signal) {
+    const data = await getCenters(signal);
+
+    const centers = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data?.data)
+            ? data.data
+            : null;
+
+    if (!centers) {
+        throw new Error(
+            "รูปแบบข้อมูลศูนย์ไม่ถูกต้อง กรุณาลองใหม่"
+        );
+    }
+
+    const activeCenters = centers.filter(
+        (center) => center.isActive !== false
+    );
+
+    if (activeCenters.length === 0) {
+        throw new Error(
+            "ไม่พบศูนย์ที่เปิดใช้งาน กรุณาตรวจสอบข้อมูลศูนย์"
+        );
+    }
+
+    if (activeCenters.length > 1) {
+        throw new Error(
+            "พบศูนย์ที่เปิดใช้งานมากกว่า 1 ศูนย์ กรุณาปิดใช้งานศูนย์อื่นก่อน"
+        );
+    }
+
+    return activeCenters[0];
+}

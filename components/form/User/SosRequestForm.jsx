@@ -16,6 +16,7 @@ import SosItemSelector from "@/components/user/SosForm/SosItemSelector";
 import LocationPicker from "@/components/user/SosForm/LocationPicker";
 import ConfirmSosModal from "@/components/user/SosForm/ConfirmSosModal";
 import UserRemark from "@/components/user/SosForm/UserRemark";
+import ReceiveMethodSelector from "@/components/user/SosForm/ReceiveMethodSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 const initialLocation = {
     latitude: null,
@@ -30,33 +31,25 @@ export default function SosRequestForm() {
     const [categories, setCategories] = useState([]);
     const [items, setItems] = useState([]);
 
-    const [
-        selectedCategoryIds,
-        setSelectedCategoryIds,
-    ] = useState([]);
+    const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
-    const [selectedItemIds, setSelectedItemIds] =
-        useState([]);
+    const [selectedItemIds, setSelectedItemIds] = useState([]);
 
     const [quantities, setQuantities] = useState({});
 
     const [userRemark, setUserRemark] = useState("");
-    const [location, setLocation] =
-        useState(initialLocation);
+    const [receiveMethod, setReceiveMethod] = useState("Delivery");
+    const [location, setLocation] = useState(initialLocation);
 
-    const [loadingData, setLoadingData] =
-        useState(true);
+    const [loadingData, setLoadingData] = useState(true);
 
-    const [isSubmitting, setIsSubmitting] =
-        useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [showConfirm, setShowConfirm] =
-        useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const itemsByCategory = useMemo(() => {
         return items.reduce((result, item) => {
-            const categoryId =
-                item.reliefCategoryId;
+            const categoryId = item.reliefCategoryId;
 
             if (!result[categoryId]) {
                 result[categoryId] = [];
@@ -73,32 +66,19 @@ export default function SosRequestForm() {
             try {
                 setLoadingData(true);
 
-                const [
-                    categoryResponse,
-                    itemResponse,
-                ] = await Promise.all([
+                const [categoryResponse, itemResponse] = await Promise.all([
                     getActiveReliefCategories(),
                     getActiveReliefItems(),
                 ]);
 
-                setCategories(
-                    Array.isArray(categoryResponse)
-                        ? categoryResponse
-                        : []
-                );
+                setCategories(Array.isArray(categoryResponse) ? categoryResponse : []);
 
-                setItems(
-                    Array.isArray(itemResponse)
-                        ? itemResponse
-                        : []
-                );
+                setItems(Array.isArray(itemResponse) ? itemResponse : []);
             } catch (error) {
                 await Swal.fire({
                     icon: "error",
                     title: t("sos.relief.loadErrorTitle"),
-                    text:
-                        error.message ||
-                        t("sos.relief.loadErrorText"),
+                    text: error.message || t("sos.relief.loadErrorText"),
                 });
             } finally {
                 setLoadingData(false);
@@ -109,39 +89,24 @@ export default function SosRequestForm() {
     }, []);
 
     const toggleCategory = (categoryId) => {
-        const isSelected =
-            selectedCategoryIds.includes(categoryId);
+        const isSelected = selectedCategoryIds.includes(categoryId);
 
         if (!isSelected) {
-            setSelectedCategoryIds(
-                (previous) => [
-                    ...previous,
-                    categoryId,
-                ]
-            );
+            setSelectedCategoryIds((previous) => [...previous, categoryId]);
 
             return;
         }
 
         const categoryItemIds = items
-            .filter(
-                (item) =>
-                    item.reliefCategoryId ===
-                    categoryId
-            )
+            .filter((item) => item.reliefCategoryId === categoryId)
             .map((item) => item.id);
 
         setSelectedCategoryIds((previous) =>
-            previous.filter(
-                (id) => id !== categoryId
-            )
+            previous.filter((id) => id !== categoryId)
         );
 
         setSelectedItemIds((previous) =>
-            previous.filter(
-                (id) =>
-                    !categoryItemIds.includes(id)
-            )
+            previous.filter((id) => !categoryItemIds.includes(id))
         );
 
         setQuantities((previous) => {
@@ -156,15 +121,10 @@ export default function SosRequestForm() {
     };
 
     const toggleItem = (itemId) => {
-        const isSelected =
-            selectedItemIds.includes(itemId);
+        const isSelected = selectedItemIds.includes(itemId);
 
         if (isSelected) {
-            setSelectedItemIds((previous) =>
-                previous.filter(
-                    (id) => id !== itemId
-                )
-            );
+            setSelectedItemIds((previous) => previous.filter((id) => id !== itemId));
 
             setQuantities((previous) => {
                 const updated = { ...previous };
@@ -175,10 +135,7 @@ export default function SosRequestForm() {
             return;
         }
 
-        setSelectedItemIds((previous) => [
-            ...previous,
-            itemId,
-        ]);
+        setSelectedItemIds((previous) => [...previous, itemId]);
 
         setQuantities((previous) => ({
             ...previous,
@@ -187,33 +144,37 @@ export default function SosRequestForm() {
     };
 
     const increaseQuantity = (itemId) => {
+        const item = items.find((entry) => entry.id === itemId);
+        const maximum = Number(item?.maximumRequestQuantity || 0);
+
         setQuantities((previous) => ({
             ...previous,
             [itemId]:
-                Number(previous[itemId] || 1) + 1,
+                maximum > 0
+                    ? Math.min(Number(previous[itemId] || 1) + 1, maximum)
+                    : Number(previous[itemId] || 1) + 1,
         }));
     };
 
     const decreaseQuantity = (itemId) => {
         setQuantities((previous) => ({
             ...previous,
-            [itemId]: Math.max(
-                Number(previous[itemId] || 1) - 1,
-                1
-            ),
+            [itemId]: Math.max(Number(previous[itemId] || 1) - 1, 1),
         }));
     };
 
     const updateQuantity = (itemId, value) => {
         const numberValue = Number(value);
+        const item = items.find((entry) => entry.id === itemId);
+        const maximum = Number(item?.maximumRequestQuantity || 0);
+        const normalized =
+            Number.isFinite(numberValue) && numberValue >= 1
+                ? Math.floor(numberValue)
+                : 1;
 
         setQuantities((previous) => ({
             ...previous,
-            [itemId]:
-                Number.isFinite(numberValue) &&
-                    numberValue >= 1
-                    ? Math.floor(numberValue)
-                    : 1,
+            [itemId]: maximum > 0 ? Math.min(normalized, maximum) : normalized,
         }));
     };
 
@@ -227,31 +188,51 @@ export default function SosRequestForm() {
 
             return false;
         }
-        console.log(location);
-        if (
-            location.latitude === null ||
-            location.longitude === null
-        ) {
+
+        const exceededItem = selectedItemIds
+            .map((itemId) => items.find((item) => item.id === itemId))
+            .find((item) => {
+                const maximum = Number(item?.maximumRequestQuantity || 0);
+                const quantity = Number(quantities[item?.id] || 1);
+                return maximum > 0 && quantity > maximum;
+            });
+
+        if (exceededItem) {
             await Swal.fire({
                 icon: "warning",
-                title: t("sos.relief.pinLocationTitle"),
-                text: t("sos.relief.pinLocationText"),
+                title: t("sos.relief.maximumRequestTitle"),
+                text: t("sos.relief.maximumRequestText", {
+                    name: exceededItem.name,
+                    maximum: Number(exceededItem.maximumRequestQuantity).toLocaleString("th-TH"),
+                    unit: exceededItem.unit,
+                }),
             });
 
             return false;
         }
 
-        if (!location.addressDetail.trim()) {
-            await Swal.fire({
-                icon: "warning",
-                title: t("sos.relief.addressTitle"),
-                text: t("sos.relief.addressText"),
-            });
+        if (receiveMethod === "Delivery") {
+            if (location.latitude === null || location.longitude === null) {
+                await Swal.fire({
+                    icon: "warning",
+                    title: t("sos.relief.pinLocationTitle"),
+                    text: t("sos.relief.pinLocationText"),
+                });
 
-            return false;
+                return false;
+            }
+
+            if (!location.addressDetail.trim()) {
+                await Swal.fire({
+                    icon: "warning",
+                    title: t("sos.relief.addressTitle"),
+                    text: t("sos.relief.addressText"),
+                });
+
+                return false;
+            }
         }
         return true;
-
     };
 
     const openConfirmModal = async () => {
@@ -271,124 +252,75 @@ export default function SosRequestForm() {
         setIsSubmitting(true);
 
         try {
-
             const payload = {
+                receiveMethod,
 
-                latitude:
-                    Number(location.latitude),
+                latitude: receiveMethod === "Delivery" ? Number(location.latitude) : 0,
 
                 longitude:
-                    Number(location.longitude),
+                    receiveMethod === "Delivery" ? Number(location.longitude) : 0,
 
                 addressDetail:
-                    location.addressDetail.trim(),
+                    receiveMethod === "Delivery" ? location.addressDetail.trim() : null,
 
-                userRemark:
-                    userRemark.trim() || null,
-                items:
-                    selectedItemIds.map(
-                        (itemId) => ({
+                userRemark: userRemark.trim() || null,
+                items: selectedItemIds.map((itemId) => ({
+                    reliefItemId: itemId,
 
-                            reliefItemId: itemId,
-
-                            quantity:
-                                Number(
-                                    quantities[itemId]
-                                ) || 1
-
-                        })
-                    )
+                    quantity: Number(quantities[itemId]) || 1,
+                })),
             };
 
-
-            const response =
-                await createSosRequest(payload);
-
-
+            const response = await createSosRequest(payload);
 
             setShowConfirm(false);
 
-
-
             await Swal.fire({
-
                 icon: "success",
 
                 title: t("sos.relief.successTitle"),
 
-                text:
-                    t("sos.relief.requestId", { id: response.sosRequestId }),
+                text: t("sos.relief.requestId", { id: response.sosRequestId }),
 
                 timer: 1500,
 
                 showConfirmButton: false,
 
-                allowOutsideClick: false
-
+                allowOutsideClick: false,
             });
 
-
-
-            router.push(
-                `/user/sos-success?id=${response.sosRequestId}`
-            );
-
-
-
+            router.push(`/user/sos-success?id=${response.sosRequestId}`);
         } catch (error) {
-
-
             if (
                 error.message.includes("Token") ||
                 error.message.includes("เข้าสู่ระบบใหม่")
             ) {
-
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");
 
-
                 await Swal.fire({
-
                     icon: "warning",
 
                     title: t("sos.relief.sessionExpired"),
 
-                    text: error.message
-
+                    text: error.message,
                 });
 
-
-                router.replace(
-                    "/user/users-login"
-                );
-
+                router.replace("/user/users-login");
 
                 return;
-
             }
 
-
-
             await Swal.fire({
-
                 icon: "error",
 
                 title: t("sos.relief.submitFailed"),
 
-                text:
-                    error.message ||
-                    t("sos.relief.genericError")
-
+                text: error.message || t("sos.relief.genericError"),
             });
-
-
-
         } finally {
-
             setIsSubmitting(false);
-
         }
-
     };
 
     if (loadingData) {
@@ -398,9 +330,7 @@ export default function SosRequestForm() {
                     progress_activity
                 </span>
 
-                <p className="font-medium">
-                    {t("sos.relief.loadingItems")}
-                </p>
+                <p className="font-medium">{t("sos.relief.loadingItems")}</p>
             </div>
         );
     }
@@ -425,9 +355,7 @@ export default function SosRequestForm() {
                 </div>
 
                 <form
-                    onSubmit={(event) =>
-                        event.preventDefault()
-                    }
+                    onSubmit={(event) => event.preventDefault()}
                     className="space-y-8 rounded-3xl border border-slate-100 bg-white p-6 shadow-xl shadow-sky-100/50 md:p-10"
                 >
                     <section className="space-y-5">
@@ -439,78 +367,79 @@ export default function SosRequestForm() {
 
                         <SosCategorySelector
                             categories={categories}
-                            selectedCategoryIds={
-                                selectedCategoryIds
-                            }
+                            selectedCategoryIds={selectedCategoryIds}
                             onToggle={toggleCategory}
                         />
                     </section>
 
-                    {selectedCategoryIds.length >
-                        0 && (
-                            <section className="space-y-5">
-                                <FormSectionTitle
-                                    number="2"
-                                    title={t("sos.relief.itemTitle")}
-                                    description={t("sos.relief.itemDescription")}
-                                />
+                    {selectedCategoryIds.length > 0 && (
+                        <section className="space-y-5">
+                            <FormSectionTitle
+                                number="2"
+                                title={t("sos.relief.itemTitle")}
+                                description={t("sos.relief.itemDescription")}
+                            />
 
-                                <SosItemSelector
-                                    categories={categories}
-                                    itemsByCategory={
-                                        itemsByCategory
-                                    }
-                                    selectedCategoryIds={
-                                        selectedCategoryIds
-                                    }
-                                    selectedItemIds={
-                                        selectedItemIds
-                                    }
-                                    quantities={
-                                        quantities
-                                    }
-                                    onToggleItem={
-                                        toggleItem
-                                    }
-                                    onIncrease={
-                                        increaseQuantity
-                                    }
-                                    onDecrease={
-                                        decreaseQuantity
-                                    }
-                                    onQuantityChange={
-                                        updateQuantity
-                                    }
-                                />
-                            </section>
-                        )}
+                            <SosItemSelector
+                                categories={categories}
+                                itemsByCategory={itemsByCategory}
+                                selectedCategoryIds={selectedCategoryIds}
+                                selectedItemIds={selectedItemIds}
+                                quantities={quantities}
+                                onToggleItem={toggleItem}
+                                onIncrease={increaseQuantity}
+                                onDecrease={decreaseQuantity}
+                                onQuantityChange={updateQuantity}
+                            />
+                        </section>
+                    )}
                     <section className="space-y-5">
                         <FormSectionTitle
                             number="3"
-                            title={t("sos.relief.locationTitle")}
-                            description={t("sos.relief.locationDescription")}
+                            title={t("sos.relief.receiveMethod.title")}
+                            description={t("sos.relief.receiveMethod.description")}
                         />
 
-                        <LocationPicker
-                            location={location}
-                            onLocationChange={
-                                setLocation
-                            }
+                        <ReceiveMethodSelector
+                            value={receiveMethod}
+                            onChange={setReceiveMethod}
                         />
                     </section>
 
+                    {receiveMethod === "Delivery" && (
+                        <section className="space-y-5">
+                            <FormSectionTitle
+                                number="4"
+                                title={t("sos.relief.locationTitle")}
+                                description={t("sos.relief.locationDescription")}
+                            />
+
+                            <LocationPicker
+                                location={location}
+                                onLocationChange={setLocation}
+                            />
+                        </section>
+                    )}
+
+                    {receiveMethod === "Pickup" && (
+                        <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-800">
+                            <div className="flex items-start gap-2">
+                                <span className="material-symbols-outlined text-emerald-600">
+                                    storefront
+                                </span>
+                                <p>{t("sos.relief.receiveMethod.pickupNotice")}</p>
+                            </div>
+                        </div>
+                    )}
 
                     <section className="space-y-5">
                         <FormSectionTitle
-                            number="4"
+                            number="5"
                             title={t("sos.relief.remarkTitle")}
                             description={t("sos.relief.remarkDescription")}
                         />
 
-                        <UserRemark
-                            value={userRemark}
-                            onChange={setUserRemark}
-                        />
+                        <UserRemark value={userRemark} onChange={setUserRemark} />
                     </section>
                     <button
                         type="button"
@@ -518,9 +447,7 @@ export default function SosRequestForm() {
                         disabled={isSubmitting}
                         className="flex w-full items-center justify-center gap-3 rounded-xl bg-red-500 px-6 py-4 text-base font-bold text-white shadow-lg shadow-red-200 transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        <span className="material-symbols-outlined">
-                            emergency
-                        </span>
+                        <span className="material-symbols-outlined">emergency</span>
 
                         {t("sos.relief.submit")}
                     </button>
@@ -530,9 +457,7 @@ export default function SosRequestForm() {
             {showConfirm && (
                 <ConfirmSosModal
                     isSubmitting={isSubmitting}
-                    selectedItemCount={
-                        selectedItemIds.length
-                    }
+                    selectedItemCount={selectedItemIds.length}
                     onClose={() => {
                         if (!isSubmitting) {
                             setShowConfirm(false);

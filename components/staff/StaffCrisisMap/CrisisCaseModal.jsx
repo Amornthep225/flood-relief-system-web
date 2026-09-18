@@ -117,6 +117,9 @@ export default function CrisisCaseModal({
                                         <Stat label={ui("ผู้สูงอายุ")} value={caseItem.elderlyCount} />
                                         <Stat label={ui("ผู้พิการ")} value={caseItem.disabledCount} />
                                         <Stat label={ui("ผู้ป่วย")} value={caseItem.patientCount} />
+                                        {(caseItem.deathCount || 0) > 0 && (
+                                            <Stat label={ui("ผู้เสียชีวิต")} value={caseItem.deathCount} />
+                                        )}
                                         {caseItem.waterLevel !== null &&
                                             caseItem.waterLevel !== undefined && (
                                                 <Stat

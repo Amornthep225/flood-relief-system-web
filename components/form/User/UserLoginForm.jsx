@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
@@ -25,7 +26,55 @@ export default function UserLoginForm({ links }) {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (token) router.replace("../../../select-role");
+        const userStorage =
+            localStorage.getItem("user");
+
+        // มี token ของ Staff/Admin อยู่ ต้องยังเข้าหน้า User Login ได้
+        // redirect เฉพาะเมื่อ session ปัจจุบันเป็น User จริงเท่านั้น
+        if (!token || !userStorage) {
+            return;
+        }
+
+        try {
+            const decoded = jwtDecode(token);
+            const userData =
+                JSON.parse(userStorage);
+
+            const expired =
+                !decoded?.exp ||
+                decoded.exp * 1000 < Date.now();
+
+            const isUserToken =
+                String(
+                    decoded?.userType || ""
+                ).toLowerCase() === "user";
+
+            const isUserStorage =
+                String(
+                    userData?.role || ""
+                ).toLowerCase() === "user";
+
+            if (
+                !expired &&
+                isUserToken &&
+                isUserStorage
+            ) {
+                router.replace(
+                    "/select-role"
+                );
+                return;
+            }
+
+            localStorage.removeItem("user");
+
+            if (expired) {
+                localStorage.removeItem(
+                    "token"
+                );
+            }
+        } catch {
+            localStorage.removeItem("user");
+        }
     }, [router]);
 
     const handleChange = (event) => {

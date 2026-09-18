@@ -2,7 +2,8 @@
 
 import { useNativeUi } from "@/hooks/useNativeUi";
 
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { cards } from "@/constants/cards";
@@ -23,9 +24,55 @@ export default function StaffLoginForm({ links }) {
     const [error, setError] = useState("");
     useEffect(() => {
         const token = localStorage.getItem("token");
+        const staffStorage =
+            localStorage.getItem("staff");
 
-        if (token) {
-            router.replace("../../../staff/staff-home");
+        // มี token ของ User/Admin อยู่ ต้องยังเข้าหน้า Staff Login ได้
+        // จะ redirect เฉพาะเมื่อ session ปัจจุบันเป็น Staff จริงเท่านั้น
+        if (!token || !staffStorage) {
+            return;
+        }
+
+        try {
+            const decoded = jwtDecode(token);
+            const staffData =
+                JSON.parse(staffStorage);
+
+            const expired =
+                !decoded?.exp ||
+                decoded.exp * 1000 < Date.now();
+
+            const isStaffToken =
+                String(
+                    decoded?.userType || ""
+                ).toLowerCase() === "staff";
+
+            const isStaffStorage =
+                String(
+                    staffData?.role || ""
+                ).toLowerCase() === "staff";
+
+            if (
+                !expired &&
+                isStaffToken &&
+                isStaffStorage
+            ) {
+                router.replace(
+                    "/staff/staff-home"
+                );
+                return;
+            }
+
+            // stale staff data เท่านั้น ไม่แตะ token ของ User/Admin
+            localStorage.removeItem("staff");
+
+            if (expired) {
+                localStorage.removeItem(
+                    "token"
+                );
+            }
+        } catch {
+            localStorage.removeItem("staff");
         }
     }, [router]);
     const handleChange = (e) => {
@@ -46,6 +93,10 @@ export default function StaffLoginForm({ links }) {
                 password: form.password,
             });
 
+            // ระบบใช้ token key ร่วมกันทุก Role
+            // เมื่อ Login Staff สำเร็จ ให้เปลี่ยน session เป็น Staff แบบชัดเจน
+            localStorage.removeItem("user");
+            localStorage.removeItem("admin");
             localStorage.setItem("token", data.token);
             localStorage.setItem("staff", JSON.stringify({
                 staffId: data.staffId,
