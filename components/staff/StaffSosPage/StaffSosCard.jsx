@@ -195,6 +195,11 @@ export default function StaffSosCard({
                                         {ui(item.reliefItemName || item.name || "ไม่ระบุรายการ")}{" "}
                                         {item.quantity || 0}{" "}
                                         {ui(item.unit || "")}
+                                        {item.approvedQuantity !== null && item.approvedQuantity !== undefined && (
+                                            <span className="block text-sm text-green-600">
+                                                อนุมัติ: {item.approvedQuantity} {ui(item.unit || "")}
+                                            </span>
+                                        )}
                                     </span>
                                 ))}
                             </div>

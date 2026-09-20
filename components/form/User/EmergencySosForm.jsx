@@ -219,7 +219,7 @@ export default function EmergencySosForm() {
             await Swal.fire({
                 icon: "error",
                 title: t("sos.emergency.failedTitle"),
-                text: error?.message || t("sos.emergency.genericError"),
+                text: "กรุณากรอกข้อมูลให้ครบถ้วน" || t("sos.emergency.genericError"),
             });
         } finally {
             setSubmitting(false);

@@ -291,6 +291,7 @@ export default function DonationForm() {
 
             <DonorItemSelector
                 items={filteredItems}
+                selectedCategory={selectedCategory}
                 quantities={
                     quantities
                 }

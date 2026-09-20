@@ -421,6 +421,12 @@ export default function StaffMission() {
                                             <p className="mt-1 text-sm text-slate-500">
                                                 {ui(`จำนวน ${item.quantity || 0} ${item.unit || ""}`)}
                                             </p>
+                                            {item.approvedQuantity !== null &&
+                                                item.approvedQuantity !== undefined && (
+                                                    <p className="mt-1 text-sm font-semibold text-green-600">
+                                                        {ui(`อนุมัติ ${item.approvedQuantity} ${item.unit || ""}`)}
+                                                    </p>
+                                                )}
                                         </div>
                                         <span className="material-symbols-outlined text-orange-500">package_2</span>
                                     </div>

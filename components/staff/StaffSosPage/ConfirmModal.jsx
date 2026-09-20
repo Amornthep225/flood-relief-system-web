@@ -49,7 +49,7 @@ export default function ConfirmModal({
             sum +
             Number(
                 approvedQuantities[
-                    item.id || item.reliefItemId
+                item.id || item.reliefItemId
                 ] ?? 0
             ),
         0
@@ -63,7 +63,7 @@ export default function ConfirmModal({
                 items.every((item) => {
                     const value = Number(
                         approvedQuantities[
-                            item.id || item.reliefItemId
+                        item.id || item.reliefItemId
                         ] ?? 0
                     );
                     return (
@@ -81,12 +81,14 @@ export default function ConfirmModal({
         }
         onConfirm(
             items.map((item) => ({
-                sosRequestItemId: item.id,
+                sosRequestItemId:
+                    item.id || item.sosRequestItemId || item.reliefItemId,
+
                 approvedQuantity: Number(
                     approvedQuantities[
-                        item.id || item.reliefItemId
+                    item.id || item.reliefItemId
                     ] ?? 0
-                ),
+                )
             }))
         );
     };
@@ -98,11 +100,10 @@ export default function ConfirmModal({
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div className="flex min-w-0 items-center gap-4">
                             <div
-                                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${
-                                    isEmergency
+                                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${isEmergency
                                         ? "bg-red-50 text-red-600"
                                         : "bg-sky-50 text-sky-600"
-                                }`}
+                                    }`}
                             >
                                 <span className="material-symbols-outlined text-2xl">
                                     {isEmergency
@@ -116,44 +117,43 @@ export default function ConfirmModal({
                                     <h3 className="text-lg font-black text-slate-900 md:text-xl">
                                         {isEmergency
                                             ? tx(
-                                                  "ยืนยันรับเคส SOS ฉุกเฉิน",
-                                                  "Accept Emergency SOS"
-                                              )
+                                                "ยืนยันรับเคส SOS ฉุกเฉิน",
+                                                "Accept Emergency SOS"
+                                            )
                                             : tx(
-                                                  "ตรวจสอบความพร้อมก่อนรับงาน",
-                                                  "Pre-Acceptance Inventory Check"
-                                              )}
+                                                "ตรวจสอบความพร้อมก่อนรับงาน",
+                                                "Pre-Acceptance Inventory Check"
+                                            )}
                                     </h3>
 
                                     <span
-                                        className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-                                            isEmergency
+                                        className={`rounded-full px-2.5 py-1 text-xs font-bold ${isEmergency
                                                 ? "bg-red-50 text-red-700"
                                                 : "bg-sky-50 text-sky-700"
-                                        }`}
+                                            }`}
                                     >
                                         {isEmergency
                                             ? tx(
-                                                  "SOS ฉุกเฉิน",
-                                                  "Emergency SOS"
-                                              )
+                                                "SOS ฉุกเฉิน",
+                                                "Emergency SOS"
+                                            )
                                             : tx(
-                                                  "คำขอรับสิ่งของ",
-                                                  "Relief Request"
-                                              )}
+                                                "คำขอรับสิ่งของ",
+                                                "Relief Request"
+                                            )}
                                     </span>
                                 </div>
 
                                 <p className="mt-1 text-sm text-slate-500">
                                     {isEmergency
                                         ? tx(
-                                              "เคสฉุกเฉินสามารถรับงานได้ทันทีโดยไม่ต้องตรวจคลัง",
-                                              "Emergency cases can be accepted immediately without an inventory check."
-                                          )
+                                            "เคสฉุกเฉินสามารถรับงานได้ทันทีโดยไม่ต้องตรวจคลัง",
+                                            "Emergency cases can be accepted immediately without an inventory check."
+                                        )
                                         : tx(
-                                              "ตรวจสอบคลัง แล้วกำหนดจำนวนที่อนุมัติได้ตามของที่มี",
-                                              "Review inventory, then choose the quantity you can approve based on available stock."
-                                          )}
+                                            "ตรวจสอบคลัง แล้วกำหนดจำนวนที่อนุมัติได้ตามของที่มี",
+                                            "Review inventory, then choose the quantity you can approve based on available stock."
+                                        )}
                                 </p>
                             </div>
                         </div>
@@ -256,19 +256,17 @@ export default function ConfirmModal({
                         </section>
 
                         <section
-                            className={`flex flex-col gap-3 rounded-xl border px-5 py-4 md:flex-row md:items-center md:justify-between ${
-                                stockCheck?.isAllEnough
+                            className={`flex flex-col gap-3 rounded-xl border px-5 py-4 md:flex-row md:items-center md:justify-between ${stockCheck?.isAllEnough
                                     ? "border-emerald-200 bg-emerald-50"
                                     : "border-red-200 bg-red-50"
-                            }`}
+                                }`}
                         >
                             <div className="flex items-start gap-3">
                                 <span
-                                    className={`material-symbols-outlined mt-0.5 text-2xl ${
-                                        stockCheck?.isAllEnough
+                                    className={`material-symbols-outlined mt-0.5 text-2xl ${stockCheck?.isAllEnough
                                             ? "text-emerald-600"
                                             : "text-red-600"
-                                    }`}
+                                        }`}
                                 >
                                     {stockCheck?.isAllEnough
                                         ? "check_circle"
@@ -277,21 +275,20 @@ export default function ConfirmModal({
 
                                 <div>
                                     <p
-                                        className={`font-black ${
-                                            stockCheck?.isAllEnough
+                                        className={`font-black ${stockCheck?.isAllEnough
                                                 ? "text-emerald-700"
                                                 : "text-red-700"
-                                        }`}
+                                            }`}
                                     >
                                         {stockCheck?.isAllEnough
                                             ? tx(
-                                                  "คลังพร้อม สามารถรับงานนี้ได้",
-                                                  "Inventory ready. This case can be accepted."
-                                              )
+                                                "คลังพร้อม สามารถรับงานนี้ได้",
+                                                "Inventory ready. This case can be accepted."
+                                            )
                                             : tx(
-                                                  "คลังยังไม่พร้อม ยังไม่สามารถรับงานนี้ได้",
-                                                  "Inventory is not ready. This case cannot be accepted yet."
-                                              )}
+                                                "คลังยังไม่พร้อม ยังไม่สามารถรับงานนี้ได้",
+                                                "Inventory is not ready. This case cannot be accepted yet."
+                                            )}
                                     </p>
 
                                     <p className="mt-1 text-sm text-slate-600">
@@ -307,21 +304,20 @@ export default function ConfirmModal({
                             </div>
 
                             <div
-                                className={`w-fit rounded-full px-3 py-1.5 text-xs font-black ${
-                                    stockCheck?.isAllEnough
+                                className={`w-fit rounded-full px-3 py-1.5 text-xs font-black ${stockCheck?.isAllEnough
                                         ? "bg-white text-emerald-700"
                                         : "bg-white text-red-700"
-                                }`}
+                                    }`}
                             >
                                 {stockCheck?.isAllEnough
                                     ? tx(
-                                          "พร้อมรับงาน",
-                                          "READY"
-                                      )
+                                        "พร้อมรับงาน",
+                                        "READY"
+                                    )
                                     : tx(
-                                          "รอเติมของ",
-                                          "RESTOCK REQUIRED"
-                                      )}
+                                        "รอเติมของ",
+                                        "RESTOCK REQUIRED"
+                                    )}
                             </div>
                         </section>
 
@@ -371,15 +367,13 @@ export default function ConfirmModal({
                                     {items.map((item, index) => (
                                         <article
                                             key={`${item.reliefItemId}-mobile-${index}`}
-                                            className={`p-4 ${
-                                                index % 2 === 0
+                                            className={`p-4 ${index % 2 === 0
                                                     ? "bg-white"
                                                     : "bg-slate-50/70"
-                                            } ${
-                                                item.isEnough
+                                                } ${item.isEnough
                                                     ? ""
                                                     : "ring-1 ring-inset ring-red-100"
-                                            }`}
+                                                }`}
                                         >
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="min-w-0">
@@ -541,24 +535,21 @@ export default function ConfirmModal({
                                                 (item, index) => (
                                                     <tr
                                                         key={`${item.reliefItemId}-${index}`}
-                                                        className={`transition ${
-                                                            index % 2 === 0
+                                                        className={`transition ${index % 2 === 0
                                                                 ? "bg-white"
                                                                 : "bg-slate-50/60"
-                                                        } ${
-                                                            item.isEnough
+                                                            } ${item.isEnough
                                                                 ? "hover:bg-sky-50/40"
                                                                 : "bg-red-50/40 hover:bg-red-50/70"
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <td className="px-6 py-4">
                                                             <div className="flex items-center gap-3">
                                                                 <div
-                                                                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                                                                        item.isEnough
+                                                                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${item.isEnough
                                                                             ? "bg-sky-50 text-sky-600"
                                                                             : "bg-red-100 text-red-600"
-                                                                    }`}
+                                                                        }`}
                                                                 >
                                                                     <span className="material-symbols-outlined text-xl">
                                                                         inventory_2
@@ -689,7 +680,7 @@ export default function ConfirmModal({
                                                             <span
                                                                 className={
                                                                     shortageItems.length >
-                                                                    0
+                                                                        0
                                                                         ? "text-red-700"
                                                                         : "text-slate-500"
                                                                 }
@@ -732,7 +723,7 @@ export default function ConfirmModal({
                                             <span
                                                 className={
                                                     shortageItems.length >
-                                                    0
+                                                        0
                                                         ? "text-red-700"
                                                         : "text-slate-500"
                                                 }
@@ -829,13 +820,13 @@ export default function ConfirmModal({
                     >
                         {canConfirm
                             ? tx(
-                                  "ยกเลิก",
-                                  "Cancel"
-                              )
+                                "ยกเลิก",
+                                "Cancel"
+                            )
                             : tx(
-                                  "ปิด",
-                                  "Close"
-                              )}
+                                "ปิด",
+                                "Close"
+                            )}
                     </button>
 
                     <button
@@ -846,23 +837,23 @@ export default function ConfirmModal({
                     >
                         {loading
                             ? tx(
-                                  "กำลังรับงาน...",
-                                  "Accepting..."
-                              )
+                                "กำลังรับงาน...",
+                                "Accepting..."
+                            )
                             : isEmergency
-                              ? tx(
+                                ? tx(
                                     "ยืนยันรับเคส SOS",
                                     "Accept SOS Case"
                                 )
-                              : approvedTotal > 0
-                                ? tx(
-                                      `อนุมัติ ${approvedTotal} หน่วยและรับงาน`,
-                                      `Approve ${approvedTotal} units and Accept`
-                                  )
-                                : tx(
-                                      "กรุณาระบุจำนวนที่อนุมัติ",
-                                      "Enter an approved quantity"
-                                  )}
+                                : approvedTotal > 0
+                                    ? tx(
+                                        `อนุมัติ ${approvedTotal} หน่วยและรับงาน`,
+                                        `Approve ${approvedTotal} units and Accept`
+                                    )
+                                    : tx(
+                                        "กรุณาระบุจำนวนที่อนุมัติ",
+                                        "Enter an approved quantity"
+                                    )}
                     </button>
                 </footer>
             </div>
@@ -887,10 +878,9 @@ function MetricCard({
 
     return (
         <div
-            className={`rounded-xl border p-4 ${
-                toneClass[tone] ||
+            className={`rounded-xl border p-4 ${toneClass[tone] ||
                 toneClass.default
-            }`}
+                }`}
         >
             <div className="flex items-center justify-between">
                 <div>
@@ -925,11 +915,10 @@ function MobileMetric({
             </p>
 
             <p
-                className={`mt-1 text-base font-black ${
-                    danger
+                className={`mt-1 text-base font-black ${danger
                         ? "text-red-600"
                         : "text-slate-900"
-                }`}
+                    }`}
             >
                 {value}
             </p>
@@ -949,11 +938,10 @@ function ValueCell({
     return (
         <td className="px-4 py-4 text-center">
             <p
-                className={`font-black ${
-                    danger
+                className={`font-black ${danger
                         ? "text-red-600"
                         : "text-slate-900"
-                }`}
+                    }`}
             >
                 {value}
             </p>

@@ -7,6 +7,7 @@ export default function DonorItemSelector({
     items,
     quantities,
     onChangeQuantity,
+    selectedCategory,
 }) {
     const { language, t } = useLanguage();
 
@@ -131,7 +132,9 @@ export default function DonorItemSelector({
                     })
                 ) : (
                     <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 py-8 text-center text-sm text-slate-400">
-                        {t("donation.form.selectCategoryFirst")}
+                        {selectedCategory
+                            ? t("donation.form.noAvailableItems")
+                            : t("donation.form.selectCategoryFirst")}
                     </div>
                 )}
             </div>

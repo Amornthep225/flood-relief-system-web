@@ -43,11 +43,21 @@ export default function SosRequestItems({ items }) {
                                         quantity: item.quantity,
                                         unit,
                                     })}
-                                    {item.approvedQuantity != null && (
-                                        <span className="ml-2 font-bold text-sky-600">
-                                            • {language === "en" ? "Approved" : "อนุมัติ"} {item.approvedQuantity} {unit}
+                                    {item.approvedQuantity !== null && item.approvedQuantity !== undefined && (
+                                        <span className="block mt-1 font-bold text-sky-600">
+                                            {language === "en"
+                                                ? `Approved: ${item.approvedQuantity} ${unit}`
+                                                : `จำนวนที่อนุมัติ: ${item.approvedQuantity} ${unit}`}
                                         </span>
                                     )}
+                                    {item.approvedQuantity !== null && item.approvedQuantity !== undefined &&
+                                        Number(item.approvedQuantity) < Number(item.quantity) && (
+                                            <span className="block mt-1 text-amber-600 text-xs font-semibold">
+                                                {language === "en"
+                                                    ? "Partially approved"
+                                                    : "อนุมัติบางส่วน"}
+                                            </span>
+                                        )}
                                 </p>
                             </div>
 

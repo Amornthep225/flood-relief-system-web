@@ -168,6 +168,16 @@ export default function SosHistoryCard({ request }) {
                                             item.unit || "",
                                             language
                                         )}
+                                        {item.approvedQuantity !== null &&
+                                            item.approvedQuantity !== undefined && (
+                                                <span className="block text-green-600">
+                                                    อนุมัติ: {item.approvedQuantity}{" "}
+                                                    {translateMasterDataText(
+                                                        item.unit || "",
+                                                        language
+                                                    )}
+                                                </span>
+                                            )}
                                     </span>
                                 ))}
 

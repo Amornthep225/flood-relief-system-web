@@ -1,0 +1,33 @@
+:root {
+  --font-sans: "Prompt", sans-serif;
+
+  --color-forest-green:#192a1d;
+  --color-deep-green:#223828;
+  --color-green:#356745;
+  --color-green-light:#448058;
+
+  --color-gold:#b38b24;
+  --color-gold-hover:#96731b;
+
+  --color-white:#ffffff;
+
+  --color-surface:#edf1ee;
+  --color-surface-2:#fafcfb;
+  --color-surface-3:#dae1dc;
+
+  --color-gold-subtle:#f4efe1;
+  --color-gold-border:#caa33b;
+
+  --color-success:#326641;
+  --color-warning:#b38b24;
+  --color-error:#aa392e;
+
+  --color-deep-text:#172118;
+  --color-muted-text:#48564a;
+  --color-placeholder:#79897c;
+  --color-disabled:#b1beb3;
+  --color-light-text:#f3f7f4;
+
+  --color-border:#d4dcd5;
+  --color-border-focus:#356745;
+}

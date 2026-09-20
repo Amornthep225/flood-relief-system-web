@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import UserLayout from "@/components/layout/UserLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -9,9 +9,26 @@ const menu = [
         key: "relief",
         icon: "inventory_2",
         buttonIcon: "shopping_bag",
-        href: "/user/sos-home",
+        href: "/user/sos-form",
         type: "relief",
         noteIcon: "info",
+        shortcuts: [
+            {
+                labelKey: "home.menu.tracking.title",
+                icon: "track_changes",
+                href: "/user/sos-tracking",
+            },
+            {
+                labelKey: "home.menu.history.title",
+                icon: "history",
+                href: "/user/sos-history",
+            },
+            {
+                labelKey: "home.menu.knowledge.title",
+                icon: "school",
+                href: "/user/users-knowledge",
+            },
+        ],
     },
     {
         key: "emergency",
@@ -20,14 +37,32 @@ const menu = [
         href: "/user/emergency-sos-form",
         type: "emergency",
         noteIcon: "warning",
+        shortcuts: [],
     },
     {
         key: "donation",
         icon: "volunteer_activism",
         buttonIcon: "favorite",
-        href: "/user/donor-home",
+        href: "/user/donor-form",
         type: "donation",
         noteIcon: "groups",
+        shortcuts: [
+            {
+                labelKey: "donation.home.menu.shortage.title",
+                icon: "inventory_2",
+                href: "/user/donor-low-products",
+            },
+            {
+                labelKey: "donation.home.menu.tracking.title",
+                icon: "package_2",
+                href: "/user/donor-tracking",
+            },
+            {
+                labelKey: "donation.home.menu.history.title",
+                icon: "history",
+                href: "/user/donor-history",
+            },
+        ],
     },
 ];
 
@@ -45,6 +80,8 @@ function getCardConfig(type) {
             dividerIcon: "bg-white text-red-500 ring-red-100",
             button:
                 "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-[0_12px_26px_rgba(239,68,68,0.30)] hover:from-red-600 hover:to-red-700",
+            shortcut:
+                "border-red-100 bg-red-50/70 text-red-700 hover:border-red-200 hover:bg-red-100/70",
             note: "text-red-600",
             noteIcon: "bg-red-50 text-red-500 ring-red-100",
             glow: "bg-red-200/40",
@@ -64,6 +101,8 @@ function getCardConfig(type) {
             dividerIcon: "bg-white text-sky-500 ring-sky-100",
             button:
                 "bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-[0_12px_26px_rgba(244,63,94,0.25)] hover:from-rose-600 hover:to-red-600",
+            shortcut:
+                "border-sky-100 bg-sky-50/70 text-sky-700 hover:border-sky-200 hover:bg-sky-100/80",
             note: "text-sky-700",
             noteIcon: "bg-sky-50 text-sky-600 ring-sky-100",
             glow: "bg-sky-200/40",
@@ -82,6 +121,8 @@ function getCardConfig(type) {
         dividerIcon: "bg-white text-blue-500 ring-blue-100",
         button:
             "bg-gradient-to-r from-blue-600 to-sky-600 text-white shadow-[0_12px_26px_rgba(37,99,235,0.25)] hover:from-blue-700 hover:to-sky-700",
+        shortcut:
+            "border-blue-100 bg-blue-50/70 text-blue-700 hover:border-blue-200 hover:bg-blue-100/80",
         note: "text-blue-700",
         noteIcon: "bg-blue-50 text-blue-600 ring-blue-100",
         glow: "bg-blue-200/40",
@@ -123,20 +164,46 @@ function CardIcon({ item, config }) {
     );
 }
 
+function ShortcutLinks({ shortcuts, config, t }) {
+    if (!shortcuts.length) {
+        return null;
+    }
+
+    return (
+        <div className="mt-4 grid gap-2">
+            {shortcuts.map((shortcut) => (
+                <Link
+                    key={shortcut.href}
+                    href={shortcut.href}
+                    className={`flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-xs font-bold leading-5 transition sm:text-sm ${config.shortcut}`}
+                >
+                    <span className="material-symbols-outlined shrink-0 text-[19px]">
+                        {shortcut.icon}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                        {t(shortcut.labelKey)}
+                    </span>
+                    <span className="material-symbols-outlined shrink-0 text-[18px] opacity-60">
+                        chevron_right
+                    </span>
+                </Link>
+            ))}
+        </div>
+    );
+}
+
 export default function SelectRolePage() {
-    const router = useRouter();
     const { t } = useLanguage();
 
     return (
         <UserLayout
-            homeHref="/user/sos-home"
+            homeHref="/select-role"
             backHref="/select-role"
             logoutHref="/user/users-login"
             showHome={false}
             showBack={false}
         >
             <section className="relative isolate overflow-hidden rounded-[38px] px-2 py-8 sm:px-5 md:py-12 lg:px-7">
-
                 <div className="mx-auto w-full max-w-7xl">
                     <header className="mb-9 text-center md:mb-12">
                         <div className="mb-3 flex items-center justify-center gap-2 text-sky-700/70">
@@ -162,20 +229,7 @@ export default function SelectRolePage() {
                             return (
                                 <article
                                     key={item.href}
-                                    role="link"
-                                    tabIndex={0}
-                                    aria-label={`${t(`selectRole.${item.key}.title`)} - ${t(`selectRole.${item.key}.button`)}`}
-                                    onClick={() => router.push(item.href)}
-                                    onKeyDown={(event) => {
-                                        if (
-                                            event.key === "Enter" ||
-                                            event.key === " "
-                                        ) {
-                                            event.preventDefault();
-                                            router.push(item.href);
-                                        }
-                                    }}
-                                    className={`group relative flex min-h-[610px] h-full cursor-pointer flex-col overflow-hidden rounded-[32px] border p-2 backdrop-blur-xl transition duration-300 hover:-translate-y-1 focus:outline-none focus-visible:-translate-y-1 focus-visible:ring-4 focus-visible:ring-white/80 ${config.card}`}
+                                    className={`group relative flex min-h-[610px] h-full flex-col overflow-hidden rounded-[32px] border p-2 backdrop-blur-xl transition duration-300 hover:-translate-y-1 ${config.card}`}
                                 >
                                     <div
                                         className={`pointer-events-none absolute inset-4 rounded-[26px] ring-1 ring-inset ${config.innerRing}`}
@@ -214,18 +268,24 @@ export default function SelectRolePage() {
                                         </p>
 
                                         <div className="mt-auto pt-7">
-                                            <div
-                                                className={`mx-auto flex h-16 w-full max-w-[310px] items-center justify-center gap-3 rounded-2xl border border-white/70 text-lg font-black transition duration-200 group-hover:-translate-y-0.5 ${config.button}`}
-                                                aria-hidden="true"
+                                            <Link
+                                                href={item.href}
+                                                className={`mx-auto flex h-16 w-full max-w-[310px] items-center justify-center gap-3 rounded-2xl border border-white/70 text-lg font-black transition duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-white/80 ${config.button}`}
                                             >
                                                 <span className="material-symbols-outlined text-[25px]">
                                                     {item.buttonIcon}
                                                 </span>
                                                 {t(`selectRole.${item.key}.button`)}
-                                            </div>
+                                            </Link>
+
+                                            <ShortcutLinks
+                                                shortcuts={item.shortcuts}
+                                                config={config}
+                                                t={t}
+                                            />
 
                                             <div
-                                                className={`mx-auto mt-7 flex max-w-[310px] items-start justify-center gap-2.5 text-center text-sm font-bold leading-6 ${config.note}`}
+                                                className={`mx-auto mt-5 flex max-w-[310px] items-start justify-center gap-2.5 text-center text-sm font-bold leading-6 ${config.note}`}
                                             >
                                                 <span
                                                     className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ring-1 ${config.noteIcon}`}
