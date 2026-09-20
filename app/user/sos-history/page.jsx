@@ -145,7 +145,7 @@ export default function SosHistoryPage() {
     return (
         <UserLayout
             homeHref="/user/sos-home"
-            backHref="/user/sos-home"
+            backHref="/select-role"
             logoutHref="/user/users-login"
             showHome={false}
         >

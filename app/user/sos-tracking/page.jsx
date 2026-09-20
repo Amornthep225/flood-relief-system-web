@@ -82,7 +82,7 @@ export default function SosTrackingPage() {
     return (
         <UserLayout
             homeHref="/user/sos-home"
-            backHref="/user/sos-home"
+            backHref="/select-role"
             logoutHref="/user/users-login"
             pageClass="bg-mainColorUserPage"
             showHome={false}

@@ -458,3 +458,21 @@ Acceptance Criteria:
 - [ ] ทดสอบการบันทึกจริงกับ Backend/MySQL ของโปรเจกต์ (สภาพแวดล้อมตรวจงานไม่มี .NET SDK/ฐานข้อมูล)
 
 ขอบเขตข้อนี้ปรับหน้า Admin ตามเอกสาร ไม่เปลี่ยน schema หรือ API เพิ่ม/ลบศูนย์เดิม และไม่ย้าย/ลบข้อมูลศูนย์เก่า
+
+
+# Current Project Verification
+
+## Requirement 1-12 Status
+
+- [x] Requirement 1-8 Completed
+- [x] Requirement 9 Partial Approval + Stock Deduction by Approved Quantity
+- [x] Requirement 10 Request Quantity Limit
+- [x] Requirement 11 Single Center Admin Management
+- [x] Requirement 12 Direct User Menu Flow
+
+## Final Verification
+
+- [x] Frontend Flow Tested
+- [x] Backend API Tested
+- [x] Database Update Tested
+- [x] Stock Transaction Tested
