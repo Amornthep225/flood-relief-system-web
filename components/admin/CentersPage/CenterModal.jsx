@@ -192,7 +192,7 @@ export default function CenterModal({
                         <span className="material-symbols-outlined text-teal-600">
                             {mode === "edit" ? "edit_square" : "add_business"}
                         </span>
-                        {mode === "edit" ? (language === "en" ? `Edit Center ${form.id}` : `แก้ไขข้อมูลศูนย์ ${form.id}`) : ui("เพิ่มจุดรับบริจาคใหม่")}
+                        {mode === "edit" ? (language === "en" ? `Edit Center ${form.id}` : `แก้ไขข้อมูลศูนย์`) : ui("เพิ่มจุดรับบริจาคใหม่")}
                     </h2>
                     {!inline && <button
                         type="button"

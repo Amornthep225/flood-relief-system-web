@@ -139,8 +139,8 @@ export default function AdminCenters() {
                         </div>
                     ) : (
                         <>
-                            <div className="flex flex-wrap items-center justify-between gap-3">
-                                <p className="text-sm text-slate-600">{ui("รหัสศูนย์")}: {center.id}</p>
+                            <div className="flex flex-wrap items-right justify-end gap-3">
+
                                 <Link href={`/admin/admin-center-inventory?centerId=${encodeURIComponent(center.id)}`} className="rounded-xl bg-teal-600 px-4 py-2 font-bold text-white">{ui("จัดการคลังสิ่งของ")}</Link>
                             </div>
                             {success && <p role="status" className="rounded-xl bg-emerald-50 p-4 text-emerald-800">{ui(success)}</p>}

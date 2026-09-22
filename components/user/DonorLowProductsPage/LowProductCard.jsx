@@ -55,6 +55,8 @@ export default function LowProductCard({ item }) {
         item.centerId ?? ""
     )}&reliefItemId=${encodeURIComponent(
         item.reliefItemId ?? ""
+    )}&suggestQuantity=${encodeURIComponent(
+        missing
     )}`;
 
     const itemName = translateMasterDataText(

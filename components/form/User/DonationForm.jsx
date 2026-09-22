@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
 import DonorFormHeader from "@/components/user/DonorForm/DonorFormHeader";
@@ -22,6 +22,12 @@ export default function DonationForm() {
     const router = useRouter();
 
     const { language, t } = useLanguage();
+    const searchParams = useSearchParams();
+
+    const presetItemId = searchParams.get("reliefItemId");
+    const presetQuantity = Number(
+        searchParams.get("suggestQuantity") || 0
+    );
 
     const [categories, setCategories] = useState([]);
     const [items, setItems] = useState([]);
@@ -93,6 +99,44 @@ export default function DonationForm() {
 
         loadData();
     }, [language, t]);
+
+    // =====================================================
+    // เปิดจากรายการขาดแคลน:
+    // เลือกรายการและจำนวนอัตโนมัติ
+    // =====================================================
+    useEffect(() => {
+        if (!presetItemId || items.length === 0) {
+            return;
+        }
+
+        const selectedItem = items.find(
+            (item) =>
+                item.id === presetItemId ||
+                item.reliefItemId === presetItemId
+        );
+
+        if (!selectedItem) {
+            return;
+        }
+
+        if (selectedItem.reliefCategoryId) {
+            setSelectedCategory(
+                selectedItem.reliefCategoryId
+            );
+        }
+
+        setQuantities((prev) => ({
+            ...prev,
+            [selectedItem.id || selectedItem.reliefItemId]:
+                presetQuantity > 0
+                    ? presetQuantity
+                    : prev[selectedItem.id || selectedItem.reliefItemId] || 0,
+        }));
+    }, [
+        presetItemId,
+        presetQuantity,
+        items,
+    ]);
 
     // =====================================================
     // อัปเดตจำนวน
