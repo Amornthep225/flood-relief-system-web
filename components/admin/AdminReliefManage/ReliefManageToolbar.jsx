@@ -28,7 +28,7 @@ export default function ReliefManageToolbar({
                             onChange={(event) => onSearchChange(event.target.value)}
                             placeholder={
                                 activeTab === "items"
-                                    ? ui("ค้นหาชื่อสินค้า รหัส หน่วย หรือหมวดหมู่")
+                                    ? ui("ค้นหาชื่อสิ่งของ รหัส หน่วย หรือหมวดหมู่")
                                     : ui("ค้นหาชื่อหรือรหัสหมวดหมู่")
                             }
                             className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 font-normal outline-none focus:border-sky-400 focus:bg-white focus:ring-4 focus:ring-sky-100"
@@ -73,7 +73,7 @@ export default function ReliefManageToolbar({
                     className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-sky-600 px-6 py-3 font-bold text-white shadow-lg shadow-sky-200 hover:bg-sky-700"
                 >
                     <span className="material-symbols-outlined text-[21px]">add_circle</span>
-                    {activeTab === "items" ? ui("เพิ่มสินค้า") : ui("เพิ่มหมวดหมู่")}
+                    {activeTab === "items" ? ui("เพิ่มสิ่งของ") : ui("เพิ่มหมวดหมู่")}
                 </button>
             </div>
         </section>

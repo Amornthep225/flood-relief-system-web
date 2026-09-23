@@ -14,7 +14,7 @@ export default function ReliefManageTabs({
     const cards = [
         {
             value: "items",
-            title: ui("รายการสินค้า"),
+            title: ui("รายการสิ่งของ"),
             count: itemCount,
             activeCount: itemActive,
             icon: "inventory_2",
@@ -23,7 +23,7 @@ export default function ReliefManageTabs({
         },
         {
             value: "categories",
-            title: ui("หมวดหมู่สินค้า"),
+            title: ui("หมวดหมู่สิ่งของ"),
             count: categoryCount,
             activeCount: categoryActive,
             icon: "category",

@@ -40,7 +40,7 @@ export async function getInventoryTransactions(
     signal
 ) {
     if (!inventoryId) {
-        throw new Error("ไม่พบรหัสสินค้าในคลัง");
+        throw new Error("ไม่พบรหัสสิ่งของในคลัง");
     }
 
     const response = await fetch(

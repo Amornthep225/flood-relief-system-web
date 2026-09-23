@@ -28,7 +28,7 @@ export default function AdminInventoryFilters({
                             : "rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600"
                     }
                 >
-                    {ui("คลังสินค้า")}
+                    {ui("คลังสิ่งของ")}
                 </button>
 
                 <button

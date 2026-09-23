@@ -5,7 +5,7 @@ import { useNativeUi } from "@/hooks/useNativeUi";
 const cards = [
     {
         key: "totalItems",
-        title: "รายการสินค้า",
+        title: "รายการสิ่งของ",
         icon: "category",
         boxStyle:
             "border-slate-200 bg-white",

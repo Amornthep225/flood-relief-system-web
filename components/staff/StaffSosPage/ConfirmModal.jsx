@@ -179,7 +179,7 @@ export default function ConfirmModal({
 
                         <p className="mt-4 font-bold text-slate-700">
                             {tx(
-                                "กำลังตรวจสอบคลังสินค้า...",
+                                "กำลังตรวจสอบคลังสิ่งของ...",
                                 "Checking inventory..."
                             )}
                         </p>
@@ -209,7 +209,7 @@ export default function ConfirmModal({
 
                                     <p className="mt-1 text-sm leading-relaxed text-red-600">
                                         {tx(
-                                            "เนื่องจากเป็น SOS ฉุกเฉิน ระบบจะไม่ตรวจคลังสินค้า เจ้าหน้าที่สามารถรับเคสและเข้าช่วยเหลือได้ทันที",
+                                            "เนื่องจากเป็น SOS ฉุกเฉิน ระบบจะไม่ตรวจคลังสิ่งของ เจ้าหน้าที่สามารถรับเคสและเข้าช่วยเหลือได้ทันที",
                                             "Because this is an emergency SOS, inventory checking is skipped and staff can proceed immediately."
                                         )}
                                     </p>
@@ -347,7 +347,7 @@ export default function ConfirmModal({
 
                                         <p className="mt-1 text-xs text-slate-500">
                                             {tx(
-                                                "ข้อมูลนี้เป็นการตรวจสอบก่อนรับงาน ยังไม่มีการหักสินค้าออกจากคลัง",
+                                                "ข้อมูลนี้เป็นการตรวจสอบก่อนรับงาน ยังไม่มีการหักสิ่งของออกจากคลัง",
                                                 "This is a pre-acceptance check. Inventory has not been deducted yet."
                                             )}
                                         </p>

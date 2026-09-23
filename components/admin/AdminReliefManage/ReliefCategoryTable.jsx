@@ -9,7 +9,7 @@ export default function ReliefCategoryTable({ rows, onEdit, onToggle }) {
     return (
         <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-6 py-5">
-                <h2 className="font-black text-slate-800">{ui("หมวดหมู่สินค้า")}</h2>
+                <h2 className="font-black text-slate-800">{ui("หมวดหมู่สิ่งของ")}</h2>
                 <p className="mt-1 text-sm text-slate-500">{ui("ใช้จัดกลุ่มสิ่งของในระบบ")}</p>
             </div>
 

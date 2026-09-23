@@ -26,7 +26,7 @@ export default function AdminInventoryHeader({
 
                     <div>
                         <h1 className="text-xl font-bold text-slate-800">
-                            {ui("คลังสินค้า")}
+                            {ui("คลังสิ่งของ")}
                             {center?.centerName
                                 ? ` — ${center.centerName}`
                                 : ""}

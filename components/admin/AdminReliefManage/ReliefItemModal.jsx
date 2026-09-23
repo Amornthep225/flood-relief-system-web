@@ -46,12 +46,12 @@ export default function ReliefItemModal({ open, item, categories, saving, onClos
                 className="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl"
             >
                 <div className="flex items-center justify-between border-b border-slate-100 bg-sky-50 px-6 py-5">
-                    <h2 className="text-xl font-black text-slate-800">{item ? ui("แก้ไขสินค้า") : ui("เพิ่มสินค้า")}</h2>
+                    <h2 className="text-xl font-black text-slate-800">{item ? ui("แก้ไขสิ่งของ") : ui("เพิ่มสิ่งของ")}</h2>
                     <button type="button" onClick={onClose} className="rounded-full bg-white p-2 text-slate-500">✕</button>
                 </div>
                 <div className="space-y-5 p-6">
                     <label className="block text-sm font-bold text-slate-700">
-                        {ui("ชื่อสินค้า")}
+                        {ui("ชื่อสิ่งของ")}
                         <input
                             required
                             value={form.name}

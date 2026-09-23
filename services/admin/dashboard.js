@@ -408,7 +408,7 @@ export async function getAllInventories(
             failedResults[0]
                 ?.reason ||
             new Error(
-                "ไม่สามารถโหลดข้อมูลคลังสินค้าได้"
+                "ไม่สามารถโหลดข้อมูลคลังสิ่งของได้"
             )
         );
     }

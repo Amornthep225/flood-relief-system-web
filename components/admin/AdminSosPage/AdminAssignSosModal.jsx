@@ -301,7 +301,7 @@ export default function AdminAssignSosModal({
                 setStockError(
                     ui(
                         error?.message ||
-                            "ไม่สามารถโหลดข้อมูลคลังสินค้าได้"
+                            "ไม่สามารถโหลดข้อมูลคลังสิ่งของได้"
                     )
                 );
             } finally {
@@ -538,7 +538,7 @@ export default function AdminAssignSosModal({
                         <div className="rounded-xl border border-red-200 bg-red-50 p-4">
                             <p className="font-black text-red-700">
                                 {tx(
-                                    "SOS ฉุกเฉิน — ไม่ต้องตรวจคลังสินค้า",
+                                    "SOS ฉุกเฉิน — ไม่ต้องตรวจคลังสิ่งของ",
                                     "Emergency SOS — inventory check is not required"
                                 )}
                             </p>
@@ -656,7 +656,7 @@ export default function AdminAssignSosModal({
                                     </span>
                                     <span className="font-bold">
                                         {tx(
-                                            "กำลังตรวจสอบคลังสินค้า...",
+                                            "กำลังตรวจสอบคลังสิ่งของ...",
                                             "Checking inventory..."
                                         )}
                                     </span>

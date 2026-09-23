@@ -144,14 +144,14 @@ export default function StaffInventory() {
                 return;
             }
 
-            console.error("โหลดคลังสินค้าไม่สำเร็จ:", error);
+            console.error("โหลดคลังสิ่งของไม่สำเร็จ:", error);
 
             await Swal.fire({
                 icon: "error",
                 title: ui("โหลดข้อมูลไม่สำเร็จ"),
                 text:
                     error?.message ||
-                    ui("ไม่สามารถโหลดข้อมูลคลังสินค้าได้"),
+                    ui("ไม่สามารถโหลดข้อมูลคลังสิ่งของได้"),
                 confirmButtonText: ui("ตกลง"),
             });
         } finally {
@@ -220,7 +220,7 @@ export default function StaffInventory() {
 
     const centerName =
         items.find((item) => item.centerName)?.centerName ||
-        ui("คลังสินค้าของศูนย์");
+        ui("คลังสิ่งของของศูนย์");
 
     const handleRefresh = async () => {
         const controller = new AbortController();

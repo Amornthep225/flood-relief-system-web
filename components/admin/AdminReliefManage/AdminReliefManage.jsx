@@ -186,7 +186,7 @@ export default function AdminReliefManage() {
 
             await Swal.fire({
                 icon: "success",
-                title: ui("บันทึกสินค้าสำเร็จ"),
+                title: ui("บันทึกสิ่งของสำเร็จ"),
                 timer: 900,
                 showConfirmButton: false,
             });
@@ -280,7 +280,7 @@ export default function AdminReliefManage() {
                                 {ui("จัดการสิ่งของและประเภท")}
                             </h1>
                             <p className="mt-1 text-sm text-slate-500">
-                                {ui("จัดการข้อมูลสินค้าและหมวดหมู่สำหรับทุกศูนย์")}
+                                {ui("จัดการข้อมูลสิ่งของและหมวดหมู่สำหรับทุกศูนย์")}
                             </p>
                         </div>
                         <button

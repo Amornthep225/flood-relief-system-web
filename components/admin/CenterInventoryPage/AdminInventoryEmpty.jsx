@@ -16,7 +16,7 @@ export default function AdminInventoryEmpty({
             </span>
 
             <h2 className="mt-4 font-bold text-slate-700">
-                {activeTab === "inventory" ? ui("ไม่พบข้อมูลสินค้าในคลัง") : ui("ไม่พบประวัติ Transaction")}
+                {activeTab === "inventory" ? ui("ไม่พบข้อมูลสิ่งของในคลัง") : ui("ไม่พบประวัติ Transaction")}
             </h2>
         </div>
     );

@@ -276,7 +276,7 @@ export default function StaffCrisisMap() {
             icon: "question",
             title: ui("ยืนยันรับเคสนี้?"),
             text: stockCheck?.isEmergency
-                ? ui("เคส SOS ฉุกเฉินไม่ต้องตรวจคลังสินค้า")
+                ? ui("เคส SOS ฉุกเฉินไม่ต้องตรวจคลังสิ่งของ สามารถรับงานได้ทันที")
                 : ui("ระบบตรวจสอบแล้วว่าสิ่งของในคลังเพียงพอ"),
             input: "textarea",
             inputLabel: ui("หมายเหตุเจ้าหน้าที่ (ไม่บังคับ)"),

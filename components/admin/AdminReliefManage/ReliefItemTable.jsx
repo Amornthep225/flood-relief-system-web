@@ -14,15 +14,15 @@ export default function ReliefItemTable({
     return (
         <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 px-6 py-5">
-                <h2 className="font-black text-slate-800">{ui("รายการสินค้า")}</h2>
+                <h2 className="font-black text-slate-800">{ui("รายการสิ่งของ")}</h2>
                 <p className="mt-1 text-sm text-slate-500">
-                    {ui("จัดการชื่อสินค้า หมวดหมู่ หน่วย และสถานะ")}
+                    {ui("จัดการชื่อสิ่งของ หมวดหมู่ หน่วย และสถานะ")}
                 </p>
             </div>
 
             {rows.length === 0 ? (
                 <div className="px-6 py-20 text-center text-slate-500">
-                    {ui("ไม่พบสินค้า")}
+                    {ui("ไม่พบรายการสิ่งของ")}
                 </div>
             ) : (
                 <div className="overflow-x-auto">
@@ -30,7 +30,7 @@ export default function ReliefItemTable({
                         <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500">
                             <tr>
                                 <th className="px-6 py-4">{ui("รหัส")}</th>
-                                <th className="px-6 py-4">{ui("ชื่อสินค้า")}</th>
+                                <th className="px-6 py-4">{ui("ชื่อสิ่งของ")}</th>
                                 <th className="px-6 py-4">{ui("หมวดหมู่")}</th>
                                 <th className="px-6 py-4">{ui("หน่วย")}</th>
                                 <th className="px-6 py-4 text-center">{ui("ขอได้สูงสุด/คำขอ")}</th>

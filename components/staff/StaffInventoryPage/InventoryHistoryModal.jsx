@@ -148,8 +148,8 @@ function isStockIn(transaction) {
         "รับของบริจาค",
         "รับเข้าคลัง",
         "ของเข้า",
-        "เพิ่มสินค้า",
-        "นำสินค้าเข้าคลัง",
+        "เพิ่มของเข้า",
+        "นำสิ่งของเข้าคลัง",
     ];
 
     const stockOutRemarks = [
@@ -157,7 +157,7 @@ function isStockIn(transaction) {
         "เบิกออก",
         "ของออก",
         "จ่ายของสำหรับ sos",
-        "นำสินค้าออกจากคลัง",
+        "นำสิ่งของออกจากคลัง",
     ];
 
     if (
@@ -347,7 +347,7 @@ export default function InventoryHistoryModal({
                     mergedTransactions.length === 0
                 ) {
                     throw new Error(
-                        ui("ไม่สามารถโหลดประวัติคลังสินค้าได้")
+                        ui("ไม่สามารถโหลดประวัติคลังสิ่งของได้")
                     );
                 }
             } catch (error) {
@@ -711,7 +711,7 @@ export default function InventoryHistoryModal({
 
                                 <input
                                     type="text"
-                                    placeholder={ui("ชื่อสินค้า / รหัสอ้างอิง")}
+                                    placeholder={ui("ชื่อสิ่งของ / รหัสอ้างอิง")}
                                     value={
                                         filters.search
                                     }

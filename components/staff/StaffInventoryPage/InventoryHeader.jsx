@@ -16,7 +16,7 @@ export default function InventoryHeader({
                     <span className="material-symbols-outlined text-sky-600">
                         warehouse
                     </span>
-                    {ui("ตรวจสอบคลังสินค้า")}
+                    {ui("ตรวจสอบคลังสิ่งของ")}
                 </h1>
 
                 <p className="mt-2 text-sm text-slate-500">

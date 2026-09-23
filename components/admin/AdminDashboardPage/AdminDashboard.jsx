@@ -371,7 +371,7 @@ export default function AdminDashboard() {
                         );
                     } else {
                         console.error(
-                            "โหลดข้อมูลคลังสินค้าไม่สำเร็จ:",
+                            "โหลดข้อมูลคลังสิ่งของไม่สำเร็จ:",
                             inventoryResult.reason
                         );
 
