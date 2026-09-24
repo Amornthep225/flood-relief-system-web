@@ -22,6 +22,15 @@ const cards = [
             "bg-white text-red-500",
     },
     {
+        key: "relief",
+        title: "ขอรับของ",
+        icon: "inventory_2",
+        cardClass:
+            "border-cyan-100 bg-cyan-50 text-cyan-600",
+        iconClass:
+            "bg-white text-cyan-500",
+    },
+    {
         key: "waiting",
         title: "รอการช่วยเหลือ",
         icon: "warning",
@@ -55,7 +64,7 @@ export default function AdminSosSummary({
 }) {
     const { ui } = useNativeUi();
     return (
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6">
             {cards.map((card) => (
                 <div
                     key={card.key}

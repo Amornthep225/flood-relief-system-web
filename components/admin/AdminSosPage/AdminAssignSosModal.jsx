@@ -461,6 +461,40 @@ export default function AdminAssignSosModal({
                         </div>
                     </div>
 
+                    <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+                        <h3 className="font-black text-slate-800">
+                            {tx("รายละเอียดเคส", "Case Details")}
+                        </h3>
+                        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                            <div>
+                                <p className="text-xs font-bold text-slate-400">
+                                    {tx("ประเภทคำขอ", "Request Type")}
+                                </p>
+                                <p className="mt-1 font-bold text-slate-700">
+                                    {isEmergency ? tx("SOS ฉุกเฉิน", "Emergency SOS") : tx("ขอรับสิ่งของ", "Relief Request")}
+                                </p>
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold text-slate-400">
+                                    {tx("ระดับความสำคัญ", "Priority")}
+                                </p>
+                                <p className="mt-1 font-bold text-slate-700">
+                                    {caseItem.priority || "-"}
+                                </p>
+                            </div>
+                        </div>
+                        {(caseItem.detail || caseItem.description || caseItem.emergencyDetail) && (
+                            <div className="mt-3 rounded-xl bg-slate-50 p-3">
+                                <p className="text-xs font-bold text-slate-400">
+                                    {tx("รายละเอียดเพิ่มเติม", "Description")}
+                                </p>
+                                <p className="mt-1 text-sm font-semibold text-slate-700">
+                                    {ui(caseItem.detail || caseItem.description || caseItem.emergencyDetail)}
+                                </p>
+                            </div>
+                        )}
+                    </section>
+
                     {!isEmergency && (
                         <section className="rounded-2xl border border-sky-100 bg-sky-50/60 p-5">
                             <div className="mb-3 flex items-center justify-between">

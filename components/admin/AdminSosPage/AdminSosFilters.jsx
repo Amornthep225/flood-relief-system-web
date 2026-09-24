@@ -2,6 +2,12 @@
 
 import { useNativeUi } from "@/hooks/useNativeUi";
 
+const typeFilters = [
+    { value: "all", label: "ทั้งหมด" },
+    { value: "emergency", label: "SOS ฉุกเฉิน" },
+    { value: "relief", label: "ขอรับของ" },
+];
+
 const statusFilters = [
     {
         value: "all",
@@ -30,6 +36,8 @@ export default function AdminSosFilters({
     onSearchChange,
     filter,
     onFilterChange,
+    typeFilter,
+    onTypeFilterChange,
 }) {
     const { ui } = useNativeUi();
     return (
@@ -52,6 +60,23 @@ export default function AdminSosFilters({
                 </div>
 
                 <div className="flex flex-col gap-3 lg:flex-row">
+                    <div className="flex gap-2 overflow-x-auto">
+                        {typeFilters.map((item) => (
+                            <button
+                                key={item.value}
+                                type="button"
+                                onClick={() => onTypeFilterChange(item.value)}
+                                className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-bold transition ${
+                                    typeFilter === item.value
+                                        ? "bg-sky-600 text-white"
+                                        : "border border-slate-200 bg-white text-slate-600"
+                                }`}
+                            >
+                                {ui(item.label)}
+                            </button>
+                        ))}
+                    </div>
+
                     <div className="flex gap-2 overflow-x-auto">
                         {statusFilters.map((item) => (
                             <button

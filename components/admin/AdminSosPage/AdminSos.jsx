@@ -260,6 +260,7 @@ export default function AdminSos() {
     const [staffs, setStaffs] = useState([]);
     const [searchText, setSearchText] = useState("");
     const [filter, setFilter] = useState("all");
+    const [typeFilter, setTypeFilter] = useState("all");
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -361,12 +362,17 @@ export default function AdminSos() {
             (item) => isEmergencySos(item)
         ).length;
 
+        const relief = cases.filter(
+            (item) => !isEmergencySos(item)
+        ).length;
+
         return {
             total: cases.length,
             waiting,
             progress,
             completed,
             critical,
+            relief,
         };
     }, [cases]);
 
@@ -397,12 +403,18 @@ export default function AdminSos() {
                 filter === "all" ||
                 statusGroup(item.status) === filter;
 
-            return matchSearch && matchStatus;
+            const matchType =
+                typeFilter === "all" ||
+                (typeFilter === "emergency" && isEmergencySos(item)) ||
+                (typeFilter === "relief" && !isEmergencySos(item));
+
+            return matchSearch && matchStatus && matchType;
         });
     }, [
         cases,
         searchText,
         filter,
+        typeFilter,
     ]);
 
     const totalPages = Math.max(
@@ -571,6 +583,8 @@ export default function AdminSos() {
                         onSearchChange={setSearchText}
                         filter={filter}
                         onFilterChange={setFilter}
+                        typeFilter={typeFilter}
+                        onTypeFilterChange={setTypeFilter}
                     />
 
                     {paginatedCases.length === 0 ? (
