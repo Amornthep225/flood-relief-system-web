@@ -2,7 +2,7 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export default function SosCategorySelector({ categories, selectedCategoryIds, onToggle }) {
+export default function SosCategorySelector({ categories, selectedCategoryIds, selectedItemIds = [], items = [], onToggle }) {
     const { t } = useLanguage();
 
     if (categories.length === 0) {
@@ -12,7 +12,9 @@ export default function SosCategorySelector({ categories, selectedCategoryIds, o
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {categories.map((category) => {
-                const isSelected = selectedCategoryIds.includes(category.id);
+                const isSelected = selectedItemIds.some((itemId) =>
+                    items.some((item) => item.id === itemId && item.reliefCategoryId === category.id)
+                );
                 return (
                     <button key={category.id} type="button" onClick={() => onToggle(category.id)} className={`relative min-h-32 rounded-2xl border p-5 text-left transition-all ${isSelected ? "border-sky-500 bg-sky-50 shadow-lg shadow-sky-100" : "border-slate-200 bg-white hover:border-sky-300 hover:bg-sky-50/50"}`}>
                         {isSelected && <span className="material-symbols-outlined absolute right-3 top-3 text-sky-500">check_circle</span>}

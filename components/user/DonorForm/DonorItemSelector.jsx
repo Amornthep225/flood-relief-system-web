@@ -8,6 +8,10 @@ export default function DonorItemSelector({
     quantities,
     onChangeQuantity,
     selectedCategory,
+    selectedItemIds = [],
+    itemSearch = "",
+    onSearchChange,
+    onToggleItem,
 }) {
     const { language, t } = useLanguage();
 
@@ -17,9 +21,20 @@ export default function DonorItemSelector({
                 {t("donation.form.itemsTitle")}
             </h2>
 
+            <input
+                type="text"
+                value={itemSearch}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                placeholder="ค้นหาชื่อสิ่งของ..."
+                className="mb-4 w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-700 focus:border-sky-400 focus:outline-none"
+            />
+
             <div className="space-y-4">
                 {items.length > 0 ? (
-                    items.map((item) => {
+                    items.filter((item) =>
+                    !itemSearch ||
+                    (item.name || item.reliefItemName || "").toLowerCase().includes(itemSearch.toLowerCase())
+                ).map((item) => {
                         const itemName = translateMasterDataText(
                             item.name || item.reliefItemName || "",
                             language
@@ -28,6 +43,8 @@ export default function DonorItemSelector({
                         const unit = translateMasterDataText(item.unit || "", language);
 
                         const currentQuantity = Number(quantities[item.id] || 0);
+
+                        const isSelected = selectedItemIds.includes(item.id);
 
                         const maximumQuantity = Number(item.maximumQuantity || 0);
 
@@ -52,6 +69,12 @@ export default function DonorItemSelector({
                                 className="rounded-xl border border-slate-200 p-4 transition-colors hover:border-slate-300"
                             >
                                 <div className="flex items-center justify-between gap-4">
+                                    <input
+                                        type="checkbox"
+                                        checked={isSelected || currentQuantity > 0}
+                                        onChange={() => onToggleItem?.(item.id)}
+                                    />
+
                                     {/* Item information */}
                                     <div className="min-w-0">
                                         <p className="font-bold text-slate-800">{itemName}</p>

@@ -1845,6 +1845,18 @@ function aggregateRequestedItems(
             const previous =
                 requiredMap.get(id);
 
+            // รายการที่ไม่ได้รับอนุมัติ ไม่ต้องนำไปคำนวณเตรียมของ/ตัดคลัง
+            const approvedQuantity = Number(
+                item.approvedQuantity ??
+                    item.ApprovedQuantity ??
+                    item.quantity ??
+                    0
+            );
+
+            if (approvedQuantity <= 0) {
+                return;
+            }
+
             requiredMap.set(id, {
                 reliefItemId: id,
                 reliefItemName:
@@ -1869,10 +1881,7 @@ function aggregateRequestedItems(
                             ?.requiredQuantity ??
                             0
                     ) +
-                    Number(
-                        item.quantity ??
-                            0
-                    ),
+                    approvedQuantity,
             });
         });
     });

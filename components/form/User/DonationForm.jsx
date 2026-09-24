@@ -38,6 +38,10 @@ export default function DonationForm() {
     const [quantities, setQuantities] =
         useState({});
 
+    // เก็บรายการที่ผู้ใช้เลือก เพื่อไม่ให้หายเมื่อซ่อน/เปิดหมวด
+    const [selectedItemIds, setSelectedItemIds] = useState([]);
+    const [itemSearch, setItemSearch] = useState("");
+
     const [showConfirm, setShowConfirm] =
         useState(false);
 
@@ -142,6 +146,14 @@ export default function DonationForm() {
     // อัปเดตจำนวน
     // และไม่ให้กรอกเกิน RemainingQuantity
     // =====================================================
+    const toggleSelectedItem = (id) => {
+        setSelectedItemIds((previous) =>
+            previous.includes(id)
+                ? previous.filter((itemId) => itemId !== id)
+                : [...previous, id]
+        );
+    };
+
     const updateQuantity = (id, value) => {
         const selectedItem =
             items.find(
@@ -328,6 +340,8 @@ export default function DonationForm() {
                 selectedCategory={
                     selectedCategory
                 }
+                selectedItemIds={selectedItemIds}
+                items={items}
                 onSelect={
                     setSelectedCategory
                 }
@@ -335,6 +349,8 @@ export default function DonationForm() {
 
             <DonorItemSelector
                 items={filteredItems}
+                itemSearch={itemSearch}
+                onSearchChange={setItemSearch}
                 selectedCategory={selectedCategory}
                 quantities={
                     quantities
@@ -342,6 +358,8 @@ export default function DonationForm() {
                 onChangeQuantity={
                     updateQuantity
                 }
+                selectedItemIds={selectedItemIds}
+                onToggleItem={toggleSelectedItem}
             />
             <DonorCenterInfo />
             <button

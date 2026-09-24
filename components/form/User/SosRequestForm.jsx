@@ -33,7 +33,10 @@ export default function SosRequestForm() {
 
     const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
+    const [expandedCategoryIds, setExpandedCategoryIds] = useState([]);
+
     const [selectedItemIds, setSelectedItemIds] = useState([]);
+    const [itemSearch, setItemSearch] = useState("");
 
     const [quantities, setQuantities] = useState({});
 
@@ -89,35 +92,15 @@ export default function SosRequestForm() {
     }, []);
 
     const toggleCategory = (categoryId) => {
-        const isSelected = selectedCategoryIds.includes(categoryId);
+        setExpandedCategoryIds((previous) =>
+            previous.includes(categoryId)
+                ? previous.filter((id) => id !== categoryId)
+                : [...previous, categoryId]
+        );
 
-        if (!isSelected) {
+        if (!selectedCategoryIds.includes(categoryId)) {
             setSelectedCategoryIds((previous) => [...previous, categoryId]);
-
-            return;
         }
-
-        const categoryItemIds = items
-            .filter((item) => item.reliefCategoryId === categoryId)
-            .map((item) => item.id);
-
-        setSelectedCategoryIds((previous) =>
-            previous.filter((id) => id !== categoryId)
-        );
-
-        setSelectedItemIds((previous) =>
-            previous.filter((id) => !categoryItemIds.includes(id))
-        );
-
-        setQuantities((previous) => {
-            const updated = { ...previous };
-
-            categoryItemIds.forEach((id) => {
-                delete updated[id];
-            });
-
-            return updated;
-        });
     };
 
     const toggleItem = (itemId) => {
@@ -368,6 +351,8 @@ export default function SosRequestForm() {
                         <SosCategorySelector
                             categories={categories}
                             selectedCategoryIds={selectedCategoryIds}
+                            selectedItemIds={selectedItemIds}
+                            items={items}
                             onToggle={toggleCategory}
                         />
                     </section>
@@ -384,7 +369,10 @@ export default function SosRequestForm() {
                                 categories={categories}
                                 itemsByCategory={itemsByCategory}
                                 selectedCategoryIds={selectedCategoryIds}
+                                expandedCategoryIds={expandedCategoryIds}
                                 selectedItemIds={selectedItemIds}
+                                itemSearch={itemSearch}
+                                onSearchChange={setItemSearch}
                                 quantities={quantities}
                                 onToggleItem={toggleItem}
                                 onIncrease={increaseQuantity}

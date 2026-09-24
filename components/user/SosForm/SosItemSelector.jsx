@@ -6,7 +6,10 @@ export default function SosItemSelector({
     categories,
     itemsByCategory,
     selectedCategoryIds,
+    expandedCategoryIds = [],
     selectedItemIds,
+    itemSearch = "",
+    onSearchChange,
     quantities,
     onToggleItem,
     onIncrease,
@@ -17,13 +20,22 @@ export default function SosItemSelector({
 
     return (
         <div className="space-y-6">
-            {selectedCategoryIds.map((categoryId) => {
+            <input
+                type="text"
+                value={itemSearch}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                placeholder="ค้นหาชื่อสิ่งของ..."
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-700 focus:border-sky-400 focus:outline-none"
+            />
+            {selectedCategoryIds.filter((categoryId) => expandedCategoryIds.includes(categoryId)).map((categoryId) => {
                 const category = categories.find(
                     (item) => item.id === categoryId
                 );
 
-                const items =
-                    itemsByCategory[categoryId] || [];
+                const items = (itemsByCategory[categoryId] || []).filter((item) =>
+                    !itemSearch ||
+                    item.name?.toLowerCase().includes(itemSearch.toLowerCase())
+                );
 
                 return (
                     <div
