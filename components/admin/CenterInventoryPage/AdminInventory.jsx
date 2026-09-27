@@ -2,7 +2,7 @@
 
 import { useNativeUi } from "@/hooks/useNativeUi";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense,useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 import RoleGuard from "@/components/RoleGuard/RoleGuard";
@@ -89,6 +89,13 @@ function normalizeTransaction(item) {
 }
 
 export default function AdminInventory() {
+     return (
+        <Suspense fallback={<div className="p-8 text-slate-500">Loading...</div>}>
+            <AdminInventoryContent />
+        </Suspense>
+    );
+}
+function AdminInventoryContent() {
     const { ui } = useNativeUi();
     const searchParams = useSearchParams();
     const centerId = searchParams.get("centerId") ?? "";

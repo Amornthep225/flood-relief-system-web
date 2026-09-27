@@ -76,17 +76,19 @@ export default function DonorItemSelector({
                                     />
 
                                     {/* Item information */}
-                                    <div className="min-w-0">
-                                        <p className="font-bold text-slate-800">{itemName}</p>
+                                    <div className="min-w-0 flex-1 min-h-[130px]">
+                                        <p className="text-lg font-bold text-slate-800">
+    {itemName}
+</p>
 
-                                        <p className="mt-0.5 text-sm text-slate-500">
+                                        <p className="mt-1 text-base text-slate-500">
                                             {t("donation.form.unitLabel")}: {unit}
                                         </p>
 
                                         {/* จำกัดจำนวน */}
                                         {hasLimit && (
                                             <div className="mt-2 space-y-1">
-                                                <p className="text-sm font-semibold text-sky-700">
+                                                <p className="text-base font-semibold text-sky-700">
                                                     {language === "en"
                                                         ? `Can receive ${remainingQuantity.toLocaleString(
                                                             "en-US"
@@ -96,7 +98,7 @@ export default function DonorItemSelector({
                                                         )} ${unit}`}
                                                 </p>
 
-                                                <p className="text-xs text-slate-500">
+                                                <p className="text-sm text-slate-500">
                                                     {language === "en"
                                                         ? `Maximum target: ${maximumQuantity.toLocaleString(
                                                             "en-US"
@@ -110,7 +112,7 @@ export default function DonorItemSelector({
 
                                         {/* ไม่จำกัด */}
                                         {!hasLimit && (
-                                            <p className="mt-2 text-xs font-medium text-emerald-600">
+                                            <p className="mt-2 text-sm font-medium text-emerald-600">
                                                 {language === "en"
                                                     ? "No maximum donation limit"
                                                     : "ไม่จำกัดจำนวนรับบริจาค"}

@@ -2,7 +2,7 @@
 
 import { useNativeUi } from "@/hooks/useNativeUi";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense,useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
@@ -98,6 +98,13 @@ function getStatusConfig(request) {
 }
 
 export default function StaffMission() {
+     return (
+        <Suspense fallback={<div className="p-8 text-slate-500">Loading...</div>}>
+            <StaffMissionContent />
+        </Suspense>
+    );
+}
+function StaffMissionContent() {
     const { ui, language } = useNativeUi();
     const router = useRouter();
     const searchParams = useSearchParams();

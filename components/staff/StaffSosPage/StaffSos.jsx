@@ -3,6 +3,7 @@
 import { useNativeUi } from "@/hooks/useNativeUi";
 
 import {
+    Suspense,
     useCallback,
     useEffect,
     useMemo,
@@ -124,6 +125,13 @@ function sortSosRequests(requests) {
 export default function StaffSos({
     requestType = "emergency",
 }) {
+     return (
+        <Suspense fallback={<div className="p-8 text-slate-500">Loading...</div>}>
+            <StaffSosContent requestType={requestType} />
+        </Suspense>
+    );
+}
+function StaffSosContent({ requestType }) {
     const { ui, language } = useNativeUi();
     const router = useRouter();
     const searchParams = useSearchParams();

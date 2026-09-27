@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
@@ -10,6 +10,18 @@ import { getMySosRequests, getSosRequestById } from "@/services/user/sos";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SosTrackingPage() {
+    return (
+            <Suspense fallback={
+                <div className="min-h-screen flex items-center justify-center text-slate-500">
+                    Loading...
+                </div>
+            }>
+                <SosTrackingContent />
+            </Suspense>
+        );
+}
+
+function SosTrackingContent() {
     const searchParams = useSearchParams();
     const requestId = searchParams.get("id");
     const { t } = useLanguage();

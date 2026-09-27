@@ -25,7 +25,10 @@ export function LanguageProvider({ children }) {
   const [language, setLanguageState] = useState("th");
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
+    const saved =
+    typeof window !== "undefined"
+        ? window.localStorage.getItem(STORAGE_KEY)
+        : null;
     if (saved === "th" || saved === "en") {
       setLanguageState(saved);
     }
@@ -38,7 +41,9 @@ export function LanguageProvider({ children }) {
   const setLanguage = useCallback((nextLanguage) => {
     if (nextLanguage !== "th" && nextLanguage !== "en") return;
     setLanguageState(nextLanguage);
+    if (typeof window !== "undefined") {
     window.localStorage.setItem(STORAGE_KEY, nextLanguage);
+}
   }, []);
 
   const dictionary = dictionaries[language] || th;

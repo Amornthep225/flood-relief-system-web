@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense,useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -12,6 +12,18 @@ import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function RequestSuccessPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center text-slate-500">
+                Loading...
+            </div>
+        }>
+            <RequestSuccessContent />
+        </Suspense>
+    );
+
+}
+function RequestSuccessContent() {
     const { dictionary, t } = useLanguage();
     const searchParams = useSearchParams();
     const id = searchParams.get("id");

@@ -2,7 +2,7 @@
 
 import { useNativeUi } from "@/hooks/useNativeUi";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense,useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
@@ -16,6 +16,13 @@ import {
 } from "@/services/staff/donation";
 
 export default function StaffDonationVerify() {
+     return (
+        <Suspense fallback={<div className="p-8 text-slate-500">Loading...</div>}>
+            <StaffDonationVerifyContent />
+        </Suspense>
+    );
+}
+function StaffDonationVerifyContent() {
     const { ui, language } = useNativeUi();
     const router = useRouter();
     const searchParams = useSearchParams();

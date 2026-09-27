@@ -1,6 +1,18 @@
 "use client";
 
-import SosMap from "@/components/map/SosMap";
+import dynamic from "next/dynamic";
+
+const SosMap = dynamic(
+    () => import("@/components/map/SosMap"),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="h-48 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400">
+                Loading map...
+            </div>
+        ),
+    }
+);
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function TrackingMapSection({
