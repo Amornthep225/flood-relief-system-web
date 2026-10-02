@@ -7,7 +7,7 @@ export default function AdminInventoryEmpty({
 }) {
     const { ui } = useNativeUi();
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-10 lg:p-12 text-center shadow-sm">
             <span className="material-symbols-outlined text-6xl text-slate-300">
                 {activeTab ===
                 "inventory"

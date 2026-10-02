@@ -53,7 +53,7 @@ export default function DonorCenterInfo() {
 
     if (isLoading) {
         return (
-            <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <div className="rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm">
                 <div className="h-28 animate-pulse rounded-2xl bg-slate-100" />
             </div>
         );
@@ -61,7 +61,7 @@ export default function DonorCenterInfo() {
 
     if (!center) {
         return (
-            <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <div className="rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm">
                 <p className="text-center text-sm text-slate-400">
                     ไม่พบข้อมูลจุดรับบริจาค
                 </p>
@@ -91,7 +91,7 @@ export default function DonorCenterInfo() {
         )}`;
 
     return (
-        <div className="rounded-3xl border border-blue-100 bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border-blue-100 bg-white p-4 sm:p-6 shadow-sm">
             <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
                     <span className="material-symbols-outlined">

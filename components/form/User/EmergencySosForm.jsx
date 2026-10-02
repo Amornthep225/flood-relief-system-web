@@ -241,7 +241,7 @@ export default function EmergencySosForm() {
                 </p>
             </div>
 
-            <div className="space-y-8 rounded-3xl border border-red-100 bg-white p-6 shadow-xl shadow-red-100/40 md:p-10">
+            <div className="space-y-8 rounded-3xl border border-red-100 bg-white p-4 sm:p-6 shadow-xl shadow-red-100/40 md:p-10">
                 {/* =====================
                     1 Emergency Type
                 ====================== */}
@@ -504,7 +504,7 @@ export default function EmergencySosForm() {
                     type="button"
                     disabled={submitting || loadingTypes}
                     onClick={handleSubmit}
-                    className="flex w-full items-center justify-center gap-3 rounded-2xl bg-red-500 px-6 py-4 text-lg font-black text-white shadow-lg shadow-red-200 transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="flex w-full items-center justify-center gap-3 rounded-2xl bg-red-500 px-4 sm:px-6 py-4 text-lg font-black text-white shadow-lg shadow-red-200 transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     <span
                         className={`material-symbols-outlined ${submitting ? "animate-spin" : ""

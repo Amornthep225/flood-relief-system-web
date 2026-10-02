@@ -684,7 +684,7 @@ export default function AdminDashboard() {
             storageKey="admin"
             loginPath="/admin-login"
         >
-            <div className="min-h-screen bg-slate-50 text-slate-900">
+            <div className="min-h-[100dvh] bg-slate-50 text-slate-900">
                 <AdminDashboardHeader
                     updatedAt={
                         updatedAt

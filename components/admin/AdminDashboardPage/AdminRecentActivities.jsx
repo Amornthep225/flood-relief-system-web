@@ -51,7 +51,7 @@ export default function AdminRecentActivities({
     const { ui, language } = useNativeUi();
     return (
         <section className="rounded-2xl border border-slate-100 bg-white shadow-sm">
-            <div className="border-b border-slate-100 p-6">
+            <div className="border-b border-slate-100 p-4 sm:p-6">
                 <h3 className="text-lg font-bold text-slate-800">
                     {ui("กิจกรรมล่าสุด")}
                 </h3>
@@ -62,7 +62,7 @@ export default function AdminRecentActivities({
             </div>
 
             {activities.length === 0 ? (
-                <div className="px-6 py-16 text-center">
+                <div className="px-4 sm:px-6 py-16 text-center">
                     <span className="material-symbols-outlined text-4xl text-slate-300">
                         history_toggle_off
                     </span>

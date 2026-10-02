@@ -126,7 +126,7 @@ export default function StaffSos({
     requestType = "emergency",
 }) {
      return (
-        <Suspense fallback={<div className="p-8 text-slate-500">Loading...</div>}>
+        <Suspense fallback={<div className="p-4 sm:p-6 lg:p-8 text-slate-500">Loading...</div>}>
             <StaffSosContent requestType={requestType} />
         </Suspense>
     );
@@ -563,7 +563,7 @@ function StaffSosContent({ requestType }) {
                 summary={summary}
             />
 
-            <section className="w-full space-y-6 border border-slate-200 rounded-xl bg-[#f3f3f3] p-6 shadow-sm">
+            <section className="w-full space-y-6 border border-slate-200 rounded-xl bg-[#f3f3f3] p-4 sm:p-6 shadow-sm">
             <StaffSosTabs
                 activeTab={activeTab}
                 onChange={setActiveTab}

@@ -339,7 +339,7 @@ export default function SosRequestForm() {
 
                 <form
                     onSubmit={(event) => event.preventDefault()}
-                    className="space-y-8 rounded-3xl border border-slate-100 bg-white p-6 shadow-xl shadow-sky-100/50 md:p-10"
+                    className="space-y-8 rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-xl shadow-sky-100/50 md:p-10"
                 >
                     <section className="space-y-5">
                         <FormSectionTitle
@@ -433,7 +433,7 @@ export default function SosRequestForm() {
                         type="button"
                         onClick={openConfirmModal}
                         disabled={isSubmitting}
-                        className="flex w-full items-center justify-center gap-3 rounded-xl bg-red-500 px-6 py-4 text-base font-bold text-white shadow-lg shadow-red-200 transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="flex w-full items-center justify-center gap-3 rounded-xl bg-red-500 px-4 sm:px-6 py-4 text-base font-bold text-white shadow-lg shadow-red-200 transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         <span className="material-symbols-outlined">emergency</span>
 

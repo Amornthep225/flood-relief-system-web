@@ -90,7 +90,7 @@ function normalizeTransaction(item) {
 
 export default function AdminInventory() {
      return (
-        <Suspense fallback={<div className="p-8 text-slate-500">Loading...</div>}>
+        <Suspense fallback={<div className="p-4 sm:p-6 lg:p-8 text-slate-500">Loading...</div>}>
             <AdminInventoryContent />
         </Suspense>
     );
@@ -294,7 +294,7 @@ function AdminInventoryContent() {
 
     return (
         <RoleGuard role="Admin" storageKey="admin" loginPath="/admin-login">
-            <div className="min-h-screen bg-slate-50 text-slate-900">
+            <div className="min-h-[100dvh] bg-slate-50 text-slate-900">
                 <AdminInventoryHeader
                     center={center}
                     centerId={centerId}

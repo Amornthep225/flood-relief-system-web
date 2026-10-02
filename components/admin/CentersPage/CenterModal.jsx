@@ -204,7 +204,7 @@ export default function CenterModal({
                     </button>}
                 </div>
 
-                <fieldset disabled={saving} className={inline ? "space-y-4 p-4 md:p-6" : "max-h-[80vh] space-y-4 overflow-y-auto p-6"}>
+                <fieldset disabled={saving} className={inline ? "space-y-4 p-4 md:p-6" : "max-h-[80vh] space-y-4 overflow-y-auto p-4 sm:p-6"}>
                     <InputField
                         label={ui("ชื่อจุดรับบริจาค")}
                         value={form.centerName}

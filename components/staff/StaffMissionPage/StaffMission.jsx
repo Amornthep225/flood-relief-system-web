@@ -99,7 +99,7 @@ function getStatusConfig(request) {
 
 export default function StaffMission() {
      return (
-        <Suspense fallback={<div className="p-8 text-slate-500">Loading...</div>}>
+        <Suspense fallback={<div className="p-4 sm:p-6 lg:p-8 text-slate-500">Loading...</div>}>
             <StaffMissionContent />
         </Suspense>
     );
@@ -328,7 +328,7 @@ function StaffMissionContent() {
     return (
         <div className="mx-auto w-full max-w-5xl space-y-6">
             <section className={`overflow-hidden rounded-3xl text-white shadow-xl ${statusConfig?.colour || "bg-slate-700"}`}>
-                <div className="flex flex-col gap-5 p-6 md:flex-row md:items-center md:justify-between md:p-8">
+                <div className="flex flex-col gap-5 p-4 sm:p-6 md:flex-row md:items-center md:justify-between md:p-8">
                     <div className="flex items-center gap-4">
                         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15">
                             <span className="material-symbols-outlined text-3xl">
@@ -356,7 +356,7 @@ function StaffMissionContent() {
 
             <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
                 <div className="space-y-6">
-                    <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <div className="rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm">
                         <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
                             <span className="material-symbols-outlined text-sky-500">person_pin_circle</span>
                             ข้อมูลผู้ประสบภัย
@@ -404,7 +404,7 @@ function StaffMissionContent() {
                         )}
                     </div>
 
-                    <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <div className="rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm">
                         <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
                             <span className="material-symbols-outlined text-orange-500">inventory_2</span>
                             รายการสิ่งของที่ร้องขอ
@@ -445,13 +445,13 @@ function StaffMissionContent() {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="rounded-3xl border border-sky-100 bg-sky-50 p-6 shadow-sm">
+                    <div className="rounded-3xl border border-sky-100 bg-sky-50 p-4 sm:p-6 shadow-sm">
                         <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
                             <span className="material-symbols-outlined text-sky-500">{isPickup ? "storefront" : "map"}</span>
                             {isPickup ? ui("จุดรับสิ่งของ") : ui("ตำแหน่งภารกิจ")}
                         </h2>
 
-                        <div className="mt-5 flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-sky-100 bg-white p-6 text-center">
+                        <div className="mt-5 flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-sky-100 bg-white p-4 sm:p-6 text-center">
                             <span className="material-symbols-outlined text-6xl text-red-500">location_on</span>
                             <p className="mt-3 font-bold text-slate-700">
                                 {request.addressDetail || "ไม่ระบุสถานที่"}
@@ -474,7 +474,7 @@ function StaffMissionContent() {
                         </a>
                     </div>
 
-                    <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <div className="rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm">
                         <h2 className="text-lg font-bold text-slate-800">{ui("ดำเนินการภารกิจ")}</h2>
                         <p className="mt-2 text-sm text-slate-500">
                             ระบบจะอนุญาตให้อัปเดตสถานะตามลำดับเท่านั้น

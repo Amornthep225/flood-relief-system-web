@@ -431,7 +431,7 @@ export default function AdminAssignSosModal({
                     />
                 </div>
 
-                <div className="space-y-5 p-6">
+                <div className="space-y-5 p-4 sm:p-6">
                     <div className="grid gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4 sm:grid-cols-2">
                         <div>
                             <p className="text-xs font-bold text-slate-400">
@@ -684,7 +684,7 @@ export default function AdminAssignSosModal({
                                     )}
                                 </div>
                             ) : checkingStock ? (
-                                <div className="flex items-center justify-center gap-3 rounded-xl bg-slate-50 p-6 text-slate-500">
+                                <div className="flex items-center justify-center gap-3 rounded-xl bg-slate-50 p-4 sm:p-6 text-slate-500">
                                     <span className="material-symbols-outlined animate-spin">
                                         progress_activity
                                     </span>
@@ -738,86 +738,89 @@ export default function AdminAssignSosModal({
                                         </p>
                                     </div>
 
-                                    <div className="overflow-x-auto rounded-xl border border-slate-200">
-                                        <table className="min-w-full text-sm">
-                                            <thead className="bg-slate-50 text-xs text-slate-500">
-                                                <tr>
-                                                    <th className="px-4 py-3 text-left">
-                                                        {tx(
-                                                            "รายการ",
-                                                            "Item"
-                                                        )}
-                                                    </th>
-                                                    <th className="px-4 py-3 text-center">
-                                                        {tx(
-                                                            "ต้องการ",
-                                                            "Required"
-                                                        )}
-                                                    </th>
-                                                    <th className="px-4 py-3 text-center">
-                                                        {tx(
-                                                            "คงเหลือ",
-                                                            "Available"
-                                                        )}
-                                                    </th>
-                                                    <th className="px-4 py-3 text-center">
-                                                        {tx(
-                                                            "หลังจ่าย",
-                                                            "After Issue"
-                                                        )}
-                                                    </th>
-                                                    <th className="px-4 py-3 text-center">
-                                                        {tx("อนุมัติ", "Approve")}
-                                                    </th>
-                                                    <th className="px-4 py-3 text-center">
-                                                        {tx(
-                                                            "ผลตรวจ",
-                                                            "Result"
-                                                        )}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-slate-100">
-                                                {stockCheck.items.map(
-                                                    (
-                                                        item,
-                                                        index
-                                                    ) => (
-                                                        <tr
-                                                            key={
-                                                                item.reliefItemId ||
-                                                                index
-                                                            }
-                                                        >
-                                                            <td className="px-4 py-3 font-bold text-slate-700">
-                                                                {ui(
-                                                                    item.reliefItemName
-                                                                )}
-                                                            </td>
-                                                            <td className="px-4 py-3 text-center">
-                                                                {
-                                                                    item.requestedQuantity
-                                                                }{" "}
-                                                                {ui(
-                                                                    item.unit
-                                                                )}
-                                                            </td>
-                                                            <td className="px-4 py-3 text-center">
-                                                                {
-                                                                    item.availableQuantity
-                                                                }{" "}
-                                                                {ui(
-                                                                    item.unit
-                                                                )}
-                                                            </td>
-                                                            <td className="px-4 py-3 text-center">
-                                                                {
-                                                                    item.remainingQuantity
-                                                                }{" "}
-                                                                {ui(
-                                                                    item.unit
-                                                                )}
-                                                            </td>
+                                    <div className="overflow-hidden rounded-xl border border-slate-200">
+                                        <div className="divide-y divide-slate-100 md:hidden">
+                                            {stockCheck.items.map((item, index) => {
+                                                const itemKey = item.id || item.reliefItemId;
+                                                const maxApproved = Math.min(
+                                                    Number(item.requestedQuantity ?? 0),
+                                                    Number(item.availableQuantity ?? 0)
+                                                );
+
+                                                return (
+                                                    <div key={itemKey || index} className="p-4">
+                                                        <div className="flex items-start justify-between gap-3">
+                                                            <div className="min-w-0">
+                                                                <p className="break-words font-bold text-slate-700">
+                                                                    {ui(item.reliefItemName)}
+                                                                </p>
+                                                                <p className="mt-1 text-xs text-slate-400">
+                                                                    {tx("ต้องการ", "Required")}: {item.requestedQuantity} {ui(item.unit)}
+                                                                </p>
+                                                            </div>
+                                                            {item.isEnough ? (
+                                                                <span className="shrink-0 rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">
+                                                                    {tx("เพียงพอ", "Enough")}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="shrink-0 rounded-full bg-red-100 px-3 py-1 text-xs font-black text-red-700">
+                                                                    {tx("ขาด", "Short")} {item.shortageQuantity} {ui(item.unit)}
+                                                                </span>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="mt-3 grid grid-cols-2 gap-2 text-center text-sm">
+                                                            <div className="rounded-lg bg-slate-50 p-2.5">
+                                                                <p className="text-[10px] font-bold text-slate-400">{tx("คงเหลือ", "Available")}</p>
+                                                                <p className="mt-1 font-black text-slate-700">{item.availableQuantity} {ui(item.unit)}</p>
+                                                            </div>
+                                                            <div className="rounded-lg bg-slate-50 p-2.5">
+                                                                <p className="text-[10px] font-bold text-slate-400">{tx("หลังจ่าย", "After Issue")}</p>
+                                                                <p className="mt-1 font-black text-slate-700">{item.remainingQuantity} {ui(item.unit)}</p>
+                                                            </div>
+                                                        </div>
+
+                                                        <label className="mt-3 block text-xs font-bold text-slate-500">
+                                                            {tx("จำนวนอนุมัติ", "Approved Quantity")}
+                                                            <input
+                                                                type="number"
+                                                                min="0"
+                                                                max={maxApproved}
+                                                                value={approvedQuantities[itemKey] ?? 0}
+                                                                onChange={(event) => {
+                                                                    const raw = Number(event.target.value);
+                                                                    setApprovedQuantities((current) => ({
+                                                                        ...current,
+                                                                        [itemKey]: Math.max(0, Math.min(Number.isFinite(raw) ? raw : 0, maxApproved)),
+                                                                    }));
+                                                                }}
+                                                                className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-center text-base font-black outline-none focus:border-sky-500"
+                                                            />
+                                                        </label>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        <div className="hidden overflow-x-auto md:block">
+                                            <table className="w-full min-w-[720px] text-sm">
+                                                <thead className="bg-slate-50 text-xs text-slate-500">
+                                                    <tr>
+                                                        <th className="px-4 py-3 text-left">{tx("รายการ", "Item")}</th>
+                                                        <th className="px-4 py-3 text-center">{tx("ต้องการ", "Required")}</th>
+                                                        <th className="px-4 py-3 text-center">{tx("คงเหลือ", "Available")}</th>
+                                                        <th className="px-4 py-3 text-center">{tx("หลังจ่าย", "After Issue")}</th>
+                                                        <th className="px-4 py-3 text-center">{tx("อนุมัติ", "Approve")}</th>
+                                                        <th className="px-4 py-3 text-center">{tx("ผลตรวจ", "Result")}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-slate-100">
+                                                    {stockCheck.items.map((item, index) => (
+                                                        <tr key={item.reliefItemId || index}>
+                                                            <td className="px-4 py-3 font-bold text-slate-700">{ui(item.reliefItemName)}</td>
+                                                            <td className="px-4 py-3 text-center">{item.requestedQuantity} {ui(item.unit)}</td>
+                                                            <td className="px-4 py-3 text-center">{item.availableQuantity} {ui(item.unit)}</td>
+                                                            <td className="px-4 py-3 text-center">{item.remainingQuantity} {ui(item.unit)}</td>
                                                             <td className="px-4 py-3 text-center">
                                                                 <input
                                                                     type="number"
@@ -837,32 +840,16 @@ export default function AdminAssignSosModal({
                                                             </td>
                                                             <td className="px-4 py-3 text-center">
                                                                 {item.isEnough ? (
-                                                                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">
-                                                                        {tx(
-                                                                            "เพียงพอ",
-                                                                            "Enough"
-                                                                        )}
-                                                                    </span>
+                                                                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">{tx("เพียงพอ", "Enough")}</span>
                                                                 ) : (
-                                                                    <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-black text-red-700">
-                                                                        {tx(
-                                                                            "ขาด",
-                                                                            "Short"
-                                                                        )}{" "}
-                                                                        {
-                                                                            item.shortageQuantity
-                                                                        }{" "}
-                                                                        {ui(
-                                                                            item.unit
-                                                                        )}
-                                                                    </span>
+                                                                    <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-black text-red-700">{tx("ขาด", "Short")} {item.shortageQuantity} {ui(item.unit)}</span>
                                                                 )}
                                                             </td>
                                                         </tr>
-                                                    )
-                                                )}
-                                            </tbody>
-                                        </table>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </>
                             ) : null}

@@ -88,7 +88,7 @@ export default function AdminReliefChart({
 
     return (
         <div className="rounded-2xl border border-slate-100 bg-white shadow-sm lg:col-span-2">
-            <div className="flex items-center justify-between border-b border-slate-100 p-6">
+            <div className="flex items-center justify-between border-b border-slate-100 p-4 sm:p-6">
                 <div>
                     <h3 className="text-lg font-bold text-slate-800">
                         {ui("สถิติการช่วยเหลือ")}
@@ -121,7 +121,7 @@ export default function AdminReliefChart({
                 </select>
             </div>
 
-            <div className="relative h-80 p-6">
+            <div className="relative h-80 p-4 sm:p-6">
                 <canvas ref={canvasRef} />
             </div>
         </div>

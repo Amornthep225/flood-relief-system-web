@@ -39,7 +39,7 @@ export default function ReliefManageTabs({
                     key={card.value}
                     type="button"
                     onClick={() => onChange(card.value)}
-                    className={`relative overflow-hidden rounded-3xl border p-6 text-left shadow-sm transition ${
+                    className={`relative overflow-hidden rounded-3xl border p-4 sm:p-6 text-left shadow-sm transition ${
                         activeTab === card.value
                             ? `${card.activeClass} ring-4`
                             : "border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-md"

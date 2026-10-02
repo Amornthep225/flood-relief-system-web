@@ -11,11 +11,11 @@ export default function SosTrackingCard({ request }) {
     const { t } = useLanguage();
 
     return (
-        <div className="min-h-screen w-full py-8 px-4 sm:px-6 bg-sosTrickingPage">
+        <div className="min-h-[100dvh] w-full bg-sosTrickingPage px-3 py-5 sm:px-6 sm:py-8">
             <div className="w-full max-w-5xl mx-auto rounded-3xl shadow-xl borde overflow-hidden bg-sky-200">
                 <TrackingHeader requestId={request.id} t={t} />
 
-                <div className="p-6 md:p-8 space-y-8">
+                <div className="p-4 sm:p-6 md:p-8 space-y-8">
                     {String(request.requestType || "Relief").toLowerCase() ===
                     "emergency" ? (
                         <EmergencySummary request={request} t={t} />
@@ -49,7 +49,7 @@ export default function SosTrackingCard({ request }) {
 
 function TrackingHeader({ requestId, t }) {
     return (
-        <div className="p-7 md:p-8 text-center border-b border-blue-500 bg-sky-200">
+        <div className="border-b border-blue-500 bg-sky-200 p-4 text-center sm:p-6 md:p-8">
             <h1 className="text-2xl font-bold text-slate-800">
                 {t("sos.tracking.headerTitle")}
             </h1>

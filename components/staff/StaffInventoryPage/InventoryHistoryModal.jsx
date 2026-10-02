@@ -554,7 +554,7 @@ export default function InventoryHistoryModal({
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/50 p-4">
             <div className="flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl bg-[#eef8ff] shadow-2xl">
                 {/* Header */}
-                <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-5">
+                <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6 py-5">
                     <div>
                         <h2 className="flex items-center gap-2 text-xl font-bold text-slate-800">
                             <span className="material-symbols-outlined text-sky-600">
@@ -580,7 +580,7 @@ export default function InventoryHistoryModal({
                     </button>
                 </div>
 
-                <div className="overflow-y-auto p-6">
+                <div className="overflow-y-auto p-4 sm:p-6">
                     {/* Filters */}
                     <div className="mb-5 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
                         <div className="mb-4 flex flex-wrap gap-2">
@@ -775,7 +775,7 @@ export default function InventoryHistoryModal({
 
                     {/* Loading */}
                     {loading ? (
-                        <div className="rounded-2xl bg-white px-6 py-16 text-center shadow-sm">
+                        <div className="rounded-2xl bg-white px-4 sm:px-6 py-16 text-center shadow-sm">
                             <span className="material-symbols-outlined animate-spin text-4xl text-sky-500">
                                 progress_activity
                             </span>
@@ -786,7 +786,7 @@ export default function InventoryHistoryModal({
                         </div>
                     ) : filteredTransactions.length ===
                       0 ? (
-                        <div className="rounded-2xl bg-white px-6 py-16 text-center shadow-sm">
+                        <div className="rounded-2xl bg-white px-4 sm:px-6 py-16 text-center shadow-sm">
                             <span className="material-symbols-outlined text-4xl text-slate-300">
                                 history_toggle_off
                             </span>
@@ -802,7 +802,7 @@ export default function InventoryHistoryModal({
                     ) : (
                         <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
                             <div className="overflow-x-auto">
-                                <table className="min-w-full text-left">
+                                <table className="min-w-[820px] text-left">
                                     <thead className="bg-slate-50 text-xs uppercase text-slate-500">
                                         <tr>
                                             <th className="px-5 py-4">

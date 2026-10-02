@@ -569,13 +569,13 @@ export default function AdminSos() {
             storageKey="admin"
             loginPath="/admin-login"
         >
-            <div className="min-h-screen bg-slate-50 text-slate-900">
+            <div className="min-h-[100dvh] bg-slate-50 text-slate-900">
                 <AdminSosHeader
                     onRefresh={() => loadData(false)}
                     refreshing={refreshing}
                 />
 
-                <main className="mx-auto w-full max-w-[1500px] space-y-6 p-4 md:p-8">
+                <main className="mx-auto w-full max-w-[1500px] space-y-4 p-3 sm:p-4 md:space-y-6 md:p-8">
                     <AdminSosSummary summary={summary} />
 
                     <AdminSosFilters

@@ -26,7 +26,7 @@ function StaffVerifySuccessContent() {
     return (
         <StaffLayout backHref="/staff/staff-verify" showBack={true} showHome={false}>
             <div className="mx-auto flex min-h-[65vh] max-w-xl items-center justify-center">
-                <section className="w-full rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-xl shadow-emerald-100/60">
+                <section className="w-full rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 text-center shadow-xl shadow-emerald-100/60">
                     <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-200">
                         <span className="material-symbols-outlined text-6xl">check</span>
                     </div>
@@ -77,14 +77,14 @@ function StaffVerifySuccessContent() {
 
 function InfoRow({ label, value, mono = false, success = false }) {
     return (
-        <div className="flex items-center justify-between gap-4 text-sm">
+        <div className="flex flex-col items-start gap-1 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <span className="text-slate-500">{label}</span>
 
             <span
                 className={`
                     ${mono ? "font-mono" : ""}
                     ${success ? "text-emerald-600" : "text-slate-800"}
-                    text-right font-bold
+                    font-bold sm:text-right
                 `}
             >
                 {value}

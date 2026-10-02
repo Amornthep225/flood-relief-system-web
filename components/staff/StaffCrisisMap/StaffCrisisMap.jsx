@@ -331,7 +331,7 @@ export default function StaffCrisisMap() {
 
     return (
         //<section className="relative h-[calc(100vh-72px)] w-full overflow-hidden bg-slate-100">
-        <section className="fixed inset-x-0 bottom-0 top-[65px] z-40 overflow-hidden bg-slate-100">
+        <section className="fixed inset-x-0 bottom-0 top-[128px] z-40 overflow-hidden bg-slate-100 sm:top-[65px]">
             <CrisisMapCanvas cases={filteredCases} onSelectCase={handleSelectCase} />
             <CrisisMapSidebar summary={summary} cases={filteredCases} activeStatus={activeStatus} onStatusChange={setActiveStatus} onSelectCase={handleSelectCase} onRefresh={() => { const c = new AbortController(); loadCases(c.signal, false); }} refreshing={refreshing} />
             <CrisisCaseModal caseItem={selectedCase} loading={detailLoading} onClose={() => setSelectedCase(null)} onAccept={handleAccept} accepting={acceptingId === selectedCase?.id} />

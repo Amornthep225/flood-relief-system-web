@@ -83,10 +83,10 @@ export default function StaffHomeHero() {
                     </p>
                 </div>
 
-                <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                     <Link
                         href="/staff/staff-sos"
-                        className={`${buttons.staffHome.hero} relative min-w-[220px]`}
+                        className={`${buttons.staffHome.hero} relative w-full sm:min-w-[220px] sm:w-auto`}
                     >
                         <span className="material-symbols-outlined">
                             emergency
@@ -110,7 +110,7 @@ export default function StaffHomeHero() {
 
                     <Link
                         href="/staff/relief-requests"
-                        className={`${buttons.staffHome.hero} relative min-w-[220px]`}
+                        className={`${buttons.staffHome.hero} relative w-full sm:min-w-[220px] sm:w-auto`}
                     >
                         <span className="material-symbols-outlined">
                             inventory_2

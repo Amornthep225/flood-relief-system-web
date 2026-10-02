@@ -78,7 +78,7 @@ export default function AdminStatusChart({
 
     return (
         <div className="rounded-2xl border border-slate-100 bg-white shadow-sm">
-            <div className="border-b border-slate-100 p-6">
+            <div className="border-b border-slate-100 p-4 sm:p-6">
                 <h3 className="text-lg font-bold text-slate-800">
                     {ui("สถานะคำขอ")}
                 </h3>
@@ -88,7 +88,7 @@ export default function AdminStatusChart({
                 </p>
             </div>
 
-            <div className="relative flex h-80 items-center justify-center p-6">
+            <div className="relative flex h-80 items-center justify-center p-4 sm:p-6">
                 <canvas ref={canvasRef} />
             </div>
         </div>

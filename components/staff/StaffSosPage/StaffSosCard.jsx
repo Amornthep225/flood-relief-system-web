@@ -45,7 +45,7 @@ export default function StaffSosCard({
             />
 
             <div className="flex flex-col gap-6 md:flex-row">
-                <div className="flex min-w-[100px] items-center gap-3 md:flex-col md:border-r md:border-slate-100 md:pr-5">
+                <div className="flex min-w-0 items-center gap-3 md:min-w-[100px] md:flex-col md:border-r md:border-slate-100 md:pr-5">
                     <div
                         className={`flex h-14 w-14 items-center justify-center rounded-full ${style.icon}`}
                     >
@@ -207,7 +207,7 @@ export default function StaffSosCard({
                     )}
                 </div>
 
-                <div className="flex min-w-[170px] flex-row gap-2 md:flex-col md:justify-center">
+                <div className="flex min-w-0 flex-col gap-2 sm:flex-row md:min-w-[170px] md:flex-col md:justify-center">
                     {isWaiting && (
                         <button
                             type="button"

@@ -43,7 +43,7 @@ export default function DonorCenterSelector({
     }, []);
 
     return (
-        <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100">
+        <div className="rounded-3xl bg-white p-4 sm:p-6 shadow-sm border border-slate-100">
             <div className="mb-4">
                 <h2 className="text-xl font-bold text-slate-800">
                     {t("donation.form.centerTitle")}

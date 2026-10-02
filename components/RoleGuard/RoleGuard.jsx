@@ -70,7 +70,7 @@ export default function RoleGuard({
 
     if (checking) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+            <div className="min-h-[100dvh] flex items-center justify-center bg-slate-50">
                 <p className="text-sm font-bold text-slate-500">
                     กำลังตรวจสอบสิทธิ์...
                 </p>

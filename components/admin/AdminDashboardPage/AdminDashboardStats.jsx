@@ -70,7 +70,7 @@ export default function AdminDashboardStats({
 }) {
     const { ui, language } = useNativeUi();
     return (
-        <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
+        <section className="grid grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-5">
             {statConfigs.map(
                 (item) => (
                     <StatCard
@@ -94,7 +94,7 @@ function StatCard({
 }) {
     const { ui, language } = useNativeUi();
     return (
-        <div className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+        <div className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5">
             <div className="absolute right-0 top-0 p-4 opacity-5 transition-opacity group-hover:opacity-10">
                 <span className="material-symbols-outlined text-7xl">
                     {item.mainIcon}
@@ -121,7 +121,7 @@ function StatCard({
                 {ui(item.title)}
             </p>
 
-            <h2 className="mt-1 text-3xl font-black text-slate-800">
+            <h2 className="mt-1 text-2xl font-black text-slate-800 sm:text-3xl">
                 {Number(
                     item.number || 0
                 ).toLocaleString(language === "en" ? "en-US" : "th-TH")}

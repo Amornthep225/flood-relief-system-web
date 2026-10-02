@@ -8,8 +8,8 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
 
     return (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl">
-                <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+            <div className="max-h-[calc(100dvh-2rem)] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white shadow-2xl">
+                <div className="flex items-center justify-between border-b border-slate-100 px-4 sm:px-6 py-5">
                     <div className="flex items-center gap-3">
                         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-100 text-sky-600">
                             <span className="material-symbols-outlined">inventory_2</span>
@@ -31,7 +31,7 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                     </div>
                 ) : (
                     <>
-                        <div className="max-h-[62vh] overflow-y-auto p-6">
+                        <div className="max-h-[62vh] overflow-y-auto p-4 sm:p-6">
                             <div className={`mb-5 rounded-2xl border p-4 ${stockCheck?.isAllEnough ? "border-emerald-200 bg-emerald-50" : "border-red-200 bg-red-50"}`}>
                                 <div className="flex items-center gap-3">
                                     <span className={`material-symbols-outlined text-3xl ${stockCheck?.isAllEnough ? "text-emerald-600" : "text-red-600"}`}>
@@ -51,8 +51,8 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                                     ไม่พบรายการสิ่งของที่ร้องขอ จึงยังไม่สามารถยืนยันรับเคสได้
                                 </div>
                             ) : (
-                                <div className="overflow-hidden rounded-2xl border border-slate-200">
-                                    <table className="w-full text-sm">
+                                <div className="overflow-x-auto rounded-2xl border border-slate-200">
+                                    <table className="w-full min-w-[700px] text-sm">
                                         <thead className="bg-slate-50 text-xs font-black text-slate-500">
                                             <tr>
                                                 <th className="px-4 py-3 text-left">{ui("รายการ")}</th>
@@ -84,7 +84,7 @@ export default function CrisisStockCheckModal({ caseItem, stockCheck, loading, a
                             )}
                         </div>
 
-                        <div className="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+                        <div className="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-4 sm:px-6 py-4">
                             <button type="button" onClick={onClose} disabled={accepting} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-600 hover:bg-slate-100 disabled:opacity-50">{ui("ยกเลิก")}</button>
                             <button type="button" onClick={onConfirm} disabled={accepting || !stockCheck?.isAllEnough} className="flex items-center gap-2 rounded-xl bg-sky-600 px-5 py-3 font-bold text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300">
                                 <span className={`material-symbols-outlined text-lg ${accepting ? "animate-spin" : ""}`}>{accepting ? "progress_activity" : "assignment_turned_in"}</span>

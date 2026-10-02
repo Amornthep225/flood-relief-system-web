@@ -6,11 +6,11 @@ export default function SosCategorySelector({ categories, selectedCategoryIds, s
     const { t } = useLanguage();
 
     if (categories.length === 0) {
-        return <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">{t("sos.relief.noCategories")}</div>;
+        return <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-6 text-center text-sm text-slate-500">{t("sos.relief.noCategories")}</div>;
     }
 
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
             {categories.map((category) => {
                 const isSelected = selectedItemIds.some((itemId) =>
                     items.some((item) => item.id === itemId && item.reliefCategoryId === category.id)

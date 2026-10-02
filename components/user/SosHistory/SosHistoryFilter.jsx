@@ -47,7 +47,7 @@ export default function SosHistoryFilter({ filters, onSearch, onReset }) {
     };
 
     return (
-        <div className="mb-6 rounded-3xl bg-white p-6 shadow-sm border border-slate-100">
+        <div className="mb-6 rounded-3xl bg-white p-4 sm:p-6 shadow-sm border border-slate-100">
             <div className="mb-5 flex items-center gap-2">
                 <span className="material-symbols-outlined text-sky-500">
                     search

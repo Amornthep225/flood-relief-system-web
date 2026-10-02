@@ -75,12 +75,12 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-mainPageBackground">
+    <div className="min-h-[100dvh] flex flex-col bg-mainPageBackground">
       <PublicNavbar hotline="1784" options={{ back: false }} />
 
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12 md:py-20">
+      <main className="flex flex-1 flex-col items-center justify-center px-3 py-8 sm:px-4 sm:py-12 md:py-20">
         <div className="max-w-[1140px] w-full flex flex-col items-center text-center">
-          <section className="mb-10">
+          <section className="mb-7 sm:mb-10">
             <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4 ${theme.badge}`}>
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute h-full w-full rounded-full bg-sky-500 opacity-75" />
@@ -89,33 +89,33 @@ export default function Home() {
               {t("publicHome.badge")}
             </div>
 
-            <h1 className={`${theme.primaryText} tracking-tight text-4xl md:text-6xl font-black leading-tight mb-4`}>
+            <h1 className={`${theme.primaryText} tracking-tight text-3xl sm:text-4xl md:text-6xl font-black leading-tight mb-4`}>
               {t("publicHome.title")}
             </h1>
 
-            <p className={`${theme.secondaryText} text-lg max-w-2xl mx-auto`}>
+            <p className={`${theme.secondaryText} mx-auto max-w-2xl text-base leading-7 sm:text-lg`}>
               {t("publicHome.description")}
             </p>
           </section>
 
-          <section className="w-full max-w-[800px] mb-12">
+          <section className="mb-9 w-full max-w-[800px] sm:mb-12">
             <div className={cards.home.actionWrapper}>
               <Link href={LINKS.userLogin} className={cards.home.action}>
-                <div className="relative flex items-center justify-center gap-6 md:gap-10">
+                <div className="relative flex items-center justify-center gap-4 sm:gap-6 md:gap-10">
                   <div className={cards.home.actionIcon}>
-                    <span className="material-symbols-outlined text-5xl md:text-7xl">emergency_share</span>
+                    <span className="material-symbols-outlined text-4xl sm:text-5xl md:text-7xl">emergency_share</span>
                   </div>
-                  <div className="h-16 md:h-20 w-[2px] bg-white/30 rounded-full" />
+                  <div className="h-12 w-[2px] rounded-full bg-white/30 sm:h-16 md:h-20" />
                   <div className={cards.home.actionIcon}>
-                    <span className="material-symbols-outlined text-5xl md:text-7xl">volunteer_activism</span>
+                    <span className="material-symbols-outlined text-4xl sm:text-5xl md:text-7xl">volunteer_activism</span>
                   </div>
                 </div>
 
                 <div className="relative flex flex-col items-center gap-3">
-                  <span className="text-3xl md:text-6xl font-black tracking-tight">
+                  <span className="text-2xl font-black tracking-tight sm:text-3xl md:text-6xl">
                     {t("publicHome.mainAction")}
                   </span>
-                  <span className="text-sm md:text-lg font-bold opacity-80 uppercase tracking-[0.3em]">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] opacity-80 sm:text-sm sm:tracking-[0.3em] md:text-lg">
                     {t("publicHome.mainActionEn")}
                   </span>
                 </div>
@@ -123,7 +123,7 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="flex justify-center w-full px-4 mb-20">
+          <section className="mb-12 flex w-full justify-center px-1 sm:mb-20 sm:px-4">
             <Link href={LINKS.staffLogin} className={buttons.home.staff}>
               <span className="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">
                 admin_panel_settings
@@ -140,9 +140,9 @@ export default function Home() {
           </section>
 
           <section className="w-full">
-            <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="mb-6 flex items-center justify-center gap-2 sm:mb-8 sm:gap-4">
               <div className="h-px flex-1 bg-blue-200" />
-              <h4 className={`${theme.primaryText}/60 text-xs font-black uppercase tracking-[0.2em] whitespace-nowrap`}>
+              <h4 className={`${theme.primaryText}/60 text-[10px] font-black uppercase tracking-[0.12em] sm:text-xs sm:tracking-[0.2em] sm:whitespace-nowrap`}>
                 {t("publicHome.impact")} ({t("publicHome.impactEn")})
               </h4>
               <div className="h-px flex-1 bg-blue-200" />

@@ -20,7 +20,7 @@ import { translateUiText } from "@/locales/uiPhrases";
 
 export default function DonationForm() {
      return (
-        <Suspense fallback={<div className="p-8 text-slate-500">Loading...</div>}>
+        <Suspense fallback={<div className="p-4 sm:p-6 lg:p-8 text-slate-500">Loading...</div>}>
             <DonationFormContent />
         </Suspense>
     );

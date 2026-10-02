@@ -96,7 +96,7 @@ export default function ConfirmModal({
     return (
         <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/55 px-4 py-6 backdrop-blur-sm">
             <div className="mx-auto w-full max-w-6xl overflow-hidden rounded-2xl bg-white shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
-                <header className="border-b border-slate-200 bg-white px-6 py-5 md:px-8">
+                <header className="border-b border-slate-200 bg-white px-4 sm:px-6 py-5 md:px-8">
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div className="flex min-w-0 items-center gap-4">
                             <div
@@ -172,7 +172,7 @@ export default function ConfirmModal({
                 </header>
 
                 {checkingStock ? (
-                    <div className="flex min-h-[380px] flex-col items-center justify-center px-6 py-14">
+                    <div className="flex min-h-[380px] flex-col items-center justify-center px-4 sm:px-6 py-14">
                         <span className="material-symbols-outlined animate-spin text-5xl text-sky-500">
                             progress_activity
                         </span>
@@ -192,8 +192,8 @@ export default function ConfirmModal({
                         </p>
                     </div>
                 ) : isEmergency ? (
-                    <div className="p-6 md:p-8">
-                        <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
+                    <div className="p-4 sm:p-6 md:p-8">
+                        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 sm:p-6">
                             <div className="flex items-start gap-4">
                                 <span className="material-symbols-outlined text-3xl text-red-600">
                                     emergency
@@ -218,7 +218,7 @@ export default function ConfirmModal({
                         </div>
                     </div>
                 ) : (
-                    <main className="space-y-5 bg-slate-50/60 p-6 md:p-8">
+                    <main className="space-y-5 bg-slate-50/60 p-4 sm:p-6 md:p-8">
                         <section className="grid gap-3 sm:grid-cols-3">
                             <MetricCard
                                 label={tx(
@@ -322,7 +322,7 @@ export default function ConfirmModal({
                         </section>
 
                         {items.length === 0 ? (
-                            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center">
+                            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:p-6 lg:p-8 text-center">
                                 <span className="material-symbols-outlined text-4xl text-amber-500">
                                     inventory
                                 </span>
@@ -413,7 +413,7 @@ export default function ConfirmModal({
                                                 )}
                                             </div>
 
-                                            <div className="mt-4 grid grid-cols-3 gap-2">
+                                            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                                                 <MobileMetric
                                                     label={tx(
                                                         "ต้องการ",
@@ -489,7 +489,7 @@ export default function ConfirmModal({
                                     <table className="w-full min-w-[760px] text-sm">
                                         <thead className="border-b border-slate-200 bg-sky-50/70 text-xs font-bold uppercase tracking-wider text-slate-600">
                                             <tr>
-                                                <th className="px-6 py-3.5 text-left">
+                                                <th className="px-4 sm:px-6 py-3.5 text-left">
                                                     {tx(
                                                         "รายการสิ่งของ",
                                                         "Item"
@@ -521,7 +521,7 @@ export default function ConfirmModal({
                                                     {tx("อนุมัติ", "Approve")}
                                                 </th>
 
-                                                <th className="px-6 py-3.5 text-center">
+                                                <th className="px-4 sm:px-6 py-3.5 text-center">
                                                     {tx(
                                                         "สถานะ",
                                                         "Status"
@@ -543,7 +543,7 @@ export default function ConfirmModal({
                                                                 : "bg-red-50/40 hover:bg-red-50/70"
                                                             }`}
                                                     >
-                                                        <td className="px-6 py-4">
+                                                        <td className="px-4 sm:px-6 py-4">
                                                             <div className="flex items-center gap-3">
                                                                 <div
                                                                     className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${item.isEnough
@@ -594,7 +594,7 @@ export default function ConfirmModal({
                                                             }
                                                         />
 
-                                                        <td className="px-6 py-4 text-center">
+                                                        <td className="px-4 sm:px-6 py-4 text-center">
                                                             <input
                                                                 type="number"
                                                                 min="0"
@@ -612,7 +612,7 @@ export default function ConfirmModal({
                                                             />
                                                         </td>
 
-                                                        <td className="px-6 py-4 text-center">
+                                                        <td className="px-4 sm:px-6 py-4 text-center">
                                                             {item.isEnough ? (
                                                                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700">
                                                                     <span className="material-symbols-outlined text-sm">
@@ -650,7 +650,7 @@ export default function ConfirmModal({
                                             <tr>
                                                 <td
                                                     colSpan={6}
-                                                    className="px-6 py-3.5"
+                                                    className="px-4 sm:px-6 py-3.5"
                                                 >
                                                     <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                                                         <p className="font-bold text-slate-600">
@@ -788,7 +788,7 @@ export default function ConfirmModal({
                 )}
 
                 {!isEmergency && Array.isArray(stockCheck?.pendingRequests) && stockCheck.pendingRequests.length > 0 && (
-                    <section className="border-t border-amber-200 bg-amber-50 px-6 py-4 md:px-8">
+                    <section className="border-t border-amber-200 bg-amber-50 px-4 sm:px-6 py-4 md:px-8">
                         <div className="flex items-start gap-3">
                             <span className="material-symbols-outlined mt-0.5 text-amber-600">inventory</span>
                             <div className="min-w-0 flex-1">
@@ -811,7 +811,7 @@ export default function ConfirmModal({
                     </section>
                 )}
 
-                <footer className="grid grid-cols-1 gap-3 border-t border-slate-200 bg-white px-6 py-4 md:grid-cols-[180px_1fr] md:px-8">
+                <footer className="grid grid-cols-1 gap-3 border-t border-slate-200 bg-white px-4 sm:px-6 py-4 md:grid-cols-[180px_1fr] md:px-8">
                     <button
                         type="button"
                         onClick={onClose}

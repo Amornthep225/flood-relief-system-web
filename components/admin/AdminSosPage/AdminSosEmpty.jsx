@@ -5,7 +5,7 @@ import { useNativeUi } from "@/hooks/useNativeUi";
 export default function AdminSosEmpty() {
     const { ui } = useNativeUi();
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white px-6 py-20 text-center shadow-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white px-4 sm:px-6 py-20 text-center shadow-sm">
             <span className="material-symbols-outlined text-5xl text-slate-300">
                 search_off
             </span>

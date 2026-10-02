@@ -11,7 +11,7 @@ export default function SosRequestItems({ items }) {
     }
 
     return (
-        <div className="rounded-3xl border border-sky-100 bg-sky-50 p-5 md:p-6">
+        <div className="rounded-3xl border border-sky-100 bg-sky-50 p-4 sm:p-5 md:p-6">
             <div className="flex items-center gap-3 mb-5">
                 <span className="material-symbols-outlined text-sky-500">
                     inventory_2
@@ -32,7 +32,7 @@ export default function SosRequestItems({ items }) {
                     return (
                         <div
                             key={item.id || item.reliefItemId}
-                            className="flex items-center justify-between rounded-2xl bg-white border border-sky-100 px-5 py-4"
+                            className="flex items-start justify-between gap-3 rounded-2xl border border-sky-100 bg-white px-4 py-4 sm:items-center sm:px-5"
                         >
                             <div>
                                 <p className="font-bold text-slate-700">

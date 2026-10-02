@@ -6,6 +6,12 @@ export const metadata = {
   description: "Flood Relief Donation Management System",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="th" className="h-full antialiased">
@@ -21,7 +27,7 @@ export default function RootLayout({ children }) {
         />
       </head>
 
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-[100dvh] flex-col">
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>

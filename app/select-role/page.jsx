@@ -238,7 +238,7 @@ export default function SelectRolePage() {
                                     <div className="pointer-events-none absolute -right-10 -top-8 h-28 w-28 rounded-full border border-current opacity-[0.04]" />
                                     <div className="pointer-events-none absolute -right-3 top-8 h-16 w-16 rounded-full border border-current opacity-[0.035]" />
 
-                                    <div className="relative flex h-full flex-1 flex-col px-6 pb-7 pt-9 sm:px-8">
+                                    <div className="relative flex h-full flex-1 flex-col px-4 sm:px-6 pb-7 pt-9 sm:px-8">
                                         <CardIcon item={item} config={config} />
 
                                         <h2 className="text-center text-2xl font-black leading-tight text-blue-800 md:text-[30px]">

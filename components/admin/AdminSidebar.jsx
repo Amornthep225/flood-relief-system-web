@@ -14,7 +14,6 @@ import {
 } from "next/navigation";
 import Swal from "sweetalert2";
 
-import { cards } from "@/constants/cards";
 import { getAllSosRequests } from "@/services/admin/sos";
 import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 
@@ -102,7 +101,7 @@ function normalizeArray(response) {
     return [];
 }
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ mobile = false, onNavigate }) {
     const { ui } = useNativeUi();
     const router = useRouter();
     const pathname = usePathname();
@@ -218,12 +217,11 @@ export default function AdminSidebar() {
 
     return (
         <aside
-            className={
-                cards.adminLayout
-                    .sidebar
-            }
+            className={`flex h-full flex-col border-r border-slate-200 bg-white shadow-sm ${
+                mobile ? "w-[min(86vw,320px)]" : "w-72"
+            }`}
         >
-            <div className="flex items-center gap-3 p-6">
+            <div className="flex items-center gap-3 p-4 sm:p-6">
                 <div className="flex items-center justify-center rounded-lg bg-sky-500 p-2 shadow-lg shadow-sky-500/30">
                     <span className="material-symbols-outlined text-xl text-white">
                         water_drop
@@ -275,6 +273,7 @@ export default function AdminSidebar() {
                                             href={
                                                 item.href
                                             }
+                                            onClick={onNavigate}
                                             className={
                                                 active
                                                     ? "flex items-center gap-3 rounded-xl bg-sky-500/10 px-3 py-2.5 font-bold text-sky-500"

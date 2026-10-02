@@ -29,7 +29,7 @@ export default function EmptyState({ activeTab }) {
         content[activeTab] || content.waiting;
 
     return (
-        <div className="rounded-3xl border border-slate-100 bg-white p-12 text-center shadow-sm">
+        <div className="rounded-3xl border border-slate-100 bg-white p-6 sm:p-10 lg:p-12 text-center shadow-sm">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
                 <span className="material-symbols-outlined text-3xl">
                     {current.icon}

@@ -77,10 +77,10 @@ export default function AdminUsersPage() {
 
     return (
         <RoleGuard role="Admin" storageKey="admin" loginPath="/admin-login">
-            <div className="min-h-screen bg-slate-50 text-slate-900">
+            <div className="min-h-[100dvh] bg-slate-50 text-slate-900">
                 <AdminUsersHeader />
 
-                <main className="p-8 max-w-[1400px] mx-auto w-full">
+                <main className="mx-auto w-full max-w-[1400px] p-4 sm:p-6 lg:p-8">
                     <UserSummarySection users={users} />
 
                     <UserFilterBar

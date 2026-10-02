@@ -15,7 +15,7 @@ export default function ManageUserModal({
     const { ui } = useNativeUi();
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4">
-            <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl relative overflow-hidden">
+            <div className="relative max-h-[calc(100dvh-2rem)] w-full max-w-sm overflow-y-auto rounded-2xl bg-white shadow-2xl">
                 <div className="bg-slate-50 p-5 border-b border-slate-100 flex justify-between items-start">
                     <div>
                         <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
@@ -38,7 +38,7 @@ export default function ManageUserModal({
                     </button>
                 </div>
 
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                     <UserWidget user={user} isBanned={isBanned} onToggle={onToggle} />
 
                     <div className="flex gap-3 mt-4">

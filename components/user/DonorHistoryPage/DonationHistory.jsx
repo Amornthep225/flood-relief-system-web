@@ -171,7 +171,7 @@ export default function DonationHistory() {
     }
 
     return (
-        <section className="min-h-screen w-full bg-[#eef8ff] rounded-3xl p-6">
+        <section className="min-h-[100dvh] w-full bg-[#eef8ff] rounded-3xl p-4 sm:p-6">
             <div className="mx-auto max-w-7xl">
                 <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div>
@@ -201,7 +201,7 @@ export default function DonationHistory() {
                     </div>
                 )}
 
-                <div className="mb-6 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+                <div className="mb-6 rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm">
                     <h2 className="mb-5 text-lg font-bold text-slate-800">
                         {t("donation.history.searchTitle")}
                     </h2>

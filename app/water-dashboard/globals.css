@@ -297,3 +297,143 @@ border-radius:999px;
 cursor:pointer;
 
 }
+/* Responsive hardening */
+.page {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.pagination button {
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-surface-2);
+    color: var(--color-deep-text);
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    cursor: not-allowed;
+    opacity: .5;
+}
+
+.modal {
+    padding: 16px;
+}
+
+.modal-header h2 {
+    margin-right: 12px;
+}
+
+.modal-header button {
+    flex: 0 0 auto;
+    min-width: 42px;
+    min-height: 42px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--color-surface);
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .page {
+        padding: 14px;
+    }
+
+    .navbar {
+        padding: 20px 16px;
+        border-radius: 18px;
+    }
+
+    .navbar h1 {
+        margin: 0;
+        font-size: 1.35rem;
+        line-height: 1.35;
+    }
+
+    .navbar p {
+        margin-bottom: 0;
+        font-size: .9rem;
+    }
+
+    .cards {
+        gap: 12px;
+        margin: 16px 0;
+    }
+
+    .card,
+    .panel,
+    .analytics-card,
+    .search-box {
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    .number {
+        font-size: 32px;
+    }
+
+    .big-number {
+        font-size: 42px;
+    }
+
+    .search-box input {
+        max-width: none;
+        font-size: 16px;
+    }
+
+    .table-scroll table {
+        min-width: 680px;
+    }
+
+    td,
+    th {
+        padding: 10px;
+        font-size: .82rem;
+    }
+
+    .modal {
+        align-items: flex-end;
+        padding: 10px;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-width: none;
+        max-height: 90dvh;
+        padding: 18px;
+        border-radius: 20px 20px 14px 14px;
+    }
+
+    .modal-header {
+        align-items: flex-start;
+    }
+
+    .detail-item p {
+        padding: 12px;
+        overflow-wrap: anywhere;
+    }
+
+    .btn-close {
+        width: 100%;
+        min-height: 44px;
+    }
+}

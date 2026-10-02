@@ -269,7 +269,7 @@ export default function AdminReliefManage() {
     };
     return (
         <RoleGuard role="Admin" storageKey="admin" loginPath="/admin-login">
-            <div className="min-h-screen bg-[#f4f8fb]">
+            <div className="min-h-[100dvh] bg-[#f4f8fb]">
                 <header className="border-b border-slate-200 bg-white px-5 py-5 md:px-8">
                     <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-4">
                         <div>

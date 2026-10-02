@@ -112,7 +112,7 @@ export default function StaffNotificationDropdown({
 }) {
     const { ui, language } = useNativeUi();
     return (
-        <div className="absolute right-0 top-12 z-[80] w-[min(92vw,400px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15">
+        <div className="fixed inset-x-3 top-[4.5rem] z-[80] w-auto sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-[min(92vw,400px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15">
             <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                 <div>
                     <p className="font-black text-slate-800">
@@ -134,16 +134,16 @@ export default function StaffNotificationDropdown({
                 )}
             </div>
 
-            <div className="max-h-[430px] overflow-y-auto">
+            <div className="max-h-[min(60vh,430px)] overflow-y-auto">
                 {loading && notifications.length === 0 ? (
-                    <div className="flex items-center justify-center gap-2 px-5 py-10 text-sm text-slate-400">
+                    <div className="flex items-center justify-center gap-2 px-5 py-6 sm:py-8 lg:py-10 text-sm text-slate-400">
                         <span className="material-symbols-outlined animate-spin text-lg">
                             progress_activity
                         </span>
                         {ui("กำลังโหลดการแจ้งเตือน...")}
                     </div>
                 ) : notifications.length === 0 ? (
-                    <div className="px-5 py-10 text-center">
+                    <div className="px-5 py-6 sm:py-8 lg:py-10 text-center">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
                             <span className="material-symbols-outlined">
                                 notifications_off

@@ -55,7 +55,7 @@ export default function CreateStaffModal({ onClose, onCreated }) {
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4">
-            <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+            <div className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl bg-white shadow-2xl">
                 <div className="bg-slate-50 p-5 border-b border-slate-100 flex justify-between">
                     <div>
                         <h3 className="font-bold text-slate-800 text-lg">
@@ -71,7 +71,7 @@ export default function CreateStaffModal({ onClose, onCreated }) {
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-3">
+                <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3">
                     <StaffInput name="centerId" value={form.centerId} onChange={handleChange} placeholder="Center ID" />
                     <StaffInput name="fullName" value={form.fullName} onChange={handleChange} placeholder={ui("ชื่อ-นามสกุล")} />
                     <StaffInput name="username" value={form.username} onChange={handleChange} placeholder="Username" />

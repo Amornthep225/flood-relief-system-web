@@ -16,7 +16,7 @@ export default function UserLayout({
 }) {
     return (
         <RoleGuard role="User" storageKey="user" loginPath="/user/users-login">
-            <div className={`min-h-screen flex flex-col ${pageClass || colors.dashboardUserSos.page}`}>
+            <div className={`min-h-[100dvh] flex flex-col ${pageClass || colors.dashboardUserSos.page}`}>
                 <UserNavbar
                     theme={theme}
                     hotline="1784"
@@ -33,7 +33,7 @@ export default function UserLayout({
                     }}
                 />
 
-                <main className={`w-full max-w-7xl mx-auto px-6 pt-8 pb-8 ${pageClass}`}>
+                <main className={`w-full max-w-7xl mx-auto px-4 pb-6 pt-5 sm:px-6 sm:pb-8 sm:pt-8 ${pageClass}`}>
                     {children}
                 </main>
                 

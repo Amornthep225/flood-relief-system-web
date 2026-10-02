@@ -106,7 +106,7 @@ export default function CrisisMapCanvas({ cases, onSelectCase }) {
                             eventHandlers={{ click: () => onSelectCase(item) }}
                         >
                             <Popup>
-                                <div className="min-w-[220px]">
+                                <div className="min-w-0 sm:min-w-[220px]">
                                     <div className="flex items-center justify-between gap-2">
                                         <p className="font-bold">
                                             {visual.isEmergency ? "SOS" : ui("คำขอ")} #{item.id}

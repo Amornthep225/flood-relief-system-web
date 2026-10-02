@@ -234,36 +234,37 @@ export default function StaffNavbar({
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white shadow-sm">
-            <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-3 md:px-12">
-                <Link href={homeHref} className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2a93d5] text-white">
+            <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-2 px-3 sm:h-auto sm:min-h-[72px] sm:px-6 sm:py-3 md:px-12">
+                <Link href={homeHref} className="flex shrink-0 items-center gap-2 sm:gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#2a93d5] text-white sm:h-10 sm:w-10">
                         <span className="material-symbols-outlined">waves</span>
                     </div>
 
-                    <h2 className={`${theme.primaryText} text-xl font-black uppercase`}>
+                    <h2 className={`${theme.primaryText} hidden text-lg font-black uppercase sm:block sm:text-xl`}>
                         Flood Relief
                     </h2>
                 </Link>
 
-                <div className="flex items-center gap-5">
+                <div className="ml-auto flex min-w-0 shrink-0 items-center justify-end gap-1 sm:gap-3 lg:gap-5">
                     {back && (
                         <Link
                             href={backHref}
-                            className="flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-sky-600"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl p-0 text-sm font-bold text-slate-500 hover:bg-sky-50 hover:text-sky-600 sm:h-10 sm:w-auto sm:gap-1 sm:px-2"
                         >
                             <span className="material-symbols-outlined text-[18px]">
                                 arrow_back
                             </span>
-                            {ui("กลับ")}
+                            <span className="hidden sm:inline">{ui("กลับ")}</span>
                         </Link>
                     )}
 
                     {home && (
                         <Link
                             href={homeHref}
-                            className={`${theme.primaryText} text-sm font-bold hover:text-[#2a93d5]`}
+                            className={`${theme.primaryText} hidden h-10 items-center justify-center gap-1 rounded-xl px-2 text-sm font-bold hover:bg-sky-50 hover:text-[#2a93d5] sm:flex`}
                         >
-                            {ui("หน้าแรก")}
+                            <span className="material-symbols-outlined text-[20px]">home</span>
+                            <span className="hidden sm:inline">{ui("หน้าแรก")}</span>
                         </Link>
                     )}
 
@@ -271,16 +272,17 @@ export default function StaffNavbar({
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="text-sm font-bold text-slate-500 hover:text-red-500"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl p-0 text-sm font-bold text-slate-500 hover:bg-red-50 hover:text-red-500 sm:h-10 sm:w-auto sm:gap-1 sm:px-2"
                         >
-                            Logout
+                            <span className="material-symbols-outlined text-[20px]">logout</span>
+                            <span className="hidden lg:inline">Logout</span>
                         </button>
                     )}
 
                     <LanguageSwitcher />
 
                     {(back || home || logout) && (
-                        <div className="hidden h-6 w-px bg-slate-200 md:block" />
+                        <div className="hidden h-6 w-px bg-slate-200 lg:block" />
                     )}
 
                     {notification && (
@@ -292,7 +294,7 @@ export default function StaffNavbar({
                                 onClick={() =>
                                     setNotificationOpen((open) => !open)
                                 }
-                                className={`relative flex h-10 w-10 items-center justify-center rounded-full transition ${
+                                className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition sm:h-10 sm:w-10 ${
                                     notificationOpen
                                         ? "bg-sky-100 text-sky-600"
                                         : "bg-slate-100 text-slate-600 hover:bg-sky-50 hover:text-sky-600"
@@ -324,7 +326,7 @@ export default function StaffNavbar({
                     )}
 
                     {profile && staff && (
-                        <div className="flex items-center gap-3">
+                        <div className="hidden items-center gap-3 sm:flex">
                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-100 font-bold text-sky-600">
                                 {staff.fullName?.charAt(0) || "S"}
                             </div>
@@ -341,14 +343,14 @@ export default function StaffNavbar({
                     )}
 
                     {hotlineButton && (
-                        <div className="flex flex-col items-center">
-                            <span className={`${theme.emergencyText} text-[10px] font-bold`}>
+                        <div className="flex shrink-0 flex-col items-center">
+                            <span className={`${theme.emergencyText} hidden text-[10px] font-bold sm:block`}>
                                 {ui("สายด่วนฉุกเฉิน")}
                             </span>
 
                             <a
                                 href={`tel:${hotline}`}
-                                className={buttons.common.hotline}
+                                className={`${buttons.common.hotline} !h-9 !min-h-0 !w-auto !min-w-0 !rounded-xl !px-2.5 !py-0 !text-sm !leading-none sm:!h-auto sm:!px-4 sm:!py-2 sm:!text-base`}
                             >
                                 {hotline}
                             </a>

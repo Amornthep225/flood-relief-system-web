@@ -8,11 +8,11 @@ export default function DonationItemList({ items = [] }) {
 
     if (!items || items.length === 0) {
         return (
-            <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <div className="rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm">
                 <h2 className="mb-4 text-xl font-bold text-slate-800">
                     {t("donation.tracking.itemsTitle")}
                 </h2>
-                <div className="rounded-2xl bg-slate-50/70 p-6 text-center text-sm text-slate-400">
+                <div className="rounded-2xl bg-slate-50/70 p-4 sm:p-6 text-center text-sm text-slate-400">
                     {t("donation.tracking.noItems")}
                 </div>
             </div>
@@ -20,8 +20,8 @@ export default function DonationItemList({ items = [] }) {
     }
 
     return (
-        <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
-            <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm">
+            <div className="mb-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div>
                     <h2 className="text-xl font-bold text-slate-800">
                         {t("donation.tracking.donatedItemsTitle")}
@@ -84,7 +84,7 @@ export default function DonationItemList({ items = [] }) {
                             key={item.id || index}
                             className="rounded-2xl border border-slate-100 bg-slate-50 p-4"
                         >
-                            <div className="flex items-center justify-between gap-4">
+                            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                                 <div className="flex min-w-0 items-center gap-3">
                                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white text-xs font-bold text-slate-400 shadow-sm">
                                         {index + 1}
@@ -138,7 +138,7 @@ export default function DonationItemList({ items = [] }) {
                                 />
                             </div>
 
-                            <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                            <div className="mt-3 grid grid-cols-1 gap-2 text-xs min-[420px]:grid-cols-3">
                                 <div className="rounded-xl bg-emerald-50 px-3 py-2 text-emerald-700">
                                     <p className="text-[10px] font-bold tracking-wide text-emerald-500">
                                         {t("donation.tracking.delivered")}

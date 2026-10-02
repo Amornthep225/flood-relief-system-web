@@ -615,7 +615,7 @@ export default function RouteCompanionPanel({
 
     return (
         <section className="rounded-3xl border border-slate-200 bg-white shadow-sm">
-            <div className="border-b border-slate-200 px-6 py-5">
+            <div className="border-b border-slate-200 px-4 sm:px-6 py-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                         <div className="flex items-center gap-2">
@@ -653,7 +653,7 @@ export default function RouteCompanionPanel({
                 </div>
             </div>
 
-            <div className="space-y-6 p-6">
+            <div className="space-y-6 p-4 sm:p-6">
                 {loading ? (
                     <div className="flex min-h-[180px] items-center justify-center gap-3 text-slate-500">
                         <span className="material-symbols-outlined animate-spin">
@@ -733,7 +733,7 @@ export default function RouteCompanionPanel({
 
                                 {candidates.length ===
                                 0 ? (
-                                    <div className="rounded-2xl bg-slate-50 p-6 text-center text-sm text-slate-500">
+                                    <div className="rounded-2xl bg-slate-50 p-4 sm:p-6 text-center text-sm text-slate-500">
                                         {routeInfo
                                             ? tx(
                                                   "ขณะนี้ไม่พบคำขออื่นที่อยู่ในแนวเส้นทางเดียวกัน",

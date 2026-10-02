@@ -121,18 +121,18 @@ export default function AdminCenters() {
 
     return (
         <RoleGuard role="Admin" storageKey="admin" loginPath="/admin-login">
-            <div className="min-h-screen bg-slate-50 text-slate-900">
+            <div className="min-h-[100dvh] bg-slate-50 text-slate-900">
                 <AdminCentersHeader />
                 <main className="mx-auto w-full max-w-5xl space-y-5 p-4 md:p-8">
                     {loading ? (
-                        <p role="status" className="rounded-xl bg-white p-6">{ui("กำลังโหลดข้อมูลศูนย์...")}</p>
+                        <p role="status" className="rounded-xl bg-white p-4 sm:p-6">{ui("กำลังโหลดข้อมูลศูนย์...")}</p>
                     ) : error ? (
-                        <div role="alert" className="rounded-xl bg-red-50 p-6 text-red-700">
+                        <div role="alert" className="rounded-xl bg-red-50 p-4 sm:p-6 text-red-700">
                             <p>{ui(error)}</p>
                             <button type="button" onClick={() => loadData()} className="mt-3 rounded-lg bg-red-600 px-4 py-2 text-white">{ui("ลองใหม่")}</button>
                         </div>
                     ) : !center ? (
-                        <div className="rounded-xl border border-slate-200 bg-white p-6">
+                        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
                             <h2 className="font-bold">{ui("ยังไม่มีข้อมูลศูนย์ในระบบ")}</h2>
                             <p className="mt-2 text-slate-600">{ui("กรุณาให้ผู้ดูแลระบบตั้งค่าข้อมูลศูนย์ก่อนใช้งานหน้านี้")}</p>
                             <button type="button" onClick={() => loadData()} className="mt-3 text-teal-700">{ui("ลองใหม่")}</button>

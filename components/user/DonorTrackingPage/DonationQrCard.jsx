@@ -9,7 +9,7 @@ export default function DonationQrCard({ donation }) {
 
     return (
         <div className="overflow-hidden rounded-3xl bg-white shadow-sm border border-slate-100">
-            <div className="bg-gradient-to-b from-sky-50/80 to-sky-50/30 p-8 text-center">
+            <div className="bg-gradient-to-b from-sky-50/80 to-sky-50/30 p-4 sm:p-6 lg:p-8 text-center">
                 <h1 className="text-xl font-bold text-slate-800">
                     {t("donation.tracking.qrTitle")}
                 </h1>

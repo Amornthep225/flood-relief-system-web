@@ -50,11 +50,11 @@ export default function AdminCentersSummary({
 }) {
     const { ui, language } = useNativeUi();
     return (
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
             {cards.map((item) => (
                 <div
                     key={item.key}
-                    className={`${item.boxStyle} flex items-center justify-between rounded-xl border p-4 shadow-sm`}
+                    className={`${item.boxStyle} flex min-h-24 items-center justify-between rounded-xl border p-3 shadow-sm sm:p-4`}
                 >
                     <div>
                         <p className="mb-1 text-xs text-slate-500">

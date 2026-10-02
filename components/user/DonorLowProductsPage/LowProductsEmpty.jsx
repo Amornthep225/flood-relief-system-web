@@ -6,7 +6,7 @@ export default function LowProductsEmpty() {
     const { t } = useLanguage();
 
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-10 lg:p-12 text-center shadow-sm">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50 text-emerald-500">
                 <span className="material-symbols-outlined text-5xl">
                     inventory

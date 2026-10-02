@@ -22,9 +22,9 @@ export default function DetailsModal({
             .toLowerCase() === "pickup";
 
     return (
-        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/60 px-4 py-10 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/60 px-4 py-6 sm:py-8 lg:py-10 backdrop-blur-sm">
             <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl">
-                <div className="flex items-start justify-between bg-gradient-to-r from-sky-600 to-blue-700 p-6 text-white">
+                <div className="flex items-start justify-between bg-gradient-to-r from-sky-600 to-blue-700 p-4 sm:p-6 text-white">
                     <div>
                         <p className="text-sm text-white/70">
                             รายละเอียดคำขอ
@@ -53,7 +53,7 @@ export default function DetailsModal({
                         </span>
                     </div>
                 ) : (
-                    <div className="space-y-6 p-6">
+                    <div className="space-y-6 p-4 sm:p-6">
                         <div className="grid gap-4 sm:grid-cols-2">
                             <DetailBox
                                 icon="person"

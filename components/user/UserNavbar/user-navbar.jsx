@@ -196,37 +196,38 @@ export default function UserNavbar({
 
     return (
         <nav className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-sm">
-            <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-3 flex items-center justify-between">
+            <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-2 px-3 sm:h-auto sm:min-h-[72px] sm:px-6 sm:py-3 md:px-12">
                 {/* Logo */}
-                <Link href={homeHref} className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-[#2a93d5] rounded-lg flex items-center justify-center text-white">
+                <Link href={homeHref} className="flex shrink-0 items-center gap-2 sm:gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#2a93d5] text-white sm:h-10 sm:w-10">
                         <span className="material-symbols-outlined">waves</span>
                     </div>
 
-                    <h2 className={`${theme.primaryText} text-xl font-black uppercase`}>
+                    <h2 className={`${theme.primaryText} hidden text-lg font-black uppercase sm:block sm:text-xl`}>
                         Flood Relief
                     </h2>
                 </Link>
 
-                <div className="flex items-center gap-5">
+                <div className="ml-auto flex min-w-0 shrink-0 items-center justify-end gap-1 sm:gap-3 lg:gap-5">
                     {back && (
                         <Link
                             href={backHref}
-                            className="flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-sky-600 transition-colors"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl p-0 text-sm font-bold text-slate-500 transition-colors hover:bg-sky-50 hover:text-sky-600 sm:h-10 sm:w-auto sm:gap-1 sm:px-2"
                         >
                             <span className="material-symbols-outlined text-[18px]">
                                 arrow_back
                             </span>
-                            {t("common.back")}
+                            <span className="hidden sm:inline">{t("common.back")}</span>
                         </Link>
                     )}
 
                     {home && (
                         <Link
                             href={homeHref}
-                            className={`${theme.primaryText} text-sm font-bold hover:text-[#2a93d5] transition-colors`}
+                            className={`${theme.primaryText} hidden h-10 items-center justify-center gap-1 rounded-xl px-2 text-sm font-bold transition-colors hover:bg-sky-50 hover:text-[#2a93d5] sm:flex`}
                         >
-                            {t("common.home")}
+                            <span className="material-symbols-outlined text-[20px]">home</span>
+                            <span className="hidden sm:inline">{t("common.home")}</span>
                         </Link>
                     )}
 
@@ -234,14 +235,15 @@ export default function UserNavbar({
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="text-sm font-bold text-slate-500 hover:text-red-500 transition-colors"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl p-0 text-sm font-bold text-slate-500 transition-colors hover:bg-red-50 hover:text-red-500 sm:h-10 sm:w-auto sm:gap-1 sm:px-2"
                         >
-                            {t("common.logout")}
+                            <span className="material-symbols-outlined text-[20px]">logout</span>
+                            <span className="hidden lg:inline">{t("common.logout")}</span>
                         </button>
                     )}
 
                     {(back || home || logout) && (
-                        <div className="hidden md:block h-6 w-px bg-slate-200" />
+                        <div className="hidden h-6 w-px bg-slate-200 lg:block" />
                     )}
 
                     <LanguageSwitcher />
@@ -255,7 +257,7 @@ export default function UserNavbar({
                                 onClick={() =>
                                     setNotificationOpen((open) => !open)
                                 }
-                                className={`relative flex h-10 w-10 items-center justify-center rounded-full transition ${
+                                className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition sm:h-10 sm:w-10 ${
                                     notificationOpen
                                         ? "bg-sky-100 text-sky-600"
                                         : "bg-slate-100 text-slate-600 hover:bg-sky-50 hover:text-sky-600"
@@ -287,7 +289,7 @@ export default function UserNavbar({
                     )}
 
                     {profile && user && (
-                        <div className="flex items-center gap-3">
+                        <div className="hidden items-center gap-3 sm:flex">
                             <div className="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold border border-slate-200">
                                 {user.fullName?.charAt(0) || "U"}
                             </div>
@@ -302,12 +304,12 @@ export default function UserNavbar({
                     )}
 
                     {hotlineButton && (
-                        <div className="flex flex-col items-center">
-                            <span className={`${theme.emergencyText} text-[10px] font-bold`}>
+                        <div className="flex shrink-0 flex-col items-center">
+                            <span className={`${theme.emergencyText} hidden text-[10px] font-bold sm:block`}>
                                 {t("common.emergencyHotline")}
                             </span>
 
-                            <a href={`tel:${hotline}`} className={buttons.common.hotline}>
+                            <a href={`tel:${hotline}`} className={`${buttons.common.hotline} !h-9 !min-h-0 !w-auto !min-w-0 !rounded-xl !px-2.5 !py-0 !text-sm !leading-none sm:!h-auto sm:!px-4 sm:!py-2 sm:!text-base`}>
                                 {hotline}
                             </a>
                         </div>

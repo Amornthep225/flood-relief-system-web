@@ -91,7 +91,7 @@ export default function LocationPicker({
     return (
         <div className="space-y-4">
             <div className="relative h-72 overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-sky-50 to-blue-100">
-                <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-6 text-center">
                     <div className="w-20 h-20 rounded-full bg-white text-red-500 shadow-xl flex items-center justify-center mb-5">
                         <span className="material-symbols-outlined text-5xl">
                             location_on
@@ -124,7 +124,7 @@ export default function LocationPicker({
                         type="button"
                         onClick={getCurrentLocation}
                         disabled={findingLocation}
-                        className="rounded-xl bg-sky-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-sky-200 transition hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-60 flex items-center gap-2"
+                        className="rounded-xl bg-sky-500 px-4 sm:px-6 py-3 text-sm font-bold text-white shadow-lg shadow-sky-200 transition hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-60 flex items-center gap-2"
                     >
                         <span className="material-symbols-outlined text-xl">
                             my_location

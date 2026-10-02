@@ -8,7 +8,7 @@ export default function StaffSummarySection({ staffs }) {
     const activeStaff = staffs.filter((staff) => staff.isActive).length;
 
     return (
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <section className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
             <SummaryCard
                 title={ui("เจ้าหน้าที่ทั้งหมด")}
                 number={totalStaff}

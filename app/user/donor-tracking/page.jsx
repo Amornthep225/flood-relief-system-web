@@ -115,7 +115,7 @@ function DonorTrackingContent() {
 
 function TrackingFallback() {
     return (
-        <div className="flex min-h-screen items-center justify-center text-sm text-slate-500">
+        <div className="flex min-h-[100dvh] items-center justify-center text-sm text-slate-500">
             Loading...
         </div>
     );

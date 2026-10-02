@@ -61,7 +61,7 @@ export default function DonationDetailCard({
 
     return (
         <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-            <div className="flex flex-col gap-4 bg-emerald-500 px-6 py-5 text-white sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 bg-emerald-500 px-4 sm:px-6 py-5 text-white sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <p className="text-xs font-bold uppercase tracking-wider text-emerald-100">
                         พบข้อมูลบริจาค
@@ -76,7 +76,7 @@ export default function DonationDetailCard({
                 </span>
             </div>
 
-            <div className="space-y-6 p-6">
+            <div className="space-y-6 p-4 sm:p-6">
                 <div className="grid gap-4 md:grid-cols-2">
                     <InfoBox
                         icon="person"
@@ -187,7 +187,7 @@ export default function DonationDetailCard({
                         type="button"
                         onClick={onReceive}
                         disabled={isReceiving}
-                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-4 font-black text-white shadow-lg shadow-emerald-200 transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 sm:px-6 py-4 font-black text-white shadow-lg shadow-emerald-200 transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <span
                             className={`material-symbols-outlined ${
@@ -203,7 +203,7 @@ export default function DonationDetailCard({
                             : ui("ยืนยันรับของเข้าคลัง")}
                     </button>
                 ) : isReceived ? (
-                    <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-100 px-6 py-4 font-black text-emerald-700">
+                    <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-100 px-4 sm:px-6 py-4 font-black text-emerald-700">
                         <span className="material-symbols-outlined">
                             inventory_2
                         </span>

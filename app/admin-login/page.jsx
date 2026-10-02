@@ -10,7 +10,7 @@ import AdminLoginForm from "@/components/form/Admin/AdminLoginForm/AdminLoginFor
 export default function AdminLoginPage() {
     const { ui } = useNativeUi();
     return (
-        <div className={`${colors.admin.page} relative min-h-screen flex flex-col overflow-hidden`}>
+        <div className={`${colors.admin.page} relative min-h-[100dvh] flex flex-col overflow-hidden`}>
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className={colors.admin.backgroundTop}></div>
                 <div className={colors.admin.backgroundBottom}></div>
@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
             <PublicNavbar />
 
             <main className="relative z-10 flex-grow flex items-center justify-center px-4">
-                <div className="bg-white w-full max-w-[420px] rounded-3xl shadow-2xl shadow-blue-100/50 p-8 md:p-10 border border-slate-100">
+                <div className="bg-white w-full max-w-[420px] rounded-3xl shadow-2xl shadow-blue-100/50 p-4 sm:p-6 lg:p-8 md:p-10 border border-slate-100">
                     <div className="flex justify-center mb-6">
                         <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-inner ${colors.admin.iconBox}`}>
                             <span className="material-symbols-outlined text-4xl">

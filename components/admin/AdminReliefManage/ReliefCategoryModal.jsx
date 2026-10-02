@@ -27,11 +27,11 @@ export default function ReliefCategoryModal({ open, item, saving, onClose, onSub
                 }}
                 className="w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl"
             >
-                <div className="flex items-center justify-between border-b border-slate-100 bg-violet-50 px-6 py-5">
+                <div className="flex items-center justify-between border-b border-slate-100 bg-violet-50 px-4 sm:px-6 py-5">
                     <h2 className="text-xl font-black text-slate-800">{item ? ui("แก้ไขหมวดหมู่") : ui("เพิ่มหมวดหมู่")}</h2>
                     <button type="button" onClick={onClose} className="rounded-full bg-white p-2 text-slate-500">✕</button>
                 </div>
-                <div className="space-y-5 p-6">
+                <div className="space-y-5 p-4 sm:p-6">
                     <label className="block text-sm font-bold text-slate-700">
                         {ui("ชื่อหมวดหมู่")}
                         <input

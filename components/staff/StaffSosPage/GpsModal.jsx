@@ -22,7 +22,7 @@ export default function GpsModal({
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/70 px-4 backdrop-blur-sm">
-            <div className="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl">
+            <div className="max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-3xl bg-white shadow-2xl">
                 <div className="flex items-center justify-between border-b border-slate-100 p-5">
                     <div>
                         <h3 className="flex items-center gap-2 font-bold text-slate-800">
@@ -48,8 +48,8 @@ export default function GpsModal({
                     </button>
                 </div>
 
-                <div className="bg-sky-50 p-6">
-                    <div className="flex min-h-[240px] flex-col items-center justify-center rounded-2xl border border-sky-100 bg-white p-6 text-center">
+                <div className="bg-sky-50 p-4 sm:p-6">
+                    <div className="flex min-h-[240px] flex-col items-center justify-center rounded-2xl border border-sky-100 bg-white p-4 sm:p-6 text-center">
                         <span className="material-symbols-outlined text-6xl text-red-500">
                             location_on
                         </span>

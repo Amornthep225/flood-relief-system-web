@@ -8,13 +8,13 @@ export default function ReliefCategoryTable({ rows, onEdit, onToggle }) {
     const { ui } = useNativeUi();
     return (
         <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-            <div className="border-b border-slate-100 px-6 py-5">
+            <div className="border-b border-slate-100 px-4 sm:px-6 py-5">
                 <h2 className="font-black text-slate-800">{ui("หมวดหมู่สิ่งของ")}</h2>
                 <p className="mt-1 text-sm text-slate-500">{ui("ใช้จัดกลุ่มสิ่งของในระบบ")}</p>
             </div>
 
             {rows.length === 0 ? (
-                <div className="px-6 py-20 text-center text-slate-500">{ui("ไม่พบหมวดหมู่")}</div>
+                <div className="px-4 sm:px-6 py-20 text-center text-slate-500">{ui("ไม่พบหมวดหมู่")}</div>
             ) : (
                 <div className="grid grid-cols-1 gap-4 p-5 md:grid-cols-2 xl:grid-cols-3">
                     {rows.map((item) => (

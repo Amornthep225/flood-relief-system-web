@@ -16,7 +16,7 @@ export default function DonorItemSelector({
     const { language, t } = useLanguage();
 
     return (
-        <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-6">
             <h2 className="mb-4 text-xl font-bold text-slate-800">
                 {t("donation.form.itemsTitle")}
             </h2>
@@ -68,7 +68,7 @@ export default function DonorItemSelector({
                                 key={item.id}
                                 className="rounded-xl border border-slate-200 p-4 transition-colors hover:border-slate-300"
                             >
-                                <div className="flex items-center justify-between gap-4">
+                                <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-4">
                                     <input
                                         type="checkbox"
                                         checked={isSelected || currentQuantity > 0}
@@ -76,7 +76,7 @@ export default function DonorItemSelector({
                                     />
 
                                     {/* Item information */}
-                                    <div className="min-w-0 flex-1 min-h-[130px]">
+                                    <div className="min-w-0 sm:min-h-[130px]">
                                         <p className="text-lg font-bold text-slate-800">
     {itemName}
 </p>
@@ -131,7 +131,7 @@ export default function DonorItemSelector({
                                         onChange={(event) =>
                                             onChangeQuantity(item.id, event.target.value)
                                         }
-                                        className={`w-24 rounded-xl border px-3 py-2 text-center font-semibold outline-none transition-all [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${reachedLimit
+                                        className={`col-start-2 w-full max-w-32 rounded-xl border px-3 py-2 text-center font-semibold outline-none transition-all sm:col-start-auto sm:w-24 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${reachedLimit
                                                 ? "border-amber-400 bg-amber-50 text-amber-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
                                                 : "border-slate-200 text-slate-700 focus:border-red-500 focus:ring-1 focus:ring-red-500"
                                             }`}

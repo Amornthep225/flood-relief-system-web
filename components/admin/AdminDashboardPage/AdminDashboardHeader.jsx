@@ -45,7 +45,7 @@ export default function AdminDashboardHeader({
     }
 
     return (
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur md:px-8">
+        <header className="relative z-10 flex flex-col gap-3 border-b border-slate-200 bg-white px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4 lg:sticky lg:top-0 lg:bg-white/90 lg:px-8 lg:backdrop-blur">
             <div>
                 <h1 className="text-xl font-black text-slate-800">
                     {ui("Dashboard ภาพรวม")}
@@ -56,7 +56,7 @@ export default function AdminDashboardHeader({
                 </p>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end sm:gap-4">
                 <button
                     type="button"
                     onClick={onRefresh}

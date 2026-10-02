@@ -76,7 +76,7 @@ export default function StaffSosFilter({
     };
 
     return (
-        <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm">
             <div className="mb-5 flex items-center gap-3">
                 <span className="material-symbols-outlined text-sky-500">
                     search

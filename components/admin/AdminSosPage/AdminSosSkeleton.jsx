@@ -1,6 +1,6 @@
 export default function AdminSosSkeleton() {
     return (
-        <div className="min-h-screen animate-pulse bg-slate-50 p-8">
+        <div className="min-h-[100dvh] animate-pulse bg-slate-50 p-4 sm:p-6 lg:p-8">
             <div className="mx-auto max-w-[1500px] space-y-6">
                 <div className="h-20 rounded-2xl bg-slate-200" />
 

@@ -50,7 +50,7 @@ export default function DonationTimeline({ status }) {
     }
 
     return (
-        <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 mb-6">
+        <div className="rounded-3xl bg-white p-4 sm:p-6 shadow-sm border border-slate-100 mb-6">
             <h2 className="text-xl font-bold text-slate-800 mb-6">
                 {t("donation.tracking.timelineTitle")}
             </h2>

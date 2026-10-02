@@ -46,7 +46,7 @@ export default function InventoryActionModal({
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 px-4 backdrop-blur-sm">
             <form
                 onSubmit={handleSubmit}
-                className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
+                className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl bg-white shadow-2xl"
             >
                 {/* Header */}
                 <div className="border-b border-slate-100 bg-slate-50 p-5">
@@ -60,7 +60,7 @@ export default function InventoryActionModal({
                 </div>
 
                 {/* Content */}
-                <div className="space-y-4 p-6">
+                <div className="space-y-4 p-4 sm:p-6">
                     {/* Current Stock */}
                     <div className="rounded-xl bg-slate-50 p-4">
                         <p className="text-xs text-slate-500">{ui("คงเหลือปัจจุบัน")}</p>

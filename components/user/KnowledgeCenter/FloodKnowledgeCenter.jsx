@@ -37,7 +37,7 @@ export default function FloodKnowledgeCenter() {
       </div>
 
       {filteredItems.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-10 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-6 sm:py-8 lg:py-10 text-center">
           <div className="text-3xl">🔎</div>
           <p className="mt-3 font-semibold text-slate-800">{knowledge.notFoundTitle}</p>
           <p className="mt-1 text-sm text-slate-500">{knowledge.notFoundText}</p>

@@ -12,7 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function SosTrackingPage() {
     return (
             <Suspense fallback={
-                <div className="min-h-screen flex items-center justify-center text-slate-500">
+                <div className="min-h-[100dvh] flex items-center justify-center text-slate-500">
                     Loading...
                 </div>
             }>

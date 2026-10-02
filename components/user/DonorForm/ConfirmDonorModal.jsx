@@ -12,7 +12,7 @@ export default function ConfirmDonorModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4">
-            <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+            <div className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-3xl border border-slate-100 bg-white p-4 text-center shadow-xl animate-in fade-in zoom-in-95 duration-200 sm:p-6 lg:p-8">
                 <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-red-50 text-red-500">
                     <span className="material-symbols-outlined text-4xl">
                         volunteer_activism
@@ -29,7 +29,7 @@ export default function ConfirmDonorModal({
                     })}
                 </p>
 
-                <div className="grid grid-cols-2 gap-4 mt-6">
+                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                     <button
                         type="button"
                         onClick={onClose}

@@ -64,24 +64,24 @@ export default function AdminSosSummary({
 }) {
     const { ui } = useNativeUi();
     return (
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6">
+        <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-6">
             {cards.map((card) => (
                 <div
                     key={card.key}
-                    className={`flex items-center justify-between rounded-xl border p-4 shadow-sm ${card.cardClass}`}
+                    className={`flex min-h-24 items-center justify-between rounded-xl border p-3 shadow-sm sm:p-4 ${card.cardClass}`}
                 >
                     <div>
-                        <p className="mb-1 text-xs font-bold">
+                        <p className="mb-1 text-[11px] font-bold leading-4 sm:text-xs">
                             {ui(card.title)}
                         </p>
 
-                        <p className="text-3xl font-black">
+                        <p className="text-2xl font-black sm:text-3xl">
                             {summary[card.key] || 0}
                         </p>
                     </div>
 
                     <div
-                        className={`flex h-11 w-11 items-center justify-center rounded-full ${card.iconClass}`}
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full sm:h-11 sm:w-11 ${card.iconClass}`}
                     >
                         <span className="material-symbols-outlined">
                             {card.icon}

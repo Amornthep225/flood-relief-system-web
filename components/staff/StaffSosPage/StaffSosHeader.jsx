@@ -11,7 +11,7 @@ export default function StaffSosHeader({
     const isEmergency = requestType === "emergency";
 
     return (
-        <div className="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm md:flex-row md:items-center md:justify-between">
             <div>
                 <h1 className="flex items-center gap-3 text-2xl font-black text-slate-800">
                     <span

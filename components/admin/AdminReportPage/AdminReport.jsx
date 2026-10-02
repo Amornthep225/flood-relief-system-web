@@ -260,27 +260,27 @@ export default function AdminReport(){
     ]);
 
     return <RoleGuard role="Admin" storageKey="admin" loginPath="/admin-login">
-        <div className="min-h-screen bg-slate-100 text-slate-800">
-            <header className="no-print sticky top-0 z-10 border-b bg-white px-4 py-4">
-                <div className="mx-auto flex max-w-[1150px] items-center justify-between">
+        <div className="min-h-[100dvh] bg-slate-100 text-slate-800">
+            <header className="no-print relative z-10 border-b bg-white px-3 py-3 sm:px-4 sm:py-4 lg:sticky lg:top-0">
+                <div className="mx-auto flex max-w-[1150px] flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h1 className="text-xl font-black">{ui("ระบบพิมพ์รายงาน")}</h1>
                         <p className="text-xs text-slate-500">{ui("เชื่อมข้อมูลจาก API จริง")}</p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex w-full gap-2 sm:w-auto">
                         <button
                             onClick={()=>{
                                 const controller=new AbortController();
                                 load(controller.signal,false);
                             }}
                             disabled={refreshing}
-                            className="rounded-xl border px-4 py-2 text-sm font-bold"
+                            className="flex-1 rounded-xl border px-4 py-2 text-sm font-bold sm:flex-none"
                         >
                             {refreshing ? ui("กำลังอัปเดต...") : ui("อัปเดต")}
                         </button>
                         <button
                             onClick={()=>window.print()}
-                            className="rounded-xl bg-indigo-600 px-5 py-2 text-sm font-bold text-white"
+                            className="flex-1 rounded-xl bg-indigo-600 px-5 py-2 text-sm font-bold text-white sm:flex-none"
                         >
                             {ui("พิมพ์เอกสาร")}
                         </button>
@@ -310,7 +310,7 @@ export default function AdminReport(){
                         </button>
                     </div>
 
-                    <div className="mb-8 grid gap-4 rounded-xl border bg-indigo-50 p-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="mb-8 grid gap-4 rounded-xl border bg-indigo-50 p-4 sm:p-6 sm:grid-cols-2 lg:grid-cols-3">
                         {config.summary.map(([label,value])=>
                             <div key={label}>
                                 <p className="text-sm font-bold text-slate-500">{ui(label)}</p>

@@ -23,7 +23,7 @@ export default function CrisisMapSidebar({
 }) {
     const { ui, language } = useNativeUi();
     return (
-        <aside className="absolute bottom-20 left-4 top-20 z-[600] flex w-[360px] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-2xl border bg-white/95 shadow-xl backdrop-blur">
+        <aside className="absolute inset-x-3 bottom-3 z-[600] flex max-h-[48dvh] flex-col overflow-hidden rounded-2xl border bg-white/95 shadow-xl backdrop-blur sm:bottom-20 sm:left-4 sm:right-auto sm:top-20 sm:max-h-none sm:w-[360px] sm:max-w-[calc(100%-2rem)]">
             <div className="border-b p-4">
                 <div className="flex items-center justify-between">
                     <div>
@@ -48,7 +48,7 @@ export default function CrisisMapSidebar({
                     </button>
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-2">
+                <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-4">
                     <Summary
                         label={ui("SOS วิกฤต")}
                         value={summary.emergencyCritical}

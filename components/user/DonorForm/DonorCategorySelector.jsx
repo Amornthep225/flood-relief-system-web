@@ -13,12 +13,12 @@ export default function DonorCategorySelector({
     const { language, t } = useLanguage();
 
     return (
-        <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100">
+        <div className="rounded-3xl bg-white p-4 sm:p-6 shadow-sm border border-slate-100">
             <h2 className="mb-4 text-xl font-bold text-slate-800">
                 {t("donation.form.categoryTitle")}
             </h2>
 
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
                 {categories.map((category) => (
                     <button
                         key={category.id}

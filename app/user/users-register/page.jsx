@@ -16,7 +16,7 @@ export default function RegisterPage() {
     const { t } = useLanguage();
 
     return (
-        <div className={`relative min-h-screen flex flex-col font-sans ${colors.login.page}`}>
+        <div className={`relative min-h-[100dvh] flex flex-col font-sans ${colors.login.page}`}>
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-sky-200/20 blur-3xl" />
                 <div className="absolute top-[40%] -right-[10%] w-[40%] h-[40%] rounded-full bg-blue-200/20 blur-3xl" />
@@ -24,7 +24,7 @@ export default function RegisterPage() {
 
             <PublicNavbar />
 
-            <main className="relative z-10 flex-grow flex items-center justify-center px-4 py-10">
+            <main className="relative z-10 flex-grow flex items-center justify-center px-4 py-6 sm:py-8 lg:py-10">
                 <div className={cards.userRegister.wrapper}>
                     <div className="flex justify-center mb-6">
                         <div className={cards.userRegister.icon}>

@@ -11,7 +11,7 @@ export default function DonationCenterCard({ donation }) {
     const { center } = donation;
 
     return (
-        <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 mb-6">
+        <div className="rounded-3xl bg-white p-4 sm:p-6 shadow-sm border border-slate-100 mb-6">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-slate-800">
                     {t("donation.tracking.centerTitle")}

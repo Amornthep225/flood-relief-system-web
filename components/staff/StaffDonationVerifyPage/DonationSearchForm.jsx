@@ -16,7 +16,7 @@ export default function DonationSearchForm({
                 event.preventDefault();
                 onSearch();
             }}
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+            className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm"
         >
             <label
                 htmlFor="donationTrackingId"
@@ -54,7 +54,7 @@ export default function DonationSearchForm({
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-sky-600 px-6 font-bold text-white shadow-md shadow-sky-200 transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 sm:px-6 font-bold text-white shadow-md shadow-sky-200 transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     <span className="material-symbols-outlined text-xl">
                         {isLoading ? "progress_activity" : "search"}

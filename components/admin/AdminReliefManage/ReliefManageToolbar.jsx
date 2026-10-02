@@ -70,7 +70,7 @@ export default function ReliefManageToolbar({
                 <button
                     type="button"
                     onClick={onAdd}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-sky-600 px-6 py-3 font-bold text-white shadow-lg shadow-sky-200 hover:bg-sky-700"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-sky-600 px-4 sm:px-6 py-3 font-bold text-white shadow-lg shadow-sky-200 hover:bg-sky-700"
                 >
                     <span className="material-symbols-outlined text-[21px]">add_circle</span>
                     {activeTab === "items" ? ui("เพิ่มสิ่งของ") : ui("เพิ่มหมวดหมู่")}

@@ -91,8 +91,8 @@ export default function QrScannerModal({ onClose, onDetected }) {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl">
-                <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+            <div className="max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-3xl bg-white shadow-2xl">
+                <div className="flex items-center justify-between border-b border-slate-100 px-4 sm:px-6 py-4">
                     <div>
                         <h2 className="text-lg font-black text-slate-800">
                             สแกน QR Code
@@ -111,7 +111,7 @@ export default function QrScannerModal({ onClose, onDetected }) {
                     </button>
                 </div>
 
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                     {error ? (
                         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-center">
                             <span className="material-symbols-outlined mb-2 text-4xl text-amber-500">

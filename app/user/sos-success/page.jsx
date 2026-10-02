@@ -14,7 +14,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function RequestSuccessPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center text-slate-500">
+            <div className="min-h-[100dvh] flex items-center justify-center text-slate-500">
                 Loading...
             </div>
         }>
@@ -52,7 +52,7 @@ function RequestSuccessContent() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center text-slate-500 font-semibold">
+            <div className="min-h-[100dvh] flex items-center justify-center text-slate-500 font-semibold">
                 {t("sos.success.loading")}
             </div>
         );
@@ -60,16 +60,16 @@ function RequestSuccessContent() {
 
     if (!request) {
         return (
-            <div className="min-h-screen flex items-center justify-center text-slate-500 font-semibold">
+            <div className="min-h-[100dvh] flex items-center justify-center text-slate-500 font-semibold">
                 {t("sos.success.notFound")}
             </div>
         );
     }
 
     return (
-        <div className={`min-h-screen flex flex-col ${colors.success.page}`}>
+        <div className={`min-h-[100dvh] flex flex-col ${colors.success.page}`}>
             {/* Navigation */}
-            <nav className="w-full px-6 py-4 flex justify-between items-center max-w-5xl mx-auto">
+            <nav className="w-full px-4 sm:px-6 py-4 flex justify-between items-center max-w-5xl mx-auto">
                 <div className="flex items-center gap-2">
                     <div className="bg-sky-500 rounded-lg w-8 h-8 flex items-center justify-center">
                         <span className="material-symbols-outlined text-white text-sm">water_drop</span>

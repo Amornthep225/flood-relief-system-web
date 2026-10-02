@@ -28,9 +28,9 @@ export default function CrisisCaseModal({
             : null;
 
     return (
-        <div className="absolute right-4 top-4 z-[700] flex max-h-[calc(100%-2rem)] w-[460px] max-w-[calc(100%-2rem)] flex-col overflow-hidden rounded-2xl border bg-white shadow-2xl">
+        <div className="absolute inset-x-3 bottom-3 z-[700] flex max-h-[72dvh] flex-col overflow-hidden rounded-2xl border bg-white shadow-2xl sm:bottom-auto sm:left-auto sm:right-4 sm:top-4 sm:max-h-[calc(100%-2rem)] sm:w-[460px] sm:max-w-[calc(100%-2rem)]">
             <div
-                className={`flex shrink-0 items-start justify-between border-b p-5 ${
+                className={`flex shrink-0 items-start justify-between border-b p-4 sm:p-5 ${
                     presentation.isEmergency ? "bg-red-50" : "bg-sky-50"
                 }`}
             >
@@ -72,7 +72,7 @@ export default function CrisisCaseModal({
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-5">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5">
                 {loading ? (
                     <div className="flex min-h-[300px] flex-col items-center justify-center text-center">
                         <span
@@ -233,7 +233,7 @@ export default function CrisisCaseModal({
             </div>
 
             {!loading && (
-                <div className="grid shrink-0 grid-cols-2 gap-3 border-t bg-white p-4">
+                <div className="grid shrink-0 grid-cols-1 gap-2 border-t bg-white p-3 sm:grid-cols-2 sm:gap-3 sm:p-4">
                     {maps ? (
                         <a
                             href={maps}

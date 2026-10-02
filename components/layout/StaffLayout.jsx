@@ -21,7 +21,7 @@ export default function StaffLayout({
     return (
         <RoleGuard role="Staff" storageKey="staff" loginPath="/staff/staff-login">
             <div
-                className={`flex min-h-screen flex-col ${pageClass || colors.dashboardUserSos.page
+                className={`flex min-h-[100dvh] flex-col ${pageClass || colors.dashboardUserSos.page
                     }`}
             >
                 <StaffNavbar
@@ -42,7 +42,7 @@ export default function StaffLayout({
                 />
 
                 <main
-                    className={`mx-auto w-full max-w-7xl flex-1 px-6 py-8 ${contentClass}`}
+                    className={`mx-auto w-full max-w-7xl flex-1 px-4 py-5 sm:px-6 sm:py-8 ${contentClass}`}
                 >
                     {children}
                 </main>

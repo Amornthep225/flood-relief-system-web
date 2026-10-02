@@ -10,7 +10,7 @@ export default function DonationHistoryList({
 
     if (!donations.length) {
         return (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm">
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-6 sm:p-8 lg:p-10 text-center shadow-sm">
                 <span className="material-symbols-outlined mb-3 text-4xl text-slate-300">
                     inventory_2
                 </span>

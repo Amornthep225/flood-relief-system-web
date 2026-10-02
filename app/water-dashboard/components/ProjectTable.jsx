@@ -1,6 +1,7 @@
 export default function ProjectTable({projects,onSelect}){
 
 return (
+<div className="table-scroll">
 <table>
 
 <thead>
@@ -34,6 +35,7 @@ style={{cursor:"pointer"}}
 </tbody>
 
 </table>
+</div>
 )
 
 }
