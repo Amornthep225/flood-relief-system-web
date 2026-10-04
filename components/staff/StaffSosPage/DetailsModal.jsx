@@ -21,6 +21,10 @@ export default function DetailsModal({
             .trim()
             .toLowerCase() === "pickup";
 
+    // ผู้เสียชีวิตเป็นยอดรวมแยกจากระดับความรุนแรง
+    // fallback รองรับข้อมูลเก่าที่เคยเก็บ deathCount ไว้ใน breakdown
+    const deathCount = getEffectiveDeathCount(request);
+
     return (
         <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/60 px-4 py-6 sm:py-8 lg:py-10 backdrop-blur-sm">
             <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl">
@@ -135,32 +139,41 @@ export default function DetailsModal({
                                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                                     <DetailBox icon="groups" label={ui("ผู้ประสบภัย")} value={request?.victimCount || 0} />
                                     <DetailBox icon="child_care" label={ui("เด็ก")} value={request?.childCount || 0} />
+                                    <DetailBox icon="person" label={ui("ผู้ใหญ่")} value={request?.adultCount || 0} />
                                     <DetailBox icon="elderly" label={ui("ผู้สูงอายุ")} value={request?.elderlyCount || 0} />
                                     <DetailBox icon="accessible" label={ui("ผู้พิการ")} value={request?.disabledCount || 0} />
-                                    <DetailBox icon="medical_services" label={ui("ผู้ป่วย")} value={request?.patientCount || 0} />
+                                    <DetailBox icon="medical_services" label={ui("บาดเจ็บ / ผู้ป่วย")} value={request?.patientCount || 0} />
 
-                                    {(request?.deathCount || 0) > 0 && (
-                                        <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
-                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-600 text-white shadow-sm">
-                                                <span className="material-symbols-outlined text-lg">
-                                                    emergency
-                                                </span>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-bold uppercase tracking-wider text-red-500">
-                                                    {ui("ผู้เสียชีวิต")}
-                                                </p>
-                                                <p className="mt-1 text-lg font-black text-red-700">
-                                                    {request.deathCount}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
+
+                                <div className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-red-200 bg-red-50 p-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-600 text-white shadow-sm">
+                                            <span className="material-symbols-outlined text-lg">deceased</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold uppercase tracking-wider text-red-500">
+                                                {ui("ผู้เสียชีวิตทั้งหมด")}
+                                            </p>
+                                            <p className="mt-1 text-xs text-red-400">
+                                                {ui("แยกออกจากระดับความรุนแรงของผู้ประสบภัย")}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p className="shrink-0 text-2xl font-black text-red-700">
+                                        {deathCount} <span className="text-xs font-bold">{ui("คน")}</span>
+                                    </p>
+                                </div>
+
+                                <VictimSeverityBreakdown
+                                    rows={request?.victimSeverityCounts}
+                                    ui={ui}
+                                    language={language}
+                                />
                             </div>
                         )}
 
-                        <div>
+                        {/* <div>
                             <h4 className="mb-3 flex items-center gap-2 font-bold text-slate-800">
                                 <span className="material-symbols-outlined text-sky-500">
                                     inventory_2
@@ -211,7 +224,7 @@ export default function DetailsModal({
                                     ))}
                                 </div>
                             )}
-                        </div>
+                        </div> */}
 
                         <button
                             type="button"
@@ -225,6 +238,77 @@ export default function DetailsModal({
             </div>
         </div>
     );
+}
+
+
+function VictimSeverityBreakdown({ rows, ui, language }) {
+    if (!Array.isArray(rows) || rows.length === 0) {
+        return null;
+    }
+
+    const order = ["Mild", "Moderate", "Severe", "Critical"];
+    const labels = {
+        Mild: language === "en" ? "Mild" : "เล็กน้อย",
+        Moderate: language === "en" ? "Moderate" : "ปานกลาง",
+        Severe: language === "en" ? "Severe" : "รุนแรง",
+        Critical: language === "en" ? "Critical" : "วิกฤต",
+    };
+
+    const normalized = order.map((severity) => {
+        const row = rows.find(
+            (item) => String(item?.severity || "").toLowerCase() === severity.toLowerCase()
+        ) || {};
+        return { severity, ...row };
+    });
+
+    return (
+        <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200">
+            <div className="bg-slate-50 px-4 py-3">
+                <p className="text-sm font-black text-slate-700">
+                    {ui("แยกตามระดับความรุนแรง")}
+                </p>
+            </div>
+            <div className="overflow-x-auto">
+                <table className="w-full min-w-[620px] text-xs">
+                    <thead className="bg-white text-slate-500">
+                        <tr>
+                            <th className="px-3 py-2 text-left">{ui("ระดับ")}</th>
+                            <th className="px-3 py-2 text-center">{ui("เด็ก")}</th>
+                            <th className="px-3 py-2 text-center">{ui("ผู้ใหญ่")}</th>
+                            <th className="px-3 py-2 text-center">{ui("ผู้สูงอายุ")}</th>
+                            <th className="px-3 py-2 text-center">{ui("ผู้พิการ")}</th>
+                            <th className="px-3 py-2 text-center">{ui("บาดเจ็บ / ผู้ป่วย")}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {normalized.map((row) => (
+                            <tr key={row.severity} className="border-t border-slate-100">
+                                <td className="px-3 py-2 font-black text-slate-700">
+                                    {labels[row.severity]}
+                                </td>
+                                <td className="px-3 py-2 text-center">{row.childCount || 0}</td>
+                                <td className="px-3 py-2 text-center">{row.adultCount || 0}</td>
+                                <td className="px-3 py-2 text-center">{row.elderlyCount || 0}</td>
+                                <td className="px-3 py-2 text-center">{row.disabledCount || 0}</td>
+                                <td className="px-3 py-2 text-center">{row.patientCount || 0}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
+
+function getEffectiveDeathCount(request) {
+    const direct = Number(request?.deathCount || 0);
+    if (direct > 0) return direct;
+
+    const rows = Array.isArray(request?.victimSeverityCounts)
+        ? request.victimSeverityCounts
+        : [];
+
+    return rows.reduce((sum, row) => sum + Number(row?.deathCount || 0), 0);
 }
 
 function DetailBox({ icon, label, value }) {

@@ -65,16 +65,16 @@ const menuGroups = [
             },
         ],
     },
-    // {
-    //     title: "รายงาน",
-    //     items: [
-    //         {
-    //             title: "พิมพ์รายงาน",
-    //             icon: "description",
-    //             href: "/admin/admin-report",
-    //         },
-    //     ],
-    // },
+    {
+        title: "รายงาน",
+        items: [
+            {
+                title: "รายงานระบบ",
+                icon: "description",
+                href: "/admin/admin-report",
+            },
+        ],
+    },
 ];
 
 function normalizeArray(response) {

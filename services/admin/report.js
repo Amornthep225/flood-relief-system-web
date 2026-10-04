@@ -41,89 +41,22 @@ async function request(url,options={}){
     return data;
 }
 
-function arr(value){
-    if(Array.isArray(value)) return value;
-    if(Array.isArray(value?.data)) return value.data;
-    if(Array.isArray(value?.items)) return value.items;
-    if(Array.isArray(value?.requests)) return value.requests;
-    if(Array.isArray(value?.donations)) return value.donations;
-    if(Array.isArray(value?.centers)) return value.centers;
-    if(Array.isArray(value?.inventories)) return value.inventories;
-    if(Array.isArray(value?.transactions)) return value.transactions;
-    return [];
-}
-
 export const getDonations=(signal)=>
     request(`${API_URL}/Donations`,{method:"GET",signal});
 
 export const getSosRequests=(signal)=>
     request(`${API_URL}/sos-requests`,{method:"GET",signal});
 
-export async function getInventoryTransactionsReport(signal){
-    const centers=arr(
-        await request(`${API_URL}/Centers`,{method:"GET",signal})
-    );
+// ใช้ endpoint รายงานโดยตรง ลดการยิง API แบบ N+1 ทีละคลัง
+export const getInventoryTransactionsReport=(signal)=>
+    request(`${API_URL}/CenterInventories/report/movements`,{
+        method:"GET",
+        signal,
+    });
 
-    const inventoryResults=await Promise.allSettled(
-        centers.map(async center=>{
-            const centerId=center.id??center.centerId;
-            if(!centerId) return [];
-
-            const inventories=arr(
-                await request(
-                    `${API_URL}/CenterInventories/center/${encodeURIComponent(centerId)}`,
-                    {method:"GET",signal}
-                )
-            );
-
-            return inventories.map(inventory=>({
-                ...inventory,
-                centerId:inventory.centerId??centerId,
-                centerName:
-                    inventory.centerName??
-                    center.centerName??
-                    center.name??
-                    "-"
-            }));
-        })
-    );
-
-    const inventories=inventoryResults
-        .filter(x=>x.status==="fulfilled")
-        .flatMap(x=>x.value);
-
-    const transactionResults=await Promise.allSettled(
-        inventories.map(async inventory=>{
-            if(!inventory.id) return [];
-
-            const transactions=arr(
-                await request(
-                    `${API_URL}/CenterInventories/${encodeURIComponent(inventory.id)}/transactions`,
-                    {method:"GET",signal}
-                )
-            );
-
-            return transactions.map(transaction=>({
-                ...transaction,
-                centerInventoryId:
-                    transaction.centerInventoryId??inventory.id,
-                centerName:
-                    transaction.centerName??inventory.centerName,
-                reliefItemId:
-                    transaction.reliefItemId??inventory.reliefItemId,
-                reliefItemName:
-                    transaction.reliefItemName??inventory.reliefItemName,
-                unit:
-                    transaction.unit??inventory.unit??"หน่วย",
-                balance:
-                    transaction.quantityAfter??
-                    inventory.quantity??
-                    0
-            }));
-        })
-    );
-
-    return transactionResults
-        .filter(x=>x.status==="fulfilled")
-        .flatMap(x=>x.value);
-}
+// ติดตามของบริจาคตั้งแต่ผู้บริจาค -> คลัง -> เคสที่นำไปช่วย
+export const getDonationTraceabilityReport=(signal)=>
+    request(`${API_URL}/Donations/report/traceability`,{
+        method:"GET",
+        signal,
+    });

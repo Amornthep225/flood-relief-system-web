@@ -15,154 +15,167 @@ export default function DonorItemSelector({
 }) {
     const { language, t } = useLanguage();
 
+    const filteredItems = items.filter((item) =>
+        !itemSearch ||
+        (item.name || item.reliefItemName || "")
+            .toLowerCase()
+            .includes(itemSearch.toLowerCase())
+    );
+
     return (
-        <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-6">
-            <h2 className="mb-4 text-xl font-bold text-slate-800">
-                {t("donation.form.itemsTitle")}
-            </h2>
+        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm sm:rounded-3xl">
+            <div className="border-b border-slate-100 p-4 sm:p-6">
+                <h2 className="mb-4 text-xl font-bold text-slate-800">
+                    {t("donation.form.itemsTitle")}
+                </h2>
 
-            <input
-                type="text"
-                value={itemSearch}
-                onChange={(e) => onSearchChange?.(e.target.value)}
-                placeholder="ค้นหาชื่อสิ่งของ..."
-                className="mb-4 w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-700 focus:border-sky-400 focus:outline-none"
-            />
-
-            <div className="space-y-4">
-                {items.length > 0 ? (
-                    items.filter((item) =>
-                    !itemSearch ||
-                    (item.name || item.reliefItemName || "").toLowerCase().includes(itemSearch.toLowerCase())
-                ).map((item) => {
-                        const itemName = translateMasterDataText(
-                            item.name || item.reliefItemName || "",
-                            language
-                        );
-
-                        const unit = translateMasterDataText(item.unit || "", language);
-
-                        const currentQuantity = Number(quantities[item.id] || 0);
-
-                        const isSelected = selectedItemIds.includes(item.id);
-
-                        const maximumQuantity = Number(item.maximumQuantity || 0);
-
-                        const remainingQuantity =
-                            item.remainingQuantity === null ||
-                                item.remainingQuantity === undefined
-                                ? null
-                                : Number(item.remainingQuantity);
-
-                        // Max > 0 = มีการจำกัดจำนวน
-                        const hasLimit = maximumQuantity > 0 && remainingQuantity !== null;
-
-                        // User กรอกถึงจำนวนสูงสุดที่ยังรับได้แล้ว
-                        const reachedLimit =
-                            hasLimit &&
-                            remainingQuantity > 0 &&
-                            currentQuantity >= remainingQuantity;
-
-                        return (
-                            <div
-                                key={item.id}
-                                className="rounded-xl border border-slate-200 p-4 transition-colors hover:border-slate-300"
-                            >
-                                <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-4">
-                                    <input
-                                        type="checkbox"
-                                        checked={isSelected || currentQuantity > 0}
-                                        onChange={() => onToggleItem?.(item.id)}
-                                    />
-
-                                    {/* Item information */}
-                                    <div className="min-w-0 sm:min-h-[130px]">
-                                        <p className="text-lg font-bold text-slate-800">
-    {itemName}
-</p>
-
-                                        <p className="mt-1 text-base text-slate-500">
-                                            {t("donation.form.unitLabel")}: {unit}
-                                        </p>
-
-                                        {/* จำกัดจำนวน */}
-                                        {hasLimit && (
-                                            <div className="mt-2 space-y-1">
-                                                <p className="text-base font-semibold text-sky-700">
-                                                    {language === "en"
-                                                        ? `Can receive ${remainingQuantity.toLocaleString(
-                                                            "en-US"
-                                                        )} more ${unit}`
-                                                        : `รับบริจาคได้อีก ${remainingQuantity.toLocaleString(
-                                                            "th-TH"
-                                                        )} ${unit}`}
-                                                </p>
-
-                                                <p className="text-sm text-slate-500">
-                                                    {language === "en"
-                                                        ? `Maximum target: ${maximumQuantity.toLocaleString(
-                                                            "en-US"
-                                                        )} ${unit}`
-                                                        : `เป้าหมายการรับบริจาค ${maximumQuantity.toLocaleString(
-                                                            "th-TH"
-                                                        )} ${unit}`}
-                                                </p>
-                                            </div>
-                                        )}
-
-                                        {/* ไม่จำกัด */}
-                                        {!hasLimit && (
-                                            <p className="mt-2 text-sm font-medium text-emerald-600">
-                                                {language === "en"
-                                                    ? "No maximum donation limit"
-                                                    : "ไม่จำกัดจำนวนรับบริจาค"}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    {/* Quantity */}
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max={hasLimit ? remainingQuantity : undefined}
-                                        step="1"
-                                        placeholder="0"
-                                        value={quantities[item.id] || ""}
-                                        onChange={(event) =>
-                                            onChangeQuantity(item.id, event.target.value)
-                                        }
-                                        className={`col-start-2 w-full max-w-32 rounded-xl border px-3 py-2 text-center font-semibold outline-none transition-all sm:col-start-auto sm:w-24 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${reachedLimit
-                                                ? "border-amber-400 bg-amber-50 text-amber-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
-                                                : "border-slate-200 text-slate-700 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                                            }`}
-                                    />
-                                </div>
-
-                                {/* แจ้งเมื่อกรอกถึงเพดาน */}
-                                {reachedLimit && (
-                                    <div className="mt-3 rounded-lg bg-amber-50 px-3 py-2">
-                                        <p className="text-xs font-semibold text-amber-700">
-                                            {language === "en"
-                                                ? `You have reached the maximum quantity this center can currently accept (${remainingQuantity.toLocaleString(
-                                                    "en-US"
-                                                )} ${unit}).`
-                                                : `ถึงจำนวนสูงสุดที่ศูนย์ยังรับได้แล้ว (${remainingQuantity.toLocaleString(
-                                                    "th-TH"
-                                                )} ${unit})`}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })
-                ) : (
-                    <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 py-8 text-center text-sm text-slate-400">
-                        {selectedCategory
-                            ? t("donation.form.noAvailableItems")
-                            : t("donation.form.selectCategoryFirst")}
-                    </div>
-                )}
+                <input
+                    type="text"
+                    value={itemSearch}
+                    onChange={(e) => onSearchChange?.(e.target.value)}
+                    placeholder="ค้นหาชื่อสิ่งของ..."
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-700 focus:border-sky-400 focus:outline-none"
+                />
             </div>
+
+            {filteredItems.length > 0 ? (
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[760px] border-collapse text-sm">
+                        <thead className="sticky top-0 z-10 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            <tr className="border-b border-slate-200">
+                                <th className="w-14 px-4 py-3 text-center">เลือก</th>
+                                <th className="px-4 py-3">รายการสิ่งของ</th>
+                                <th className="w-28 px-4 py-3">หน่วย</th>
+                                <th className="w-40 px-4 py-3 text-center">รับได้อีก</th>
+                                <th className="w-36 px-4 py-3 text-center">เป้าหมาย</th>
+                                <th className="w-32 px-4 py-3 text-center">จำนวนบริจาค</th>
+                            </tr>
+                        </thead>
+
+                        <tbody className="divide-y divide-slate-100">
+                            {filteredItems.map((item) => {
+                                const itemName = translateMasterDataText(
+                                    item.name || item.reliefItemName || "",
+                                    language
+                                );
+
+                                const unit = translateMasterDataText(item.unit || "", language);
+                                const currentQuantity = Number(quantities[item.id] || 0);
+                                const isSelected = selectedItemIds.includes(item.id);
+                                const maximumQuantity = Number(item.maximumQuantity || 0);
+                                const remainingQuantity =
+                                    item.remainingQuantity === null ||
+                                    item.remainingQuantity === undefined
+                                        ? null
+                                        : Number(item.remainingQuantity);
+
+                                const hasLimit = maximumQuantity > 0 && remainingQuantity !== null;
+                                const reachedLimit =
+                                    hasLimit &&
+                                    remainingQuantity > 0 &&
+                                    currentQuantity >= remainingQuantity;
+
+                                const isActive = isSelected || currentQuantity > 0;
+
+                                const toggleRowSelection = () => {
+                                    if (isActive) {
+                                        onChangeQuantity(item.id, 0);
+
+                                        if (isSelected) {
+                                            onToggleItem?.(item.id);
+                                        }
+
+                                        return;
+                                    }
+
+                                    onChangeQuantity(item.id, 1);
+
+                                    if (!isSelected) {
+                                        onToggleItem?.(item.id);
+                                    }
+                                };
+
+                                return (
+                                    <tr
+                                        key={item.id}
+                                        onClick={toggleRowSelection}
+                                        className={`cursor-pointer transition-colors hover:bg-slate-50 ${
+                                            isActive ? "bg-sky-50/40" : "bg-white"
+                                        }`}
+                                    >
+                                        <td className="px-4 py-3 text-center align-middle">
+                                            <input
+                                                type="checkbox"
+                                                checked={isActive}
+                                                onClick={(event) => event.stopPropagation()}
+                                                onChange={toggleRowSelection}
+                                                className="h-4 w-4 cursor-pointer rounded border-slate-300 text-sky-500 focus:ring-sky-500"
+                                            />
+                                        </td>
+
+                                        <td className="px-4 py-3 align-middle">
+                                            <p className="font-semibold text-slate-800">{itemName}</p>
+                                        </td>
+
+                                        <td className="px-4 py-3 align-middle text-slate-500">{unit}</td>
+
+                                        <td className="px-4 py-3 text-center align-middle">
+                                            {hasLimit ? (
+                                                <span className="font-semibold text-sky-700">
+                                                    {remainingQuantity.toLocaleString(language === "en" ? "en-US" : "th-TH")} {unit}
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                                                    {language === "en" ? "Unlimited" : "ไม่จำกัด"}
+                                                </span>
+                                            )}
+                                        </td>
+
+                                        <td className="px-4 py-3 text-center align-middle text-slate-500">
+                                            {hasLimit
+                                                ? `${maximumQuantity.toLocaleString(language === "en" ? "en-US" : "th-TH")} ${unit}`
+                                                : "-"}
+                                        </td>
+
+                                        <td className="px-4 py-2.5 text-center align-middle">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <input
+                                                    type="number"
+                                                    onClick={(event) => event.stopPropagation()}
+                                                    min="0"
+                                                    max={hasLimit ? remainingQuantity : undefined}
+                                                    step="1"
+                                                    placeholder="0"
+                                                    value={quantities[item.id] || ""}
+                                                    onChange={(event) =>
+                                                        onChangeQuantity(item.id, event.target.value)
+                                                    }
+                                                    className={`h-9 w-24 rounded-lg border px-2 text-center font-semibold outline-none transition-all [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${
+                                                        reachedLimit
+                                                            ? "border-amber-400 bg-amber-50 text-amber-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                                                            : "border-slate-200 text-slate-700 focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                                                    }`}
+                                                />
+                                                {reachedLimit && (
+                                                    <span className="text-[10px] font-semibold text-amber-600">
+                                                        {language === "en" ? "Maximum reached" : "ถึงจำนวนสูงสุดแล้ว"}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <div className="m-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/50 py-8 text-center text-sm text-slate-400 sm:m-6">
+                    {selectedCategory
+                        ? t("donation.form.noAvailableItems")
+                        : t("donation.form.selectCategoryFirst")}
+                </div>
+            )}
         </div>
     );
 }

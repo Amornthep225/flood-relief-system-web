@@ -30,6 +30,8 @@ export default function StaffSosCard({
         ? request.items
         : [];
 
+    const deathCount = getEffectiveDeathCount(request);
+
     return (
         <article
             className={`relative overflow-hidden rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md ${
@@ -158,9 +160,9 @@ export default function StaffSosCard({
                                     {ui(`ผู้สูงอายุ ${request.elderlyCount} คน`)}
                                 </span>
                             )}
-                            {(request.deathCount || 0) > 0 && (
+                            {deathCount > 0 && (
                                 <span className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-black text-white shadow-sm">
-                                    {ui(`ผู้เสียชีวิต ${request.deathCount} คน`)}
+                                    {ui(`ผู้เสียชีวิต ${deathCount} คน`)}
                                 </span>
                             )}
                             {request.waterLevel != null && (
@@ -341,6 +343,17 @@ function PriorityBadge({ priority }) {
             {ui(config.label)}
         </span>
     );
+}
+
+function getEffectiveDeathCount(request) {
+    const direct = Number(request?.deathCount || 0);
+    if (direct > 0) return direct;
+
+    const rows = Array.isArray(request?.victimSeverityCounts)
+        ? request.victimSeverityCounts
+        : [];
+
+    return rows.reduce((sum, row) => sum + Number(row?.deathCount || 0), 0);
 }
 
 function normalizeStatus(status) {

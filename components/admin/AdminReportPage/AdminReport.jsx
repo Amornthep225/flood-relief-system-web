@@ -1,7 +1,6 @@
 "use client";
 
 import { useNativeUi } from "@/hooks/useNativeUi";
-
 import {
     useCallback,
     useEffect,
@@ -16,13 +15,16 @@ import ReportHeader from "./ReportHeader";
 import {
     DonorTable,
     SosTable,
+    SeverityTable,
     InventoryTable,
+    DonationTraceTable,
 } from "./ReportTables";
 
 import {
     getDonations,
     getSosRequests,
     getInventoryTransactionsReport,
+    getDonationTraceabilityReport,
 } from "@/services/admin/report";
 
 function arr(value){
@@ -31,6 +33,7 @@ function arr(value){
     if(Array.isArray(value?.items)) return value.items;
     if(Array.isArray(value?.requests)) return value.requests;
     if(Array.isArray(value?.donations)) return value.donations;
+    if(Array.isArray(value?.transactions)) return value.transactions;
     return [];
 }
 
@@ -69,10 +72,12 @@ function donationOf(item,index){
                 x.name
             ).filter(Boolean).join(", ")||"-",
         totalQuantity:
-            items.reduce(
-                (sum,x)=>sum+Number(x.quantity??0),
-                0
-            ),
+            items.length
+                ? items.reduce(
+                    (sum,x)=>sum+Number(x.quantity??0),
+                    0
+                  )
+                : Number(item.totalQuantity??item.quantity??0),
     };
 }
 
@@ -94,37 +99,74 @@ function sosOf(item){
         status:item.status??"-",
         priority:item.priority??"Normal",
         requestType:item.requestType??"Relief",
+        victimCount:Number(item.victimCount??0),
+        childCount:Number(item.childCount??0),
+        adultCount:Number(item.adultCount??0),
+        elderlyCount:Number(item.elderlyCount??0),
+        disabledCount:Number(item.disabledCount??0),
+        patientCount:Number(item.patientCount??0),
         deathCount:Number(item.deathCount??0),
+        severity:item.severity??null,
+        victimSeverityCounts:Array.isArray(item.victimSeverityCounts)
+            ? item.victimSeverityCounts
+            : Array.isArray(item.VictimSeverityCounts)
+              ? item.VictimSeverityCounts
+              : [],
         createdAt:item.createdAt,
     };
 }
 
-function stockIn(item){
-    const type=String(
-        item.transactionType??
-        item.type??
-        ""
-    ).toLowerCase().replaceAll("_","-");
-
-    if(["in","stock-in","receive","received","donation","inbound"].includes(type)) return true;
-    if(["out","stock-out","withdraw","issue","outbound"].includes(type)) return false;
-
-    return Number(item.quantity??0)>0;
-}
-
 function inventoryOf(item,index){
-    const isIn=stockIn(item);
+    const direction=String(item.direction??"").toUpperCase();
+    const isIn=direction==="IN";
 
     return {
         id:item.id??item.transactionId??String(index+1),
         reliefItemId:item.reliefItemId??"",
         name:item.reliefItemName??item.itemName??"-",
         centerName:item.centerName??"-",
+        direction:isIn?"IN":"OUT",
+        transactionType:item.transactionType??"-",
+        quantity:Math.abs(Number(item.quantity??0)),
         inQuantity:isIn?Math.abs(Number(item.quantity??0)):0,
         outQuantity:isIn?0:Math.abs(Number(item.quantity??0)),
-        balance:item.quantityAfter??item.balance??0,
+        balanceBefore:Number(item.balanceBefore??0),
+        balance:Number(item.balanceAfter??item.balance??0),
         unit:item.unit??"หน่วย",
+        sourceType:item.sourceType??"-",
+        sourceName:item.sourceName??"-",
+        sourceReference:item.sourceReference??null,
+        destinationType:item.destinationType??"-",
+        destinationName:item.destinationName??"-",
+        destinationReference:item.destinationReference??null,
+        destinationAddress:item.destinationAddress??null,
+        staffName:item.staffName??"-",
+        note:item.note??"",
         createdAt:item.createdAt,
+    };
+}
+
+function traceOf(item,index){
+    return {
+        id:item.id??String(index+1),
+        createdAt:item.activityAt??item.receivedAt,
+        receivedAt:item.receivedAt,
+        donationId:item.donationId??"-",
+        donationBatchId:item.donationBatchId??"-",
+        donorName:item.donorName??"-",
+        reliefItemId:item.reliefItemId??"-",
+        reliefItemName:item.reliefItemName??"-",
+        unit:item.unit??"หน่วย",
+        quantity:Number(item.quantity??0),
+        centerName:item.centerName??"-",
+        flowStatus:item.flowStatus??"-",
+        destinationType:item.destinationType??"-",
+        destinationName:item.destinationName??"-",
+        destinationReference:item.destinationReference??null,
+        destinationAddress:item.destinationAddress??null,
+        receiveMethod:item.receiveMethod??null,
+        requestStatus:item.requestStatus??null,
+        staffName:item.staffName??"-",
     };
 }
 
@@ -135,6 +177,7 @@ export default function AdminReport(){
     const [donations,setDonations]=useState([]);
     const [sos,setSos]=useState([]);
     const [inventory,setInventory]=useState([]);
+    const [traceability,setTraceability]=useState([]);
     const [loading,setLoading]=useState(true);
     const [refreshing,setRefreshing]=useState(false);
 
@@ -142,11 +185,12 @@ export default function AdminReport(){
         try{
             showLoading?setLoading(true):setRefreshing(true);
 
-            const [donationResult,sosResult,inventoryResult]=
+            const [donationResult,sosResult,inventoryResult,traceabilityResult]=
                 await Promise.allSettled([
                     getDonations(signal),
                     getSosRequests(signal),
                     getInventoryTransactionsReport(signal),
+                    getDonationTraceabilityReport(signal),
                 ]);
 
             setDonations(
@@ -167,18 +211,29 @@ export default function AdminReport(){
                     :[]
             );
 
+            setTraceability(
+                traceabilityResult.status==="fulfilled"
+                    ?arr(traceabilityResult.value).map(traceOf)
+                    :[]
+            );
+
             const failed=[
                 donationResult,
                 sosResult,
                 inventoryResult,
+                traceabilityResult,
             ].filter(x=>x.status==="rejected");
 
-            if(failed.length===3){
+            if(failed.length===4){
                 throw failed[0].reason;
             }
         }catch(error){
             if(error?.name!=="AbortError"){
-                await Swal.fire(ui("โหลดรายงานไม่สำเร็จ"), ui(error?.message || "ไม่สามารถโหลดข้อมูลได้"), "error");
+                await Swal.fire(
+                    ui("โหลดรายงานไม่สำเร็จ"),
+                    ui(error?.message || "ไม่สามารถโหลดข้อมูลได้"),
+                    "error"
+                );
             }
         }finally{
             if(!signal?.aborted){
@@ -219,6 +274,98 @@ export default function AdminReport(){
         [inventory,dateFilter]
     );
 
+    const shownEmergencySos=useMemo(
+        ()=>shownSos.filter(x=>String(x.requestType||"").toLowerCase()==="emergency"),
+        [shownSos]
+    );
+
+    const severityRows=useMemo(()=>{
+        const levels=[
+            {value:"Mild",label:"เล็กน้อย"},
+            {value:"Moderate",label:"ปานกลาง"},
+            {value:"Severe",label:"รุนแรง"},
+            {value:"Critical",label:"วิกฤต"},
+        ];
+
+        const normalizeLegacyRow=(request)=>{
+            const accounted=
+                Number(request.childCount||0)+
+                Number(request.elderlyCount||0)+
+                Number(request.disabledCount||0)+
+                Number(request.patientCount||0);
+
+            return {
+                severity:request.severity||"Mild",
+                childCount:Number(request.childCount||0),
+                adultCount:Math.max(
+                    Number(request.adultCount||0) ||
+                    (Number(request.victimCount||0)-accounted),
+                    0
+                ),
+                elderlyCount:Number(request.elderlyCount||0),
+                disabledCount:Number(request.disabledCount||0),
+                patientCount:Number(request.patientCount||0),
+            };
+        };
+
+        return levels.map(level=>{
+            const matchingRows=[];
+
+            shownEmergencySos.forEach((request)=>{
+                const breakdown=Array.isArray(request.victimSeverityCounts)
+                    ?request.victimSeverityCounts
+                    :[];
+
+                if(breakdown.length){
+                    const row=breakdown.find(
+                        x=>String(x.severity||"").toLowerCase()===level.value.toLowerCase()
+                    );
+
+                    if(row){
+                        matchingRows.push({
+                            ...row,
+                            childCount:Number(row.childCount||0),
+                            adultCount:Number(row.adultCount||0),
+                            elderlyCount:Number(row.elderlyCount||0),
+                            disabledCount:Number(row.disabledCount||0),
+                            patientCount:Number(row.patientCount||0),
+                        });
+                    }
+                    return;
+                }
+
+                const legacy=normalizeLegacyRow(request);
+                if(String(legacy.severity||"").toLowerCase()===level.value.toLowerCase()){
+                    matchingRows.push(legacy);
+                }
+            });
+
+            const rowTotal=(row)=>
+                Number(row.childCount||0)+
+                Number(row.adultCount||0)+
+                Number(row.elderlyCount||0)+
+                Number(row.disabledCount||0)+
+                Number(row.patientCount||0);
+
+            return {
+                severity:level.value,
+                label:level.label,
+                caseCount:matchingRows.filter(row=>rowTotal(row)>0).length,
+                victimCount:matchingRows.reduce((sum,row)=>sum+rowTotal(row),0),
+                injuredCount:matchingRows.reduce((sum,row)=>sum+Number(row.patientCount||0),0),
+                childCount:matchingRows.reduce((sum,row)=>sum+Number(row.childCount||0),0),
+                adultCount:matchingRows.reduce((sum,row)=>sum+Number(row.adultCount||0),0),
+                elderlyCount:matchingRows.reduce((sum,row)=>sum+Number(row.elderlyCount||0),0),
+                disabledCount:matchingRows.reduce((sum,row)=>sum+Number(row.disabledCount||0),0),
+            };
+        });
+    },[shownEmergencySos]);
+
+    const shownTraceability=useMemo(
+        ()=>filterByDate(traceability),
+        [traceability,dateFilter]
+    );
+
     const config=useMemo(()=>{
         if(tab==="sos"){
             return {
@@ -228,6 +375,19 @@ export default function AdminReport(){
                     ["จำนวนเคสทั้งหมด",shownSos.length],
                     ["รอรับเรื่อง",shownSos.filter(x=>String(x.status).toLowerCase()==="pending").length],
                     ["ผู้เสียชีวิตทั้งหมด",shownSos.reduce((sum,x)=>sum+Number(x.deathCount||0),0)],
+                ],
+            };
+        }
+
+        if(tab==="severity"){
+            return {
+                title: ui("รายงานความรุนแรงของผู้ประสบภัย"),
+                ref:"RPT-SEVERITY",
+                summary:[
+                    ["เคสฉุกเฉินทั้งหมด",shownEmergencySos.length],
+                    ["ผู้ประสบภัยรวม",shownEmergencySos.reduce((sum,x)=>sum+Number(x.victimCount||0),0)],
+                    ["ผู้บาดเจ็บ/ผู้ป่วยรวม",shownEmergencySos.reduce((sum,x)=>sum+Number(x.patientCount||0),0)],
+                    ["ผู้เสียชีวิตรวม",shownEmergencySos.reduce((sum,x)=>sum+Number(x.deathCount||0),0)],
                 ],
             };
         }
@@ -244,6 +404,18 @@ export default function AdminReport(){
             };
         }
 
+        if(tab==="traceability"){
+            return {
+                title: ui("รายงานเส้นทางสิ่งของบริจาค"),
+                ref:"RPT-TRACE",
+                summary:[
+                    ["รายการติดตาม",shownTraceability.length],
+                    ["จัดสรรช่วยเหลือแล้ว",shownTraceability.filter(x=>x.flowStatus==="Allocated").reduce((s,x)=>s+x.quantity,0)],
+                    ["ยังอยู่ในคลัง",shownTraceability.filter(x=>x.flowStatus==="InStock").reduce((s,x)=>s+x.quantity,0)],
+                ],
+            };
+        }
+
         return {
             title: ui("รายงานสรุปยอดผู้บริจาค"),
             ref:"RPT-DON",
@@ -256,7 +428,10 @@ export default function AdminReport(){
         tab,
         shownDonations,
         shownSos,
-        shownInventory
+        shownEmergencySos,
+        shownInventory,
+        shownTraceability,
+        ui,
     ]);
 
     return <RoleGuard role="Admin" storageKey="admin" loginPath="/admin-login">
@@ -310,7 +485,7 @@ export default function AdminReport(){
                         </button>
                     </div>
 
-                    <div className="mb-8 grid gap-4 rounded-xl border bg-indigo-50 p-4 sm:p-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="mb-8 grid gap-4 rounded-xl border bg-indigo-50 p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
                         {config.summary.map(([label,value])=>
                             <div key={label}>
                                 <p className="text-sm font-bold text-slate-500">{ui(label)}</p>
@@ -325,7 +500,11 @@ export default function AdminReport(){
                           ?<DonorTable rows={shownDonations}/>
                           :tab==="sos"
                             ?<SosTable rows={shownSos}/>
-                            :<InventoryTable rows={shownInventory}/>
+                            :tab==="severity"
+                              ?<SeverityTable rows={severityRows}/>
+                              :tab==="inventory"
+                                ?<InventoryTable rows={shownInventory}/>
+                                :<DonationTraceTable rows={shownTraceability}/>
                     }
 
                     <div className="mt-16 flex justify-between border-t pt-8 text-center">

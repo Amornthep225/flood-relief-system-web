@@ -52,6 +52,44 @@ const STATUS_CONFIG = {
     },
 };
 
+// Emergency SOS ใช้ status เดิมของ Backend เพื่อไม่กระทบ workflow
+// แต่เปลี่ยนความหมายของแต่ละขั้นให้เป็นงานช่วยเหลือฉุกเฉิน
+// ไม่ใช้คำว่า "จัดเตรียมสิ่งของ" เพราะ SOS ไม่มีรายการสิ่งของ
+const EMERGENCY_STATUS_CONFIG = {
+    Accepted: {
+        label: "รับเรื่องแล้ว",
+        description: "ตรวจสอบข้อมูลและเตรียมพร้อมออกช่วยเหลือผู้ประสบภัย",
+        nextStatus: "Preparing",
+        nextLabel: "เริ่มดำเนินการช่วยเหลือ",
+        icon: "support_agent",
+        colour: "bg-sky-600",
+    },
+    Preparing: {
+        label: "กำลังดำเนินการช่วยเหลือ",
+        description: "ตรวจสอบตำแหน่ง รายละเอียดเหตุ และความพร้อมก่อนออกช่วยเหลือ",
+        nextStatus: "Delivering",
+        nextLabel: "ยืนยันออกเดินทาง",
+        icon: "emergency",
+        colour: "bg-amber-500",
+    },
+    Delivering: {
+        label: "กำลังเดินทางช่วยเหลือ",
+        description: "เจ้าหน้าที่กำลังเดินทางไปยังตำแหน่งผู้ประสบภัย",
+        nextStatus: "Completed",
+        nextLabel: "ช่วยเหลือสำเร็จ / ปิดงาน",
+        icon: "emergency_share",
+        colour: "bg-blue-600",
+    },
+    Completed: {
+        label: "ช่วยเหลือสำเร็จ",
+        description: "ดำเนินการช่วยเหลือผู้ประสบภัยเรียบร้อยแล้ว",
+        nextStatus: null,
+        nextLabel: null,
+        icon: "task_alt",
+        colour: "bg-emerald-500",
+    },
+};
+
 function getStatusConfig(request) {
     const base = STATUS_CONFIG[request?.status] || null;
 
@@ -64,6 +102,12 @@ function getStatusConfig(request) {
         !isEmergency &&
         String(request?.receiveMethod || "Delivery").trim().toLowerCase() ===
             "pickup";
+
+    // SOS ฉุกเฉินมี workflow ของตัวเองใน UI
+    // แต่ยังคง nextStatus เดิมเพื่อให้ตรงกับกติกา Backend
+    if (isEmergency) {
+        return EMERGENCY_STATUS_CONFIG[request?.status] || base;
+    }
 
     if (!isPickup) return base;
 
@@ -404,6 +448,7 @@ function StaffMissionContent() {
                         )}
                     </div>
 
+                    {!isEmergency && (
                     <div className="rounded-3xl border border-slate-100 bg-white p-4 sm:p-6 shadow-sm">
                         <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
                             <span className="material-symbols-outlined text-orange-500">inventory_2</span>
@@ -441,6 +486,7 @@ function StaffMissionContent() {
                             )}
                         </div>
                     </div>
+                    )}
 
                 </div>
 

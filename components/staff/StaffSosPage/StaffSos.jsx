@@ -572,6 +572,7 @@ function StaffSosContent({ requestType }) {
 
             <StaffSosList
                 requests={visibleRequests}
+                requestType={requestType}
                 activeTab={activeTab}
                 onAccept={handleOpenAccept}
                 onOpenGps={setGpsRequest}

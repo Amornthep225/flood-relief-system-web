@@ -88,6 +88,8 @@ export default function AdminSosDetailModal({
         ? caseItem.items
         : [];
 
+    const deathCount = getEffectiveDeathCount(caseItem);
+
     const mapsUrl =
         caseItem.latitude &&
         caseItem.longitude
@@ -223,7 +225,7 @@ export default function AdminSosDetailModal({
                                 />
                             </Section>
 
-                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-6">
+                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-7">
                                 <StatCard
                                     label={tx(
                                         "ผู้ประสบภัย",
@@ -241,6 +243,16 @@ export default function AdminSosDetailModal({
                                     )}
                                     value={
                                         caseItem.childCount ||
+                                        0
+                                    }
+                                />
+                                <StatCard
+                                    label={tx(
+                                        "ผู้ใหญ่",
+                                        "Adults"
+                                    )}
+                                    value={
+                                        caseItem.adultCount ||
                                         0
                                     }
                                 />
@@ -274,17 +286,31 @@ export default function AdminSosDetailModal({
                                         0
                                     }
                                 />
-                                <StatCard
-                                    label={tx(
-                                        "ผู้เสียชีวิต",
-                                        "Deceased"
-                                    )}
-                                    value={
-                                        caseItem.deathCount ||
-                                        0
-                                    }
-                                />
                             </div>
+
+                            <div className="flex items-center justify-between gap-4 rounded-xl border border-red-200 bg-red-50 p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-white">
+                                        <span className="material-symbols-outlined">deceased</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold uppercase tracking-wider text-red-500">
+                                            {tx("ผู้เสียชีวิตทั้งหมด", "Total deceased")}
+                                        </p>
+                                        <p className="mt-1 text-xs text-red-400">
+                                            {tx("แยกออกจากระดับความรุนแรง", "Separate from victim severity")}
+                                        </p>
+                                    </div>
+                                </div>
+                                <p className="text-2xl font-black text-red-700">
+                                    {deathCount} <span className="text-xs font-bold">{tx("คน", "people")}</span>
+                                </p>
+                            </div>
+
+                            <AdminVictimSeverityBreakdown
+                                rows={caseItem.victimSeverityCounts}
+                                tx={tx}
+                            />
 
                             {caseItem.emergencyDetail && (
                                 <TextBlock
@@ -530,6 +556,71 @@ export default function AdminSosDetailModal({
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+    );
+}
+
+
+function getEffectiveDeathCount(request) {
+    const direct = Number(request?.deathCount || 0);
+    if (direct > 0) return direct;
+
+    const rows = Array.isArray(request?.victimSeverityCounts)
+        ? request.victimSeverityCounts
+        : [];
+
+    return rows.reduce((sum, row) => sum + Number(row?.deathCount || 0), 0);
+}
+
+function AdminVictimSeverityBreakdown({ rows, tx }) {
+    if (!Array.isArray(rows) || rows.length === 0) {
+        return null;
+    }
+
+    const order = ["Mild", "Moderate", "Severe", "Critical"];
+    const labels = {
+        Mild: tx("เล็กน้อย", "Mild"),
+        Moderate: tx("ปานกลาง", "Moderate"),
+        Severe: tx("รุนแรง", "Severe"),
+        Critical: tx("วิกฤต", "Critical"),
+    };
+
+    return (
+        <div className="overflow-hidden rounded-xl border border-slate-200">
+            <div className="bg-slate-50 px-4 py-3 text-sm font-black text-slate-700">
+                {tx("ข้อมูลผู้ประสบภัยแยกตามระดับความรุนแรง", "Victims by severity level")}
+            </div>
+            <div className="overflow-x-auto">
+                <table className="w-full min-w-[620px] text-xs">
+                    <thead className="bg-white text-slate-500">
+                        <tr>
+                            <th className="px-3 py-2 text-left">{tx("ระดับ", "Severity")}</th>
+                            <th className="px-3 py-2 text-center">{tx("เด็ก", "Children")}</th>
+                            <th className="px-3 py-2 text-center">{tx("ผู้ใหญ่", "Adults")}</th>
+                            <th className="px-3 py-2 text-center">{tx("ผู้สูงอายุ", "Elderly")}</th>
+                            <th className="px-3 py-2 text-center">{tx("ผู้พิการ", "Disabled")}</th>
+                            <th className="px-3 py-2 text-center">{tx("บาดเจ็บ / ผู้ป่วย", "Injured / patients")}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {order.map((severity) => {
+                            const row = rows.find(
+                                (item) => String(item?.severity || "").toLowerCase() === severity.toLowerCase()
+                            ) || {};
+                            return (
+                                <tr key={severity} className="border-t border-slate-100">
+                                    <td className="px-3 py-2 font-black text-slate-700">{labels[severity]}</td>
+                                    <td className="px-3 py-2 text-center">{row.childCount || 0}</td>
+                                    <td className="px-3 py-2 text-center">{row.adultCount || 0}</td>
+                                    <td className="px-3 py-2 text-center">{row.elderlyCount || 0}</td>
+                                    <td className="px-3 py-2 text-center">{row.disabledCount || 0}</td>
+                                    <td className="px-3 py-2 text-center">{row.patientCount || 0}</td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

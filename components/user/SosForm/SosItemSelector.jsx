@@ -19,7 +19,7 @@ export default function SosItemSelector({
     const { t } = useLanguage();
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <input
                 type="text"
                 value={itemSearch}
@@ -27,156 +27,153 @@ export default function SosItemSelector({
                 placeholder="ค้นหาชื่อสิ่งของ..."
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-700 focus:border-sky-400 focus:outline-none"
             />
-            {selectedCategoryIds.filter((categoryId) => expandedCategoryIds.includes(categoryId)).map((categoryId) => {
-                const category = categories.find(
-                    (item) => item.id === categoryId
-                );
 
-                const items = (itemsByCategory[categoryId] || []).filter((item) =>
-                    !itemSearch ||
-                    item.name?.toLowerCase().includes(itemSearch.toLowerCase())
-                );
+            {selectedCategoryIds
+                .filter((categoryId) => expandedCategoryIds.includes(categoryId))
+                .map((categoryId) => {
+                    const category = categories.find((item) => item.id === categoryId);
+                    const items = (itemsByCategory[categoryId] || []).filter(
+                        (item) =>
+                            !itemSearch ||
+                            item.name?.toLowerCase().includes(itemSearch.toLowerCase())
+                    );
 
-                return (
-                    <div
-                        key={categoryId}
-                        className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5"
-                    >
-                        <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-4">
-                            <span className="material-symbols-outlined text-sky-500">
-                                {category?.icon || "category"}
-                            </span>
-
-                            {category?.title ||
-                                category?.name ||
-                                categoryId}
-                        </h3>
-
-                        {items.length === 0 ? (
-                            <p className="text-sm text-slate-500">
-                                {t("sos.relief.noItems")}
-                            </p>
-                        ) : (
-                            <div className="space-y-3">
-                                {items.map((item) => {
-                                    const isSelected =
-                                        selectedItemIds.includes(
-                                            item.id
-                                        );
-
-                                    return (
-                                        <div
-                                            key={item.id}
-                                            className={`rounded-xl border p-4 transition-all ${
-                                                isSelected
-                                                    ? "border-sky-400 bg-white shadow-sm"
-                                                    : "border-slate-200 bg-white"
-                                            }`}
-                                        >
-                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                                <label className="flex items-center gap-3 cursor-pointer">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={
-                                                            isSelected
-                                                        }
-                                                        onChange={() =>
-                                                            onToggleItem(
-                                                                item.id
-                                                            )
-                                                        }
-                                                        className="w-5 h-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500"
-                                                    />
-
-                                                    <div>
-                                                        <p className="font-bold text-slate-800">
-                                                            {
-                                                                item.name
-                                                            }
-                                                        </p>
-
-                                                        <p className="text-xs text-slate-400 mt-1">
-                                                            {t("sos.relief.unit")}:{" "}
-                                                            {
-                                                                item.unit
-                                                            }
-                                                        </p>
-
-                                                        {Number(item.maximumRequestQuantity || 0) > 0 && (
-                                                            <p className="mt-1 text-xs font-medium text-amber-600">
-                                                                ขอได้ไม่เกิน {Number(item.maximumRequestQuantity).toLocaleString("th-TH")} {item.unit}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                </label>
-
-                                                {isSelected && (
-                                                    <div className="flex items-center gap-2">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                onDecrease(
-                                                                    item.id
-                                                                )
-                                                            }
-                                                            className="w-9 h-9 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center justify-center"
-                                                        >
-                                                            <span className="material-symbols-outlined text-lg">
-                                                                remove
-                                                            </span>
-                                                        </button>
-
-                                                        <input
-                                                            type="number"
-                                                            min="1"
-                                                            max={Number(item.maximumRequestQuantity || 0) > 0 ? item.maximumRequestQuantity : undefined}
-                                                            value={
-                                                                quantities[
-                                                                    item
-                                                                        .id
-                                                                ] || 1
-                                                            }
-                                                            onChange={(
-                                                                event
-                                                            ) =>
-                                                                onQuantityChange(
-                                                                    item.id,
-                                                                    event
-                                                                        .target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            className="w-20 h-9 rounded-lg border border-slate-200 text-center text-sm font-bold outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
-                                                        />
-
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                onIncrease(
-                                                                    item.id
-                                                                )
-                                                            }
-                                                            className="w-9 h-9 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 flex items-center justify-center"
-                                                        >
-                                                            <span className="material-symbols-outlined text-lg">
-                                                                add
-                                                            </span>
-                                                        </button>
-
-                                                        <span className="text-xs font-medium text-slate-500 min-w-10">
-                                                            {item.unit}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                    return (
+                        <section
+                            key={categoryId}
+                            className="overflow-hidden rounded-2xl border border-slate-200 bg-white"
+                        >
+                            <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-50 px-4 py-3">
+                                <span className="material-symbols-outlined text-lg text-sky-500">
+                                    {category?.icon || "category"}
+                                </span>
+                                <h3 className="font-bold text-slate-800">
+                                    {category?.title || category?.name || categoryId}
+                                </h3>
+                                <span className="ml-auto rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-500 shadow-sm ring-1 ring-slate-200">
+                                    {items.length} รายการ
+                                </span>
                             </div>
-                        )}
-                    </div>
-                );
-            })}
+
+                            {items.length === 0 ? (
+                                <p className="px-4 py-6 text-center text-sm text-slate-500">
+                                    {t("sos.relief.noItems")}
+                                </p>
+                            ) : (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full min-w-[650px] border-collapse text-sm">
+                                        <thead className="bg-white text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                            <tr className="border-b border-slate-200">
+                                                <th className="w-14 px-4 py-3 text-center">เลือก</th>
+                                                <th className="px-4 py-3">รายการสิ่งของ</th>
+                                                <th className="w-28 px-4 py-3">หน่วย</th>
+                                                <th className="w-40 px-4 py-3 text-center">ขอได้สูงสุด</th>
+                                                <th className="w-52 px-4 py-3 text-center">จำนวนที่ต้องการ</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody className="divide-y divide-slate-100">
+                                            {items.map((item) => {
+                                                const isSelected = selectedItemIds.includes(item.id);
+                                                const maximumRequestQuantity = Number(
+                                                    item.maximumRequestQuantity || 0
+                                                );
+                                                const hasMaximum = maximumRequestQuantity > 0;
+
+                                                return (
+                                                    <tr
+                                                        key={item.id}
+                                                        onClick={() => onToggleItem(item.id)}
+                                                        className={`cursor-pointer transition-colors hover:bg-slate-50 ${
+                                                            isSelected ? "bg-sky-50/50" : "bg-white"
+                                                        }`}
+                                                    >
+                                                        <td className="px-4 py-3 text-center align-middle">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={isSelected}
+                                                                onClick={(event) => event.stopPropagation()}
+                                                                onChange={() => onToggleItem(item.id)}
+                                                                className="h-4 w-4 cursor-pointer rounded border-slate-300 text-sky-500 focus:ring-sky-500"
+                                                            />
+                                                        </td>
+
+                                                        <td className="px-4 py-3 align-middle">
+                                                            <span className="font-semibold text-slate-800">
+                                                                {item.name}
+                                                            </span>
+                                                        </td>
+
+                                                        <td className="px-4 py-3 align-middle text-slate-500">
+                                                            {item.unit}
+                                                        </td>
+
+                                                        <td className="px-4 py-3 text-center align-middle">
+                                                            {hasMaximum ? (
+                                                                <span className="font-medium text-amber-700">
+                                                                    {maximumRequestQuantity.toLocaleString("th-TH")} {item.unit}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-slate-400">ไม่จำกัด</span>
+                                                            )}
+                                                        </td>
+
+                                                        <td className="px-4 py-2.5 text-center align-middle">
+                                                            {isSelected ? (
+                                                                <div
+                                                                    className="inline-flex items-center gap-2"
+                                                                    onClick={(event) => event.stopPropagation()}
+                                                                >
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => onDecrease(item.id)}
+                                                                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                                                                        aria-label={`ลดจำนวน ${item.name}`}
+                                                                    >
+                                                                        <span className="material-symbols-outlined text-base">
+                                                                            remove
+                                                                        </span>
+                                                                    </button>
+
+                                                                    <input
+                                                                        type="number"
+                                                                        min="1"
+                                                                        max={hasMaximum ? maximumRequestQuantity : undefined}
+                                                                        value={quantities[item.id] || 1}
+                                                                        onChange={(event) =>
+                                                                            onQuantityChange(
+                                                                                item.id,
+                                                                                event.target.value
+                                                                            )
+                                                                        }
+                                                                        className="h-8 w-20 rounded-lg border border-slate-200 text-center text-sm font-bold outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                                                                    />
+
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => onIncrease(item.id)}
+                                                                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                                                                        aria-label={`เพิ่มจำนวน ${item.name}`}
+                                                                    >
+                                                                        <span className="material-symbols-outlined text-base">
+                                                                            add
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                <span className="text-slate-300">—</span>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </section>
+                    );
+                })}
         </div>
     );
 }

@@ -1,8 +1,9 @@
 import EmptyState from "./EmptyState";
-import StaffSosCard from "./StaffSosCard";
+import StaffSosTable from "./StaffSosTable";
 
 export default function StaffSosList({
     requests,
+    requestType,
     activeTab,
     onAccept,
     onOpenGps,
@@ -13,16 +14,12 @@ export default function StaffSosList({
     }
 
     return (
-        <div className="space-y-4">
-            {requests.map((request) => (
-                <StaffSosCard
-                    key={request.id}
-                    request={request}
-                    onAccept={onAccept}
-                    onOpenGps={onOpenGps}
-                    onOpenDetail={onOpenDetail}
-                />
-            ))}
-        </div>
+        <StaffSosTable
+            requests={requests}
+            requestType={requestType}
+            onAccept={onAccept}
+            onOpenGps={onOpenGps}
+            onOpenDetail={onOpenDetail}
+        />
     );
 }

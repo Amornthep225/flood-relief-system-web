@@ -5,12 +5,14 @@ import { useNativeUi } from "@/hooks/useNativeUi";
 const tabs=[
     {value:"donors",label:"รายงานผู้บริจาค",icon:"volunteer_activism"},
     {value:"sos",label:"รายงาน SOS",icon:"crisis_alert"},
+    {value:"severity",label:"ความรุนแรงผู้ประสบภัย",icon:"monitor_heart"},
     {value:"inventory",label:"รายงานคลัง",icon:"inventory_2"},
+    {value:"traceability",label:"เส้นทางสิ่งของบริจาค",icon:"route"},
 ];
 
 export default function ReportTabs({value,onChange}){
     const { ui } = useNativeUi();
-    return <div className="no-print grid grid-cols-1 gap-2 rounded-2xl border bg-white p-2 shadow-sm sm:grid-cols-3">
+    return <div className="no-print grid grid-cols-1 gap-2 rounded-2xl border bg-white p-2 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
         {tabs.map(tab=><button
             key={tab.value}
             onClick={()=>onChange(tab.value)}

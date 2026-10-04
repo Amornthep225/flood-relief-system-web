@@ -409,7 +409,7 @@ const en = {
       child: "Children",
       elderly: "Elderly",
       disabled: "People with disabilities",
-      patient: "Patients",
+      patient: "Injured / Patients",
       deceased: "Deceased",
       deceasedWarning: "{count} death(s) reported. Please verify this information before submitting the SOS.",
       severityTitle: "Patient / Victim Severity",
