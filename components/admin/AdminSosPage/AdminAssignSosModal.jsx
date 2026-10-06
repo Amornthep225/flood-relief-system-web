@@ -594,7 +594,10 @@ export default function AdminAssignSosModal({
                                 {stockCheck.pendingRequests.map((pending, index) => (
                                     <div key={`${pending.sosRequestId}-${pending.reliefItemId}-${index}`} className="flex items-center justify-between gap-3 rounded-lg bg-white px-3 py-2">
                                         <span className="font-mono text-xs font-bold text-slate-500">#{pending.sosRequestId}</span>
-                                        <span className="font-bold text-slate-700">{ui(pending.reliefItemName)}</span>
+                                        <div className="min-w-0 flex-1">
+                                            <div className="font-bold text-slate-700">{ui(pending.reliefItemName)}</div>
+                                            <div className="text-xs text-slate-500">{tx("ผู้ขอ", "Requester")}: {pending.requesterName || tx("ผู้ใช้งาน", "User")}</div>
+                                        </div>
                                         <span className="font-black text-amber-700">{pending.requestedQuantity} {ui(pending.unit)}</span>
                                     </div>
                                 ))}

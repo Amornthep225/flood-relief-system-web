@@ -6,7 +6,7 @@ import StaffMission from "@/components/staff/StaffMissionPage/StaffMission";
 export default function MissionActivePage() {
     return (
         <StaffLayout
-            backHref="/staff/staff-sos"
+            backHref="/staff/staff-home"
             logoutHref="/staff/staff-login"
             showHome={false}
             showBack

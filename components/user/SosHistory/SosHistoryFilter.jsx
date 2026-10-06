@@ -2,8 +2,17 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export default function SosHistoryFilter({ filters, onSearch, onReset }) {
-    const { t } = useLanguage();
+export default function SosHistoryFilter({ historyType = "emergency", filters, onSearch, onReset }) {
+    const { t, language } = useLanguage();
+
+    const title =
+        language === "en"
+            ? historyType === "emergency"
+                ? "Search SOS history"
+                : "Search relief item requests"
+            : historyType === "emergency"
+                ? "ค้นหาประวัติ SOS"
+                : "ค้นหาประวัติขอสิ่งของ";
 
     const getTodayString = () => new Date().toISOString().substring(0, 10);
 
@@ -53,7 +62,7 @@ export default function SosHistoryFilter({ filters, onSearch, onReset }) {
                     search
                 </span>
                 <h2 className="text-lg font-bold text-slate-800">
-                    {t("sos.history.filter.title")}
+                    {title}
                 </h2>
             </div>
 

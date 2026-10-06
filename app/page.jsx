@@ -77,7 +77,6 @@ export default function Home() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-mainPageBackground">
       <PublicNavbar hotline="1784" options={{ back: false }} />
-
       <main className="flex flex-1 flex-col items-center justify-center px-3 py-8 sm:px-4 sm:py-12 md:py-20">
         <div className="max-w-[1140px] w-full flex flex-col items-center text-center">
           <section className="mb-7 sm:mb-10">

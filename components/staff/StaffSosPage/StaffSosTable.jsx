@@ -8,6 +8,7 @@ const LONG_WAIT_HOURS = 3;
 export default function StaffSosTable({
     requests,
     requestType = "emergency",
+    startIndex = 0,
     onAccept,
     onOpenGps,
     onOpenDetail,
@@ -22,7 +23,9 @@ export default function StaffSosTable({
                     <table className="w-full table-fixed border-collapse text-left">
                         <thead className="sticky top-0 z-10 bg-slate-50/95 backdrop-blur">
                             <tr className="border-b border-slate-200 text-xs font-black text-slate-500">
-                                <th className="w-[9%] px-2.5 py-3">{ui("รหัส")}</th>
+                                <th className="w-[9%] px-2.5 py-3 text-center">
+                                    {language === "en" ? "No." : "ลำดับ"}
+                                </th>
                                 <th className="w-[19%] px-2.5 py-3">
                                     {ui(isEmergencyView ? "ประเภท SOS" : "รายการที่ขอ")}
                                 </th>
@@ -40,10 +43,11 @@ export default function StaffSosTable({
                         </thead>
 
                         <tbody className="divide-y divide-slate-100">
-                            {requests.map((request) => (
+                            {requests.map((request, index) => (
                                 <DesktopRow
                                     key={request.id}
                                     request={request}
+                                    displayIndex={startIndex + index + 1}
                                     ui={ui}
                                     language={language}
                                     onAccept={onAccept}
@@ -57,10 +61,11 @@ export default function StaffSosTable({
             </div>
 
             <div className="space-y-3 lg:hidden">
-                {requests.map((request) => (
+                {requests.map((request, index) => (
                     <MobileRow
                         key={request.id}
                         request={request}
+                        displayIndex={startIndex + index + 1}
                         ui={ui}
                         language={language}
                         onAccept={onAccept}
@@ -75,6 +80,7 @@ export default function StaffSosTable({
 
 function DesktopRow({
     request,
+    displayIndex,
     ui,
     language,
     onAccept,
@@ -101,16 +107,10 @@ function DesktopRow({
             }`}
         >
             <td className="px-2.5 py-3">
-                <div className="flex items-center gap-2">
-                    <span className={`h-8 w-1 shrink-0 rounded-full ${isLongWaiting ? "bg-red-500" : style.bar}`} />
-                    <div className="min-w-0">
-                        <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">
-                            {isEmergency ? "SOS ID" : ui("รหัสคำขอ")}
-                        </p>
-                        <p className="truncate font-mono text-xs font-black text-slate-700">
-                            #{request.id}
-                        </p>
-                    </div>
+                <div className="flex items-center justify-center gap-2">
+                    <span className="min-w-6 text-center text-sm font-black text-slate-700">
+                        {displayIndex}
+                    </span>
                 </div>
             </td>
 
@@ -178,7 +178,7 @@ function DesktopRow({
                     <div className="space-y-1 text-xs text-slate-600">
                         <p>{ui("ผู้ประสบภัย")} <strong className="text-slate-800">{request.victimCount || 1}</strong></p>
                         <p className="truncate">
-                            {ui("ผู้ป่วย")} {request.patientCount || 0}
+                            {/* {ui("ผู้ป่วย")} {request.patientCount || 0} */}
                             {deathCount > 0 ? (
                                 <span className="ml-2 font-black text-red-600">
                                     {ui("เสียชีวิต")} {deathCount}
@@ -245,6 +245,7 @@ function DesktopRow({
 
 function MobileRow({
     request,
+    displayIndex,
     ui,
     language,
     onAccept,
@@ -274,8 +275,8 @@ function MobileRow({
                             <p className="truncate text-sm font-black text-slate-800">
                                 {ui(getRequestTitle(request))}
                             </p>
-                            <p className="mt-1 font-mono text-[11px] font-bold text-slate-400">
-                                #{request.id}
+                            <p className="mt-1 text-[11px] font-bold text-slate-400">
+                                {language === "en" ? `No. ${displayIndex}` : `ลำดับ ${displayIndex}`}
                             </p>
                         </div>
                         <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black ${style.badge}`}>

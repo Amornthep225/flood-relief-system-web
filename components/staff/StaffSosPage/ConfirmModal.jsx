@@ -803,6 +803,7 @@ export default function ConfirmModal({
                                                 <span className="font-black text-amber-700">{pending.requestedQuantity} {ui(pending.unit)}</span>
                                             </div>
                                             <p className="mt-1 font-bold text-slate-800">{ui(pending.reliefItemName)}</p>
+                                            <p className="mt-1 text-xs text-slate-500">{tx("ผู้ขอ", "Requester")}: {pending.requesterName || tx("ผู้ใช้งาน", "User")}</p>
                                         </div>
                                     ))}
                                 </div>

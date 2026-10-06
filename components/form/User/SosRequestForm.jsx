@@ -263,7 +263,7 @@ export default function SosRequestForm() {
 
                 title: t("sos.relief.successTitle"),
 
-                text: t("sos.relief.requestId", { id: response.sosRequestId }),
+                // text: t("sos.relief.requestId", { id: response.sosRequestId }),
 
                 timer: 1500,
 

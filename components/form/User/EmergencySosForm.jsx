@@ -474,9 +474,9 @@ export default function EmergencySosForm() {
 
                 title: t("sos.emergency.successTitle"),
 
-                text: t("sos.emergency.caseId", {
-                    id: response?.sosRequestId ?? "-",
-                }),
+                // text: t("sos.emergency.caseId", {
+                //     id: response?.sosRequestId ?? "-",
+                // }),
 
                 timer: 1400,
 

@@ -10,6 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { translateUiText } from "@/locales/uiPhrases";
 
 const completedStatuses = ["completed", "received", "success"];
+const PAGE_SIZE = 8;
 
 function isCompleted(donation) {
     return completedStatuses.includes(
@@ -31,6 +32,7 @@ export default function DonationHistory() {
     const { language, t } = useLanguage();
     const [donations, setDonations] = useState([]);
     const [activeTab, setActiveTab] = useState("all");
+    const [currentPage, setCurrentPage] = useState(1);
     const [filters, setFilters] = useState({
         startDate: "",
         endDate: "",
@@ -105,6 +107,25 @@ export default function DonationHistory() {
         return result;
     }, [donations, filters, activeTab]);
 
+    const totalPages = Math.max(
+        1,
+        Math.ceil(filteredDonations.length / PAGE_SIZE)
+    );
+
+    const paginatedDonations = useMemo(() => {
+        const startIndex = (currentPage - 1) * PAGE_SIZE;
+        return filteredDonations.slice(
+            startIndex,
+            startIndex + PAGE_SIZE
+        );
+    }, [currentPage, filteredDonations]);
+
+    useEffect(() => {
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
+
     const counts = useMemo(() => {
         const completed =
             filteredDonations.filter(isCompleted).length;
@@ -137,6 +158,7 @@ export default function DonationHistory() {
             startDate: today,
             endDate: today,
         });
+        setCurrentPage(1);
     };
 
     const setLast7Days = () => {
@@ -149,6 +171,7 @@ export default function DonationHistory() {
                 start.toISOString().split("T")[0],
             endDate: end.toISOString().split("T")[0],
         });
+        setCurrentPage(1);
     };
 
     const setThisMonth = () => {
@@ -164,6 +187,7 @@ export default function DonationHistory() {
                 start.toISOString().split("T")[0],
             endDate: now.toISOString().split("T")[0],
         });
+        setCurrentPage(1);
     };
 
     if (isLoading) {
@@ -236,38 +260,41 @@ export default function DonationHistory() {
                         <input
                             type="date"
                             value={filters.startDate}
-                            onChange={(event) =>
+                            onChange={(event) => {
                                 setFilters({
                                     ...filters,
                                     startDate:
                                         event.target.value,
-                                })
-                            }
+                                });
+                                setCurrentPage(1);
+                            }}
                             className="rounded-xl border px-4 py-3"
                         />
 
                         <input
                             type="date"
                             value={filters.endDate}
-                            onChange={(event) =>
+                            onChange={(event) => {
                                 setFilters({
                                     ...filters,
                                     endDate:
                                         event.target.value,
-                                })
-                            }
+                                });
+                                setCurrentPage(1);
+                            }}
                             className="rounded-xl border px-4 py-3"
                         />
                     </div>
 
                     <button
                         type="button"
-                        onClick={() =>
+                        onClick={() => {
                             setFilters({
                                 startDate: "",
                                 endDate: "",
-                            })
-                        }
+                            });
+                            setCurrentPage(1);
+                        }}
                         className="mt-4 rounded-xl bg-slate-100 px-5 py-2 text-sm font-bold"
                     >
                         {t("donation.history.reset")}
@@ -282,15 +309,75 @@ export default function DonationHistory() {
                 <div className="mt-6 border-b border-slate-200">
                     <DonationTabs
                         activeTab={activeTab}
-                        onChange={setActiveTab}
+                        onChange={(tab) => {
+                            setActiveTab(tab);
+                            setCurrentPage(1);
+                        }}
                         counts={counts}
                     />
                 </div>
 
                 <div className="mt-6 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
                     <DonationHistoryList
-                        donations={filteredDonations}
+                        donations={paginatedDonations}
                     />
+
+                    {filteredDonations.length > 0 && (
+                        <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="text-sm text-slate-500">
+                                {language === "en"
+                                    ? `Showing ${(currentPage - 1) * PAGE_SIZE + 1}-${Math.min(
+                                          currentPage * PAGE_SIZE,
+                                          filteredDonations.length
+                                      )} of ${filteredDonations.length}`
+                                    : `แสดง ${(currentPage - 1) * PAGE_SIZE + 1}-${Math.min(
+                                          currentPage * PAGE_SIZE,
+                                          filteredDonations.length
+                                      )} จาก ${filteredDonations.length} รายการ`}
+                            </p>
+
+                            <div className="flex items-center justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setCurrentPage((page) =>
+                                            Math.max(1, page - 1)
+                                        )
+                                    }
+                                    disabled={currentPage === 1}
+                                    className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                                >
+                                    {language === "en"
+                                        ? "Previous"
+                                        : "ก่อนหน้า"}
+                                </button>
+
+                                <span className="text-sm font-bold text-slate-700">
+                                    {language === "en"
+                                        ? `Page ${currentPage} / ${totalPages}`
+                                        : `หน้า ${currentPage} / ${totalPages}`}
+                                </span>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setCurrentPage((page) =>
+                                            Math.min(
+                                                totalPages,
+                                                page + 1
+                                            )
+                                        )
+                                    }
+                                    disabled={currentPage === totalPages}
+                                    className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                                >
+                                    {language === "en"
+                                        ? "Next"
+                                        : "ถัดไป"}
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

@@ -54,14 +54,14 @@ function TrackingHeader({ requestId, t }) {
                 {t("sos.tracking.headerTitle")}
             </h1>
 
-            <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full border border-slate-200 shadow-sm mt-3">
+            {/* <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full border border-slate-200 shadow-sm mt-3">
                 <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">
                     {t("sos.tracking.caseId")}
                 </span>
                 <span className="text-sm font-mono font-bold text-sky-600">
                     #{requestId}
                 </span>
-            </div>
+            </div> */}
         </div>
     );
 }
